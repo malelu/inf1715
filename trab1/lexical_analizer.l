@@ -12,8 +12,19 @@ int done = 0;
 
 \"([^\n"\\]|\\["\\])*\" { return STRING; }
 
-foo { return FOO; }
-bar { return BAR; }
+if { return IF; }
+else { return ELSE; }
+while { return WHILE; }
+return { return RETURN; }
+int { return INT; }
+char { return CHAR; }
+bool { return TRUE; }
+true { return TRUE; }
+false { return FALSE; }
+ 
+
+"(" { return OPEN_PARENTHESIS; }
+")" { return CLOSE_PARENTHESIS; }
 
 ([ \t\n]*) { }
 
