@@ -1,36 +1,39 @@
  /* declarations */
 %{
-#define IF 100
-#define ELSE 101
-#define STRING 200
-#define ERROR 999999
-
 int done = 0;
+#include "lexical_analizer.h"
+
+
 
 %}
 
-%%
- /* regular expressions */
-\"([^\n"\\]|\\["\\])*\" { return STRING; }
 
+ /* regular expressions */
+string \"([^\n"\\]|\\["\\])*\"
+%%
 
  /* tokens */
-if { return IF; }
-else { return ELSE; }
-while { return WHILE; }
-return { return RETURN; }
-new { return NEW; }
-void { return VOID; }
+char { return CHAR; }
 int { return INT; }
 float { return FLOAT; }
-char { return CHAR; }
+while { return WHILE; }
+if { return IF; }
+else { return ELSE; }
+new { return NEW; }
+return { return RETURN; }
+void { return VOID; }
 bool { return TRUE; }
 true { return TRUE; }
 false { return FALSE; }
- 
-
+">=" { return GREATER_EQUAL; } 
+"<=" { return LESS_EQUAL; }
+"==" { return EQUAL_EQUAL; }
+"!=" { return NOT_EQUAL; }
+"&&" { return AND; }
+"||" { return OR; }
 "(" { return OPEN_PARENTHESIS; }
 ")" { return CLOSE_PARENTHESIS; }
+{string} {return STRING; }
 
 ([ \t\n]*) { }
 
@@ -44,6 +47,7 @@ yywrap() {
 
 int main() {
 	while (!done) {
+ 		printf("%d\n", yylex());
 		printf("%s\n", yytext);
 	}
 	return 0;

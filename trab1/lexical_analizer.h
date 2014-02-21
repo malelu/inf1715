@@ -9,12 +9,20 @@ enum token {
 	ELSE, 
 	NEW, 
 	RETURN, 
-	VOID, 
-	GE,
-	LE, 
-	EE,
-	NE, 
+	VOID,
+	BOOL,
+	TRUE,
+	FALSE, 
+	GREATER_EQUAL,
+	LESS_EQUAL, 
+	EQUAL_EQUAL,
+	NOT_EQUAL, 
 	AND, 
-	OR, 
-	STRING 
+	OR,
+	OPEN_PARENTHESIS,
+	CLOSE_PARENTHESIS, 
+	STRING,
+	ERROR 
 }
+
+
