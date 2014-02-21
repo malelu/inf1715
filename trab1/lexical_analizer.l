@@ -1,6 +1,7 @@
+ /* declarations */
 %{
-#define FOO 100
-#define BAR 101
+#define IF 100
+#define ELSE 101
 #define STRING 200
 #define ERROR 999999
 
@@ -9,14 +10,19 @@ int done = 0;
 %}
 
 %%
-
+ /* regular expressions */
 \"([^\n"\\]|\\["\\])*\" { return STRING; }
 
+
+ /* tokens */
 if { return IF; }
 else { return ELSE; }
 while { return WHILE; }
 return { return RETURN; }
+new { return NEW; }
+void { return VOID; }
 int { return INT; }
+float { return FLOAT; }
 char { return CHAR; }
 bool { return TRUE; }
 true { return TRUE; }
@@ -33,15 +39,15 @@ false { return FALSE; }
 %%
 
 yywrap() {
-done = 1;
+	done = 1;
 }
 
 int main() {
-while (!done) {
-printf("%d\n", yylex());
-printf("%s\n", yytext);
-}
-return 0;
+	while (!done) {
+ 		/*printf("%d\n", yylex());*/
+		printf("%s\n", yytext);
+	}
+	return 0;
 }
 
 

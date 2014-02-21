@@ -1,5 +1,1 @@
-foo bar "bla" "hello world"
-
-foo"weeee" foo foo
-bar
-bar bar
+int if
