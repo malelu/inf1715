@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 enum token {
 	CHAR = 256,
@@ -23,6 +22,6 @@ enum token {
 	CLOSE_PARENTHESIS, 
 	STRING,
 	ERROR 
-}
+};
 
 

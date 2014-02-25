@@ -5,11 +5,11 @@
 int done = 0;
 
 %}
-
-
- /* regular expressions */
+/* regular expressions */
 string \"([^\n"\\]|\\["\\])*\"
 %%
+ 
+
 
  /* tokens */
 char { return CHAR; }
