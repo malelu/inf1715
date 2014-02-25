@@ -6,11 +6,18 @@ int done = 0;
 
 %}
 /* regular expressions */
+digit [0-9]
+exp [eE][-+]?[0-9]+
+hexa "0"[xX][0-9a-f-A-F]+
+character [a-zA-Z]
+numInt {digit}+|{hexa}
+fraction ("."{digit}+|{digit}+".")
+id (_|{character})+(_|{character}|{digit})*
+numFloat (({digit}+{fraction}|{fraction})({exp})?|{digit}+{exp}) 
 string \"([^\n"\\]|\\["\\])*\"
+comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")
 %%
  
-
-
  /* tokens */
 char { return CHAR; }
 int { return INT; }
