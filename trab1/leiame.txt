@@ -1,0 +1,47 @@
+*****************************************
+Aluna: Marina Leao Lucena
+Matéria: Compiladores
+Trabalho: Analisador léxico
+*****************************************
+
+*****************************************
+Diretórios e arquivos:
+
+	- Diretório testes
+		- Diretório entrada
+			- expressoes.mg
+			- numero.mg
+			- string.mg
+			- variaveis.mg
+		- Diretório gabarito
+			- expressoes.mg.out.exp
+			- numero.mg.out.exp
+			- string.mg.out.exp
+			- variaveis.mg.out.exp
+		- Diretório saida
+	- main.c
+	- analisadorLexico.h
+	- analisadorLexico.l
+	- makefile
+	- teste.sh
+	- leiame.txt
+
+*****************************************
+Para executar o programa, siga os seguintes passos:
+
+	- Abra o terminal
+	- Navegue ao diretório do trabalho pelo terminal
+	- Escreva no terminal o comando "make" e pressione enter para compilar o programa e criar o executável
+	- Escreva no terminal o comando "sh teste.sh" para gerar as saídas e compará-las com o gabarito
+
+*****************************************
+Relatório do trabalho:
+
+No trabalho foi implementado um analisador léxico para a linguagem monga.
+Nele, foram identificados os tokens que formam a linguagem através de expressões regulares criadas. Esses tokens foram tratados e passados para uma função main, que imprimiu o resultado.
+No tratamento do token "string" foram criadas duas funções auxiliares: "createString" e "check".
+Para os números inteiros há um tratamento para o caso de números decimais e outro para números hexadecimais. Números octais não são reconhecidos.
+Os números float possuem expressão regular reconhecendo três casos: número inteiro com expoente, número fracionário, com ou sem expoente, do tipo "dígitos.dígitos" e por último, número fracionário, com ou sem expoente, na fórmula ".dígito" ou "dígito.".
+Mensagens de erro para o caso de strings ou comentários abertos foram implementadas.
+
+

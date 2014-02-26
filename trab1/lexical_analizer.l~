@@ -12,7 +12,10 @@ hexa "0"[xX][0-9a-f-A-F]+
 character [a-zA-Z]
 numInt {digit}+|{hexa}
 fraction ("."{digit}+|{digit}+".")
+id (_|{character})+(_|{character}|{digit})*
+numFloat (({digit}+{fraction}|{fraction})({exp})?|{digit}+{exp}) 
 string \"([^\n"\\]|\\["\\])*\"
+comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")
 %%
  
  /* tokens */

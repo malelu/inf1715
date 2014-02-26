@@ -1,12 +1,15 @@
-lexical_analizer: lex.yy.c
-	gcc -o lexical_analizer lex.yy.c
+############### Makefile ########################
+all: lexico
+lexico : analisadorLexico.o main.c
+	gcc -o lexico analisadorLexico.o main.c analisadorLexico.h -ll
 
-lex.yy.c: lexical_analizer.l
-	flex lexical_analizer.l
+analisadorLexico.o : analisadorLexico.c
+	gcc -c -o analisadorLexico.o analisadorLexico.c
 
-clean:
-	rm -f lexical_analizer *.o lex.yy.c
+analisadorLexico.c : analisadorLexico.l
+	lex -t analisadorLexico.l > analisadorLexico.c 
 
-test: lexical_analizer
-	@echo "Teste sem erros:"
-	./lexical_analizer < teste_ok.txt
+clean: 
+	rm -rf *.o 
+mrproper: clean 
+	rm -rf lexico

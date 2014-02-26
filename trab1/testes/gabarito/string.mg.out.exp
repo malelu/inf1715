@@ -1,0 +1,76 @@
+INT
+ID->main
+(
+VOID
+)
+{
+CHAR
+*
+ID->teste
+=
+STRING->Marina
+ Leao	 Lucena !
+;
+CHAR
+*
+ID->TesTe2_
+=
+STRING->
+ deve pular linha
+;
+CHAR
+*
+ID->_TesTe2
+=
+STRING->\n nao deve pular linha
+;
+CHAR
+*
+ID->tes_te3
+=
+STRING->testando \
+ pulo de linha
+;
+CHAR
+*
+ID->tes_te4
+=
+STRING->testando \\n nao pulo de linha
+;
+CHAR
+*
+ID->tes_te5
+=
+STRING->testando\
+;
+CHAR
+*
+ID->tes_5te
+=
+STRING->testando2 
+
+;
+CHAR
+*
+NUMINT->6
+ID->tes_te
+=
+STRING->testando2 \t
+;
+CHAR
+*
+ID->tes_te51
+=
+STRING->	"
+;
+CHAR
+*
+ID->y
+=
+STRING->cuidado, cachorro "BRAVO"
+;
+CHAR
+*
+ID->k
+=
+ STRING INVALIDA-> \b

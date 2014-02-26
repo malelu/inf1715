@@ -1,0 +1,10 @@
+int main (void)
+{
+/* teste */
+float VVV = 1.548e2, xxx = 1.548e-4;
+float___ = 22.456E7;
+float _s;
+
+s = VVV + xxx + ___;
+return 0;
+}
