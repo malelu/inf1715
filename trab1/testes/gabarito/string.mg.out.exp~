@@ -4,63 +4,55 @@ OPEN_PARENTHESIS
 CLOSE_PARENTHESIS
 COLLON
 INT
+ID->tes_te1
+COLLON
+OPEN_BRACKET
+CLOSE_BRACKET
 CHAR
-TIMES
-ID->teste
+NUMINT->6
+ID->Teste_
+COLLON
+OPEN_BRACKET
+CLOSE_BRACKET
+CHAR
+ID->tes_te1
 EQUAL
 LITERAL_STRING->Marina
  Leao	 Lucena !
-CHAR
-TIMES
-ID->TesTe2_
+ID->tes_te1
 EQUAL
 LITERAL_STRING->
  deve pular linha
-CHAR
-TIMES
-ID->_TesTe2
+ID->tes_te1
 EQUAL
 LITERAL_STRING->\n nao deve pular linha
-CHAR
-TIMES
-ID->tes_te3
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando \
  pulo de linha
-CHAR
-TIMES
-ID->tes_te4
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando \\n nao pulo de linha
-CHAR
-TIMES
-ID->tes_te5
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando\
-CHAR
-TIMES
-ID->tes_5te
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando2 
 
-CHAR
-TIMES
 NUMINT->6
-ID->tes_te
+ID->Teste_
 EQUAL
 LITERAL_STRING->testando2 \t
-CHAR
-TIMES
-ID->tes_te51
+NUMINT->6
+ID->Teste_
 EQUAL
 LITERAL_STRING->	"
-CHAR
-TIMES
-ID->y
+NUMINT->6
+ID->Teste_
 EQUAL
 LITERAL_STRING->cuidado, cachorro "BRAVO"
-CHAR
-TIMES
-ID->k
+NUMINT->6
+ID->Teste_
 EQUAL
  STRING INVALIDA-> \b

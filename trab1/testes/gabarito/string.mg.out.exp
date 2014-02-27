@@ -1,76 +1,58 @@
-INT
+FUN
 ID->main
-(
-VOID
-)
-{
+OPEN_PARENTHESIS
+CLOSE_PARENTHESIS
+COLLON
+INT
+ID->tes_te1
+COLLON
+OPEN_BRACKET
+CLOSE_BRACKET
 CHAR
-*
-ID->teste
-=
-STRING->Marina
- Leao	 Lucena !
-;
-CHAR
-*
-ID->TesTe2_
-=
-STRING->
- deve pular linha
-;
-CHAR
-*
-ID->_TesTe2
-=
-STRING->\n nao deve pular linha
-;
-CHAR
-*
-ID->tes_te3
-=
-STRING->testando \
- pulo de linha
-;
-CHAR
-*
-ID->tes_te4
-=
-STRING->testando \\n nao pulo de linha
-;
-CHAR
-*
-ID->tes_te5
-=
-STRING->testando\
-;
-CHAR
-*
-ID->tes_5te
-=
-STRING->testando2 
-
-;
-CHAR
-*
 NUMINT->6
-ID->tes_te
-=
-STRING->testando2 \t
-;
+ID->Teste_
+COLLON
+OPEN_BRACKET
+CLOSE_BRACKET
 CHAR
-*
-ID->tes_te51
-=
-STRING->	"
-;
-CHAR
-*
-ID->y
-=
-STRING->cuidado, cachorro "BRAVO"
-;
-CHAR
-*
-ID->k
-=
- STRING INVALIDA-> \b
+ID->tes_te1
+EQUAL
+LITERAL_STRING->Marina
+ Leao	 Lucena !
+ID->tes_te1
+EQUAL
+LITERAL_STRING->
+ deve pular linha
+ID->tes_te1
+EQUAL
+LITERAL_STRING->\n nao deve pular linha
+ID->tes_te1
+EQUAL
+LITERAL_STRING->testando \
+ pulo de linha
+ID->tes_te1
+EQUAL
+LITERAL_STRING->testando \\n nao pulo de linha
+ID->tes_te1
+EQUAL
+LITERAL_STRING->testando\
+ID->tes_te1
+EQUAL
+LITERAL_STRING->testando2 
+
+NUMINT->6
+ID->Teste_
+EQUAL
+LITERAL_STRING->testando2 \t
+NUMINT->6
+ID->Teste_
+EQUAL
+LITERAL_STRING->	"
+NUMINT->6
+ID->Teste_
+EQUAL
+LITERAL_STRING->cuidado, cachorro "BRAVO"
+NUMINT->6
+ID->Teste_
+EQUAL
+ INVALID STRING-> \b

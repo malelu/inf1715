@@ -102,7 +102,7 @@ void check (int i, int j, int tam, char* sentence, char* text)
 		sentence[j] = '\"';
 	else					/* senão a string é inválida */ 
 	{
-		printf(" STRING INVALIDA-> \\%c", letra);
+		printf(" INVALID STRING-> \\%c", letra);
 		exit(1);
 	}
 }

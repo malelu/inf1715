@@ -1,15 +1,17 @@
 fun main () : int
-	char* teste = "Marina\n Leao\t Lucena !"
-	char* TesTe2_ = "\n deve pular linha"
-	char* _TesTe2 = "\\n nao deve pular linha"
-	char* tes_te3 = "testando \\\n pulo de linha"
-	char* tes_te4 = "testando \\\\n nao pulo de linha"
-	char* tes_te5 = "testando\\"
-	char* tes_5te = "testando2 \n"
-	char* 6tes_te = "testando2 \\t"
-	char* tes_te51 = "\t\""
-	char* y = "cuidado, cachorro \"BRAVO\""
-	char* k = "tentativa \"\bravo\""
-	char* tes_te5 = "testando\"
+	tes_te1 : []char
+	6Teste_ : []char
+	tes_te1 = "Marina\n Leao\t Lucena !"
+	tes_te1 = "\n deve pular linha"
+	tes_te1 = "\\n nao deve pular linha"
+	tes_te1 = "testando \\\n pulo de linha"
+	tes_te1 = "testando \\\\n nao pulo de linha"
+	tes_te1 = "testando\\"
+	tes_te1 = "testando2 \n"
+	6Teste_ = "testando2 \\t"
+	6Teste_ = "\t\""
+	6Teste_ = "cuidado, cachorro \"BRAVO\""
+	6Teste_ = "tentativa \"\bravo\""
+	6Teste_ = "testando\"
 
 end

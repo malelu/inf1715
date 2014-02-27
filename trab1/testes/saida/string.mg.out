@@ -4,73 +4,55 @@ OPEN_PARENTHESIS
 CLOSE_PARENTHESIS
 COLLON
 INT
+ID->tes_te1
+COLLON
+OPEN_BRACKET
+CLOSE_BRACKET
 CHAR
-TIMES
-ID->teste
+NUMINT->6
+ID->Teste_
+COLLON
+OPEN_BRACKET
+CLOSE_BRACKET
+CHAR
+ID->tes_te1
 EQUAL
 LITERAL_STRING->Marina
  Leao	 Lucena !
-ERROR->;
-CHAR
-TIMES
-ID->TesTe2_
+ID->tes_te1
 EQUAL
 LITERAL_STRING->
  deve pular linha
-ERROR->;
-CHAR
-TIMES
-ID->_TesTe2
+ID->tes_te1
 EQUAL
 LITERAL_STRING->\n nao deve pular linha
-ERROR->;
-CHAR
-TIMES
-ID->tes_te3
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando \
  pulo de linha
-ERROR->;
-CHAR
-TIMES
-ID->tes_te4
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando \\n nao pulo de linha
-ERROR->;
-CHAR
-TIMES
-ID->tes_te5
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando\
-ERROR->;
-CHAR
-TIMES
-ID->tes_5te
+ID->tes_te1
 EQUAL
 LITERAL_STRING->testando2 
 
-ERROR->;
-CHAR
-TIMES
 NUMINT->6
-ID->tes_te
+ID->Teste_
 EQUAL
 LITERAL_STRING->testando2 \t
-ERROR->;
-CHAR
-TIMES
-ID->tes_te51
+NUMINT->6
+ID->Teste_
 EQUAL
 LITERAL_STRING->	"
-ERROR->;
-CHAR
-TIMES
-ID->y
+NUMINT->6
+ID->Teste_
 EQUAL
 LITERAL_STRING->cuidado, cachorro "BRAVO"
-ERROR->;
-CHAR
-TIMES
-ID->k
+NUMINT->6
+ID->Teste_
 EQUAL
  STRING INVALIDA-> \b
