@@ -42,12 +42,18 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 ")" {return TK_CLOSE_PARENTHESIS;}
 "," {return TK_COMMA;}
 ":" {return TK_COLLON;}
-">" {retrun TK_GREATER;}
+">" {return TK_GREATER;}
 "<" {return TK_LESS;}
-">=" {return TK_GE;}
-"<=" {return TK_LE;}
-"==" {return TK_EE;}
-"!=" {return TK_NE;}
+">=" {return TK_GREATER_EQUAL;}
+"<=" {return TK_LESS_EQUAL;}
+"=" {return TK_EQUAL;}
+"<>" {return TK_NOT_EQUAL;}
+"[" {return TK_OPEN_BRACKET;}
+"]" {return TK_CLOSE_BRACKET;}
+"+" {return TK_PLUS;}
+"-" {return TK_MINUS;}
+"*" {return TK_TIMES;}
+"/" {return TK_DIVIDED;}
 "and" {return TK_AND;}
 "or" {return TK_OR;}
 {numInt} {
@@ -82,7 +88,7 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 {isSpace} { }
 . {
 	val.cValor = yytext;
-	return OTHER;
+	return ERROR;
 } 
 
 %%
