@@ -79,7 +79,7 @@ int main (void)
 			case TK_ID :
 				printf ("ID->%s\n", val.cValor);
 			break;
-			case TK_LITERAL_STRING :			
+			case TK_STRING :			
 				printf("STRING->%s\n", val.cValor);
 			break;
 			case OTHER :

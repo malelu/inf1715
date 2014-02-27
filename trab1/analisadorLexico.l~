@@ -38,12 +38,6 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 "new" {return TK_NEW;}
 "return" {return TK_RET;}
 "fun" {return TK_FUN;}
-"(" {return TK_OPEN_PARENTHESIS;}
-")" {return TK_CLOSE_PARENTHESIS;}
-"," {return TK_COMMA;}
-":" {return TK_COLLON;}
-">" {retrun TK_GREATER;}
-"<" {return TK_LESS;}
 ">=" {return TK_GE;}
 "<=" {return TK_LE;}
 "==" {return TK_EE;}

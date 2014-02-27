@@ -1,7 +1,7 @@
 INT
 ID->main
 (
-VOID
+ID->void
 )
 {
 CHAR

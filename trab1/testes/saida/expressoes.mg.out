@@ -1,7 +1,7 @@
 INT
 ID->main
 (
-VOID
+ID->void
 )
 {
 INT
@@ -13,12 +13,12 @@ ID->c
 ,
 ID->d
 ;
-FLOAT
+ID->float
 ID->b
 =
 NUMFLOAT->4.500000
 ;
-FLOAT
+ID->float
 ID->s
 =
 ID->a
@@ -46,7 +46,8 @@ IF
 ID->a
 EE
 NUMINT->8
-OR
+|
+|
 ID->b
 NE
 NUMINT->9
@@ -62,7 +63,8 @@ IF
 (
 !
 ID->d
-AND
+&
+&
 ID->f
 >
 NUMINT->6
