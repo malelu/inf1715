@@ -109,9 +109,6 @@ int main (void)
 			case TK_NUMINT :
 				printf ("NUMINT->%d\n", val.iValor);
 			break;
-			case TK_NUMFLOAT :
-				printf ("NUMFLOAT->%f\n", val.fValor);
-			break;
 			case TK_ID :
 				printf ("ID->%s\n", val.cValor);
 			break;

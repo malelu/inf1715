@@ -34,7 +34,6 @@ enum token { TK_CHAR = 256,
 	     TK_AND, 
 	     TK_OR, 
 	     TK_NUMINT, 
-	     TK_NUMFLOAT, 
 	     TK_ID, 
 	     TK_LITERAL_STRING, 
 	     ERROR

@@ -1,76 +1,76 @@
 INT
 ID->main
-(
+OPEN_PARENTHESIS
 ID->void
-)
-{
+CLOSE_PARENTHESIS
+ERROR->{
 CHAR
-*
+TIMES
 ID->teste
-=
-STRING->Marina
+EQUAL
+LITERAL_STRING->Marina
  Leao	 Lucena !
-;
+ERROR->;
 CHAR
-*
+TIMES
 ID->TesTe2_
-=
-STRING->
+EQUAL
+LITERAL_STRING->
  deve pular linha
-;
+ERROR->;
 CHAR
-*
+TIMES
 ID->_TesTe2
-=
-STRING->\n nao deve pular linha
-;
+EQUAL
+LITERAL_STRING->\n nao deve pular linha
+ERROR->;
 CHAR
-*
+TIMES
 ID->tes_te3
-=
-STRING->testando \
+EQUAL
+LITERAL_STRING->testando \
  pulo de linha
-;
+ERROR->;
 CHAR
-*
+TIMES
 ID->tes_te4
-=
-STRING->testando \\n nao pulo de linha
-;
+EQUAL
+LITERAL_STRING->testando \\n nao pulo de linha
+ERROR->;
 CHAR
-*
+TIMES
 ID->tes_te5
-=
-STRING->testando\
-;
+EQUAL
+LITERAL_STRING->testando\
+ERROR->;
 CHAR
-*
+TIMES
 ID->tes_5te
-=
-STRING->testando2 
+EQUAL
+LITERAL_STRING->testando2 
 
-;
+ERROR->;
 CHAR
-*
+TIMES
 NUMINT->6
 ID->tes_te
-=
-STRING->testando2 \t
-;
+EQUAL
+LITERAL_STRING->testando2 \t
+ERROR->;
 CHAR
-*
+TIMES
 ID->tes_te51
-=
-STRING->	"
-;
+EQUAL
+LITERAL_STRING->	"
+ERROR->;
 CHAR
-*
+TIMES
 ID->y
-=
-STRING->cuidado, cachorro "BRAVO"
-;
+EQUAL
+LITERAL_STRING->cuidado, cachorro "BRAVO"
+ERROR->;
 CHAR
-*
+TIMES
 ID->k
-=
+EQUAL
  STRING INVALIDA-> \b

@@ -1,7 +1,7 @@
 INT
 ID->main
-(
+OPEN_PARENTHESIS
 ID->void
-)
-{
-}
+CLOSE_PARENTHESIS
+ERROR->{
+ERROR->}

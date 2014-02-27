@@ -118,8 +118,8 @@ int main (void)
 			case TK_LITERAL_STRING :			
 				printf("LITERAL_STRING->%s\n", val.cValor);
 			break;
-			case OTHER :
-				printf ("%s\n", val.cValor);
+			case ERROR :
+				printf ("ERROR->%s\n", val.cValor);
 			break;
 
 		}

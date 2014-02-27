@@ -8,14 +8,11 @@ char* createString (char* text) ;
 %}
  /* expressoes regulares */
 digit [0-9]
-exp [eE][-+]?[0-9]+
 hexa "0"[xX][0-9 a-fA-F]+
 letter [a-zA-Z]
 isSpace [ \t\n\r\v\f]+
 numInt {digit}+|{hexa}
-fraction ("."{digit}+|{digit}+".")
 id (_|{letter})+(_|{letter}|{digit})*
-numFloat (({digit}+{fraction}|{fraction})({exp})?|{digit}+{exp}) 
 openComment "/*"
 comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")
 quotMark \"
@@ -63,10 +60,6 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 	else	
 		val.iValor = (int)strtol(val.cValor, 0, 0);
 	return TK_NUMINT;
-	}
-{numFloat} {
-	val.fValor = atof(yytext); 	
-	return TK_NUMFLOAT;
 	}
 {id} {
 	val.cValor = yytext; 	

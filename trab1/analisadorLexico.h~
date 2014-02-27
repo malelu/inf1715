@@ -37,7 +37,7 @@ enum token { TK_CHAR = 256,
 	     TK_NUMFLOAT, 
 	     TK_ID, 
 	     TK_LITERAL_STRING, 
-	     OTHER
+	     ERROR
 };
 
 union Valor{

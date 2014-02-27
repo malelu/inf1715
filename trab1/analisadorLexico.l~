@@ -48,8 +48,8 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 "<=" {return TK_LESS_EQUAL;}
 "=" {return TK_EQUAL;}
 "<>" {return TK_NOT_EQUAL;}
-"[" {return OPEN_BRACKET;}
-"]" {return CLOSE_BRACKET;}
+"[" {return TK_OPEN_BRACKET;}
+"]" {return TK_CLOSE_BRACKET;}
 "+" {return TK_PLUS;}
 "-" {return TK_MINUS;}
 "*" {return TK_TIMES;}
