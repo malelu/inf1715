@@ -12,5 +12,8 @@ fun main () : int
 		variavel = "marina"
 	else if a <= 4 and _b > 0
 		return 4*5-4+1/(1+3)
+
+	while not C
+		func( 5, 6)
 end
 

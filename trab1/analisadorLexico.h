@@ -42,6 +42,5 @@ enum token { TK_CHAR = 256,
 union Valor{
 	char* cValor;
 	int iValor;
-	double fValor;
 }val;
 

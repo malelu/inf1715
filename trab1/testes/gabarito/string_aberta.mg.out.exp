@@ -1,14 +1,14 @@
-FUN
-ID->main
-OPEN_PARENTHESIS
-CLOSE_PARENTHESIS
-COLLON
-INT
-ID->teste
-COLLON
-OPEN_BRACKET
-CLOSE_BRACKET
-CHAR
-ID->teste
-EQUAL
- ERROR: OPEN STRING
+line 1 => FUN
+line 1 => ID->main
+line 1 => OPEN_PARENTHESIS
+line 1 => CLOSE_PARENTHESIS
+line 1 => COLLON
+line 1 => INT
+line 2 => ID->teste
+line 2 => COLLON
+line 2 => OPEN_BRACKET
+line 2 => CLOSE_BRACKET
+line 2 => CHAR
+line 3 => ID->teste
+line 3 => EQUAL
+line: 3 => ERROR: OPEN STRING

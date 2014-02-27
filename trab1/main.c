@@ -1,4 +1,5 @@
 #include "analisadorLexico.h"
+extern int lineCount ;
 
 int main (void)
 {
@@ -8,115 +9,115 @@ int main (void)
 		switch(token)
 		{
 			case TK_CHAR :
-				printf ("CHAR\n");
+				printf ("line %d => CHAR\n", lineCount);
 			break;
 			case TK_INT :
-				printf ("INT\n");
+				printf ("line %d => INT\n", lineCount);
 			break;
 			case TK_STRING :
-				printf ("STRING\n");
+				printf ("line %d => STRING\n", lineCount);
 			break;
 			case TK_BOOL :
-				printf ("BOOL\n");
+				printf ("line %d => BOOL\n", lineCount);
 			break;
 			case TK_TRUE :
-				printf ("TRUE\n");
+				printf ("line %d => TRUE\n", lineCount);
 			break;
 			case TK_FALSE :
-				printf ("FALSE\n");
+				printf ("line %d => FALSE\n", lineCount);
 			break;
 			case TK_NOT :
-				printf ("NOT\n");
+				printf ("line %d => NOT\n", lineCount);
 			break;
 			case TK_WHILE :
-				printf ("WHILE\n");
+				printf ("line %d => WHILE\n", lineCount);
 			break;
 			case TK_LOOP :
-				printf ("LOOP\n");
+				printf ("line %d => LOOP\n", lineCount);
 			break;
 			case TK_IF :
-				printf ("IF\n");
+				printf ("line %d => IF\n", lineCount);
 			break;
 			case TK_ELSE :
-				printf ("ELSE\n");
+				printf ("line %d => ELSE\n", lineCount);
 			break;
 			case TK_END :
-				printf ("END\n");
+				printf ("line %d => END\n", lineCount);
 			break;
 			case TK_NEW :
-				printf ("NEW\n");
+				printf ("line %d => NEW\n", lineCount);
 			break;
 			case TK_RET :
-				printf ("RET\n");
+				printf ("line %d => RET\n", lineCount);
 			break;
 			case TK_FUN :
-				printf ("FUN\n");
+				printf ("line %d => FUN\n", lineCount);
 			break;
 			case TK_OPEN_PARENTHESIS :
-				printf ("OPEN_PARENTHESIS\n");
+				printf ("line %d => OPEN_PARENTHESIS\n", lineCount);
 			break;
 			case TK_CLOSE_PARENTHESIS :
-				printf ("CLOSE_PARENTHESIS\n");
+				printf ("line %d => CLOSE_PARENTHESIS\n", lineCount);
 			break;
 			case TK_COMMA :
-				printf ("COMMA\n");
+				printf ("line %d => COMMA\n", lineCount);
 			break;
 			case TK_COLLON :
-				printf ("COLLON\n");
+				printf ("line %d => COLLON\n", lineCount);
 			break;
 			case TK_GREATER :
-				printf ("GREATER\n");
+				printf ("line %d => GREATER\n", lineCount);
 			break;
 			case TK_LESS :
-				printf ("LESS\n");
+				printf ("line %d => LESS\n", lineCount);
 			break;
 			case TK_GREATER_EQUAL :
-				printf ("GREATER_EQUAL\n");
+				printf ("line %d => GREATER_EQUAL\n", lineCount);
 			break;
 			case TK_LESS_EQUAL :
-				printf ("LESS_EQUAL\n");
+				printf ("line %d => LESS_EQUAL\n", lineCount);
 			break;
 			case TK_EQUAL :
-				printf ("EQUAL\n");
+				printf ("line %d => EQUAL\n", lineCount);
 			break;
 			case TK_NOT_EQUAL :
-				printf ("NOT_EQUAL\n");
+				printf ("line %d => NOT_EQUAL\n", lineCount);
 			break;
 			case TK_OPEN_BRACKET :
-				printf ("OPEN_BRACKET\n");
+				printf ("line %d => OPEN_BRACKET\n", lineCount);
 			break;
 			case TK_CLOSE_BRACKET :
-				printf ("CLOSE_BRACKET\n");
+				printf ("line %d => CLOSE_BRACKET\n", lineCount);
 			break;
 			case TK_PLUS :
-				printf ("PLUS\n");
+				printf ("line %d => PLUS\n", lineCount);
 			break;
 			case TK_MINUS :
-				printf ("MINUS\n");
+				printf ("line %d => MINUS\n", lineCount);
 			break;
 			case TK_TIMES :
-				printf ("TIMES\n");
+				printf ("line %d => TIMES\n", lineCount);
 			break;
 			case TK_DIVIDED :
-				printf ("DIVIDED\n");
+				printf ("line %d => DIVIDED\n", lineCount);
 			break;
 			case TK_AND :
-				printf ("AND\n");
+				printf ("line %d => AND\n", lineCount);
 			break;
 			case TK_OR :
-				printf ("OR\n");
+				printf ("line %d => OR\n", lineCount);
 			break;
 			case TK_NUMINT :
-				printf ("NUMINT->%d\n", val.iValor);
+				printf ("line %d => NUMINT->%d\n", lineCount, val.iValor);
 			break;
 			case TK_ID :
-				printf ("ID->%s\n", val.cValor);
+				printf ("line %d => ID->%s\n", lineCount, val.cValor);
 			break;
 			case TK_LITERAL_STRING :			
-				printf("LITERAL_STRING->%s\n", val.cValor);
+				printf("line %d => LITERAL_STRING->%s\n", lineCount, val.cValor);
 			break;
 			case ERROR :
-				printf ("ERROR->%s\n", val.cValor);
+				printf ("line %d => ERROR->%s\n", lineCount, val.cValor);
 			break;
 
 		}

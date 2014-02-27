@@ -2,24 +2,27 @@
 %{
 #include <string.h>
 #include "analisadorLexico.h"
-
+int lineCount = 1;
 void check (int i, int j, int tam, char* sentence, char* text) ;
 char* createString (char* text) ;
 %}
+
  /* expressoes regulares */
 digit [0-9]
 hexa "0"[xX][0-9 a-fA-F]+
 letter [a-zA-Z]
-isSpace [ \t\n\r\v\f]+
+isSpace [ \t\r\v\f]+
+line [\n]
 numInt {digit}+|{hexa}
 id (_|{letter})+(_|{letter}|{digit})*
 openComment "/*"
 comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")
 quotMark \"
 string {quotMark}(\\.|[^\\"\n])*{quotMark}
- /* regras */
-%%
 
+%%
+%line
+ /* regras */
 "char" {return TK_CHAR;}
 "int" {return TK_INT;}
 "string" {return TK_STRING;}
@@ -78,6 +81,9 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 	printf (" ERROR: OPEN STRING");
 	exit(1);
 	}
+{line} {
+	lineCount++;
+}
 {isSpace} { }
 . {
 	val.cValor = yytext;
@@ -102,7 +108,7 @@ void check (int i, int j, int tam, char* sentence, char* text)
 		sentence[j] = '\"';
 	else					/* senão a string é inválida */ 
 	{
-		printf(" STRING INVALIDA-> \\%c", letra);
+		printf("line %d => INVALID STRING-> \\%c", lineCount, letra);
 		exit(1);
 	}
 }
