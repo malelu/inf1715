@@ -71,11 +71,11 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 	}
 {comment} { } 
 {openComment} {
-	printf("ERRO: COMENTARIO ABERTO");
+	printf("ERROR: OPEN COMMENT");
 	exit(1);
 }
 {quotMark} {
-	printf (" ERRO: STRING ABERTA");
+	printf (" ERROR: OPEN STRING");
 	exit(1);
 	}
 {isSpace} { }

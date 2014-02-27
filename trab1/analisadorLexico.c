@@ -1048,7 +1048,7 @@ case 38:
 YY_RULE_SETUP
 #line 73 "analisadorLexico.l"
 {
-	printf("ERRO: COMENTARIO ABERTO");
+	printf("ERROR: OPEN COMMENT");
 	exit(1);
 }
 	YY_BREAK
@@ -1056,7 +1056,7 @@ case 39:
 YY_RULE_SETUP
 #line 77 "analisadorLexico.l"
 {
-	printf (" ERRO: STRING ABERTA");
+	printf (" ERROR: OPEN STRING");
 	exit(1);
 	}
 	YY_BREAK

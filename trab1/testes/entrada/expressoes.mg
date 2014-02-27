@@ -1,21 +1,14 @@
-int main (void)
-{
+fun main () : int
+	a : int 
+	_b : int
+	A_ : []char
+	a = 8
+	_b = 0x34
+	variavel : string	
 
-	int a = 8, c, d ;
-	float b = 4.5 ;
-	float s = a + b ;
-	c = (a-6)/2 ;
-	d = c*4 ;
+	if a = 8 or _b <> 9
+		variavel = "marina"
+	else if a <= 4 and _b > 0
+		return 4*5-4+1/(1+3)
+end
 
-	if( a == 8 || b != 9)
-	{
-		d = 5;
-	}
-	else if(!d && f > 6)
-	{
-		new int [4-2] ;
-	}
-	
-
-	return 0 ;
-}

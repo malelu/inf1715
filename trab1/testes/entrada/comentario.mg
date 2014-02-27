@@ -1,4 +1,3 @@
-int main (void)
-{
+fun main () : int
 	/* marina */
-}
+end
