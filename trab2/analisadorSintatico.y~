@@ -45,69 +45,6 @@
 
 %%
  /*regras de tradução */
-programa  : funcao { funcao }
-	;
-funcao    -> 'fun' ID '(' [ params ] ')' [ ':' tipo ] NL
-                { declvar NL }
-                { comando NL }
-             'end' NL
-	;
-params    : /*vazio*/ | parametro { ',' parametro }
-	;
-parametro : ID ':' tipo
-	;
-tipo      : tipobase | '[' ']' tipo
-	;
-tipobase  : 'int' | 'bool' | 'char' | 'string'
-	;
-declvar   : ID ':' tipo NL
-	;
-comando   : cmdif | cmdwhile | cmdatrib | cmdreturn | chamada 
-	;
-cmdif     : 'if' exp NL
-                { comando NL }
-             { 'else' 'if' exp NL
-                { comando NL }
-             }
-             { 'else' NL
-                { comando NL }
-             }
-             'end'
-	;
-cmdwhile  : 'while' exp NL
-                { comando NL }
-             'loop'
-	;
-cmdatrib  : ID '=' exp
-	;
-chamada   : ID '(' listaexp ')'
-	;
-listaexp  : /*vazio*/ | exp { ',' exp }
-	;
-cmdreturn : 'return' exp | 'return'
-	;
-exp       : LITNUMERAL
-           | LITSTRING
-           | 'new' '[' exp ']' tipo
-           | '(' exp ')'
-           | chamada
-           | exp '+' exp
-           | exp '-' exp
-           | exp '*' exp
-           | exp '/' exp
-           | exp '>' exp
-           | exp '<' exp
-           | exp '>=' exp
-           | exp '<=' exp
-           | exp '=' exp
-           | exp '<>' exp
-           | exp 'and' exp
-           | exp 'or' exp
-           | 'not' exp
-	;
-
- /*anterior*/
-
 programa : lista_declaracao
 	;
 lista_declaracao : /* empty */| declaracao lista_declaracao

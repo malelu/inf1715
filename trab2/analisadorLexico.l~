@@ -8,6 +8,7 @@
 union Valor{
 	char* cValor;
 	int iValor;
+	double fValor;
 }val;
 
 int lineCount = 1;
