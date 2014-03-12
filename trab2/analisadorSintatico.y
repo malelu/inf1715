@@ -45,46 +45,52 @@
 
 %%
  /*regras de tradução */
-programa  : funcao { funcao }
+programa  : funcao lista_funcao 
 	;
-funcao    -> 'fun' ID '(' [ params ] ')' [ ':' tipo ] NL
-                { declvar NL }
-                { comando NL }
-             'end' NL
+lista_funcao : /* vazio */ | funcao lista_funcao
 	;
-params    : /*vazio*/ | parametro { ',' parametro }
+funcao    -> TK_FUN TK_ID TK_OPEN_PARENTHESIS [ params ] TK_CLOSE_PARENTHESIS [ ':' tipo ] NL
+                lista_declvar
+                lista_comando
+             TK_END NL
 	;
-parametro : ID ':' tipo
+params    : /*vazio*/ | parametro { TK_COMMA parametro }
+	;
+parametro : TK_ID TK_COLLON tipo
 	;
 tipo      : tipobase | '[' ']' tipo
 	;
-tipobase  : 'int' | 'bool' | 'char' | 'string'
+tipobase  : TK_INT | TK_CHAR | TK_BOOL | TK_STRING
 	;
-declvar   : ID ':' tipo NL
+lista_declvar /* vazio */ | declvar lista_declvar
+	;
+declvar   : TK_ID TK_COLLON tipo NL
+	;
+lista_comando : /* vazio */ | comando lista_comando
 	;
 comando   : cmdif | cmdwhile | cmdatrib | cmdreturn | chamada 
 	;
-cmdif     : 'if' exp NL
+cmdif     : TK_IF exp NL
                 { comando NL }
-             { 'else' 'if' exp NL
-                { comando NL }
-             }
-             { 'else' NL
+             { TK_ELSE TK_IF exp NL
                 { comando NL }
              }
-             'end'
-	;
-cmdwhile  : 'while' exp NL
+             { TK_ELSE NL
                 { comando NL }
-             'loop'
+             }
+             TK_END
 	;
-cmdatrib  : ID '=' exp
+cmdwhile  : TK_WHILE exp NL
+                { comando NL }
+             TK_LOOP
 	;
-chamada   : ID '(' listaexp ')'
+cmdatrib  : TK_ID TK_EQUAL exp
 	;
-listaexp  : /*vazio*/ | exp { ',' exp }
+chamada   : TK_ID TK_OPEN_PARENTHESIS listaexp TK_CLOSE_PARENTHESIS
 	;
-cmdreturn : 'return' exp | 'return'
+listaexp  : /*vazio*/ | exp { TK_COMMA exp }
+	;
+cmdreturn : TK_RETURN exp | TK_RETURN
 	;
 exp       : LITNUMERAL
            | LITSTRING
@@ -105,7 +111,27 @@ exp       : LITNUMERAL
            | exp 'or' exp
            | 'not' exp
 	;
-
+exp : exp_or 
+	;
+exp_or : exp_and | exp_or TK_OR exp_and
+	;
+exp_and : exp_less | exp_and TK_AND exp_less
+	;
+exp_less :  exp_add 
+	| exp_less TK_LESS exp_add 
+	| exp_less TK_GREATER exp_add 
+	| exp_less TK_EQUAL exp_add
+	| exp_less TK_LESS_EQUAL exp_add
+	| exp_less TK_GREATER_EQUAL exp_add
+	;
+exp_add : exp_times | exp_add TK_PLUS exp_times | exp_add TK_MINUS exp_times
+	;
+exp_times : exp_un | exp_times TK_TIMES exp_un | exp_times TK_DIVIDED exp_un
+	;
+exp_un : TK_NOT exp_un | exp_fin
+	;
+exp_fin : var | TK_NUMINT | TK_NEW tipo '['exp']' | chamada | TK_OPEN_PARENTHESIS exp TK_CLOSE_PARENTHESIS
+	;
  /*anterior*/
 
 programa : lista_declaracao
