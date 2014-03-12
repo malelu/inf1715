@@ -49,16 +49,18 @@ programa  : funcao lista_funcao
 	;
 lista_funcao : /* vazio */ | funcao lista_funcao
 	;
-funcao    -> TK_FUN TK_ID TK_OPEN_PARENTHESIS [ params ] TK_CLOSE_PARENTHESIS [ ':' tipo ] NL
+funcao    -> TK_FUN TK_ID TK_OPEN_PARENTHESIS [ params ] TK_CLOSE_PARENTHESIS [ TK_COLLON tipo ] NL
                 lista_declvar
                 lista_comando
-             'end' NL
+             TK_END NL
 	;
-params    : /*vazio*/ | parametro { TK_COMMA parametro }
+params    : /*vazio*/ | parametro lista_parametro
+	;
+lista_parametro : /* vazio */ | lista_parametro TK_COMMA parametro
 	;
 parametro : TK_ID TK_COLLON tipo
 	;
-tipo      : tipobase | '[' ']' tipo
+tipo      : tipobase | TK_OPEN_BRACKET TK_CLOSE_BRACKET tipo
 	;
 tipobase  : TK_INT | TK_CHAR | TK_BOOL | TK_STRING
 	;
@@ -66,33 +68,35 @@ lista_declvar /* vazio */ | declvar lista_declvar
 	;
 declvar   : TK_ID TK_COLLON tipo NL
 	;
-lista_comando : /* vazio */ | comando lista_comando
+lista_comando : /* vazio */ | comando NL lista_comando
 	;
 comando   : cmdif | cmdwhile | cmdatrib | cmdreturn | chamada 
 	;
 cmdif     : TK_IF exp NL
-                { comando NL }
-             { TK_ELSE TK_IF exp NL
-                { comando NL }
-             }
-             { TK_ELSE NL
-                { comando NL }
-             }
+                lista_comando
+             lista_else_if
+             lista_else
              TK_END
 	;
+lista_else_if : /* vazio */ | TK_ELSE TK_IF exp NL lista_comando lista_else_if
+	;
+lista_else : /* vazio */ | TK_ELSE NL lista_comando lista_else
+	;
 cmdwhile  : TK_WHILE exp NL
-                { comando NL }
+                lista_comando
              TK_LOOP
 	;
 cmdatrib  : TK_ID TK_EQUAL exp
 	;
-chamada   : TK_ID TK_OPEN_PARENTHESIS listaexp TK_CLOSE_PARENTHESIS
+chamada   : TK_ID TK_OPEN_PARENTHESIS lista_exp TK_CLOSE_PARENTHESIS
 	;
-listaexp  : /*vazio*/ | exp { TK_COMMA exp }
+lista_exp  : /* vazio */ | exp sublista_exp
 	;
+sublista_exp : /* vazio */ | TK_COMMA exp sublista_exp
+	; 
 cmdreturn : TK_RETURN exp | TK_RETURN
 	;
-exp       : LITNUMERAL
+ /*exp       : LITNUMERAL
            | LITSTRING
            | 'new' '[' exp ']' tipo
            | '(' exp ')'
@@ -110,7 +114,7 @@ exp       : LITNUMERAL
            | exp 'and' exp
            | exp 'or' exp
            | 'not' exp
-	;
+	; */
 exp : exp_or 
 	;
 exp_or : exp_and | exp_or TK_OR exp_and
@@ -130,7 +134,7 @@ exp_times : exp_un | exp_times TK_TIMES exp_un | exp_times TK_DIVIDED exp_un
 	;
 exp_un : TK_NOT exp_un | exp_fin
 	;
-exp_fin : var | TK_NUMINT | TK_NEW tipo '['exp']' | chamada | TK_OPEN_PARENTHESIS exp TK_CLOSE_PARENTHESIS
+exp_fin : var | TK_NUMINT | TK_NEW tipo TK_OPEN_BRACKET exp TK_CLOSE_BRACKET | chamada | TK_OPEN_PARENTHESIS exp TK_CLOSE_PARENTHESIS
 	;
  /*anterior*/
 

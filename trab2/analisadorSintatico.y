@@ -39,9 +39,6 @@
 %token TK_ID
 %token TK_LITERAL_STRING 
 %token ERROR
-%nonassoc TK_EMPTY_ELSE
-%nonassoc TK_ELSE
-
 
 %%
  /*regras de tradução */
@@ -49,16 +46,18 @@ programa  : funcao lista_funcao
 	;
 lista_funcao : /* vazio */ | funcao lista_funcao
 	;
-funcao    -> TK_FUN TK_ID TK_OPEN_PARENTHESIS [ params ] TK_CLOSE_PARENTHESIS [ ':' tipo ] NL
+funcao    -> TK_FUN TK_ID TK_OPEN_PARENTHESIS [ params ] TK_CLOSE_PARENTHESIS [ TK_COLLON tipo ] NL
                 lista_declvar
                 lista_comando
              TK_END NL
 	;
-params    : /*vazio*/ | parametro { TK_COMMA parametro }
+params    : /*vazio*/ | parametro lista_parametro
+	;
+lista_parametro : /* vazio */ | lista_parametro TK_COMMA parametro
 	;
 parametro : TK_ID TK_COLLON tipo
 	;
-tipo      : tipobase | '[' ']' tipo
+tipo      : tipobase | TK_OPEN_BRACKET TK_CLOSE_BRACKET tipo
 	;
 tipobase  : TK_INT | TK_CHAR | TK_BOOL | TK_STRING
 	;
@@ -66,33 +65,35 @@ lista_declvar /* vazio */ | declvar lista_declvar
 	;
 declvar   : TK_ID TK_COLLON tipo NL
 	;
-lista_comando : /* vazio */ | comando lista_comando
+lista_comando : /* vazio */ | comando NL lista_comando
 	;
 comando   : cmdif | cmdwhile | cmdatrib | cmdreturn | chamada 
 	;
 cmdif     : TK_IF exp NL
-                { comando NL }
-             { TK_ELSE TK_IF exp NL
-                { comando NL }
-             }
-             { TK_ELSE NL
-                { comando NL }
-             }
+                lista_comando
+             lista_else_if
+             lista_else
              TK_END
 	;
+lista_else_if : /* vazio */ | TK_ELSE TK_IF exp NL lista_comando lista_else_if
+	;
+lista_else : /* vazio */ | TK_ELSE NL lista_comando lista_else
+	;
 cmdwhile  : TK_WHILE exp NL
-                { comando NL }
+                lista_comando
              TK_LOOP
 	;
 cmdatrib  : TK_ID TK_EQUAL exp
 	;
-chamada   : TK_ID TK_OPEN_PARENTHESIS listaexp TK_CLOSE_PARENTHESIS
+chamada   : TK_ID TK_OPEN_PARENTHESIS lista_exp TK_CLOSE_PARENTHESIS
 	;
-listaexp  : /*vazio*/ | exp { TK_COMMA exp }
+lista_exp  : /* vazio */ | exp sublista_exp
 	;
+sublista_exp : /* vazio */ | TK_COMMA exp sublista_exp
+	; 
 cmdreturn : TK_RETURN exp | TK_RETURN
 	;
-exp       : LITNUMERAL
+ /*exp       : LITNUMERAL
            | LITSTRING
            | 'new' '[' exp ']' tipo
            | '(' exp ')'
@@ -110,7 +111,7 @@ exp       : LITNUMERAL
            | exp 'and' exp
            | exp 'or' exp
            | 'not' exp
-	;
+	; */
 exp : exp_or 
 	;
 exp_or : exp_and | exp_or TK_OR exp_and
@@ -130,78 +131,8 @@ exp_times : exp_un | exp_times TK_TIMES exp_un | exp_times TK_DIVIDED exp_un
 	;
 exp_un : TK_NOT exp_un | exp_fin
 	;
-exp_fin : var | TK_NUMINT | TK_NEW tipo '['exp']' | chamada | TK_OPEN_PARENTHESIS exp TK_CLOSE_PARENTHESIS
-	;
- /*anterior*/
-
-programa : lista_declaracao
-	;
-lista_declaracao : /* empty */| declaracao lista_declaracao
-	;	
-declaracao : dec_variavel| dec_funcao
-	;
-dec_variavel : tipo lista_nomes ';'
-	;	
-lista_nomes : TK_ID | TK_ID ',' lista_nomes        
-	;
-tipo : tipo_base | tipo '[' ']'
-	;
-tipo_id : tipo TK_ID | TK_VOID TK_ID
-	;
-tipo_base : TK_INT | TK_CHAR | TK_FLOAT 
-	;
-dec_funcao : tipo_id '(' parametros ')' bloco
-	;
-parametros : /* empty */ | parametro | parametro ',' parametros        
-	;
-parametro : tipo TK_ID
-	;
-bloco : '{' lista_dec_variavel lista_comando '}' 
-	| '{'/* empty */'}' 
-	| '{' lista_dec_variavel '}' 
-	| '{' lista_comando '}'	
-	;
-lista_dec_variavel : dec_variavel | lista_dec_variavel dec_variavel 
-	;
-lista_comando : comando | lista_comando comando 
-	; 
-comando : TK_IF '(' exp ')' comando parte_else
-        | TK_WHILE '(' exp ')' comando
-        | TK_ID '=' exp ';'
-        | TK_RET exp ';'
-	| TK_RET ';'
-        | chamada ';'
-	| bloco
-	;
-
-parte_else : /* empty */ %prec TK_EMPTY_ELSE | TK_ELSE comando
-	;
-var : TK_ID | exp_fin '[' exp ']'
-	;
-exp : exp_or 
-	;
-exp_or : exp_and | exp_or TK_OR exp_and
-	;
-exp_and : exp_less | exp_and TK_AND exp_less
-	;
-exp_less :  exp_add 
-	| exp_less '<' exp_add 
-	| exp_less '>' exp_add 
-	| exp_less TK_EE exp_add
-	| exp_less TK_LE exp_add
-	| exp_less TK_GE exp_add
-	;
-exp_add : exp_times | exp_add '+' exp_times | exp_add '-' exp_times
-	;
-exp_times : exp_un | exp_times '*' exp_un | exp_times '/' exp_un
-	;
-exp_un : '-'exp_un | '!'exp_un |  exp_fin
-	;
-exp_fin : var | TK_NUMINT | TK_NUMFLOAT | TK_NEW tipo '['exp']' | chamada | '('exp')'
-	;
-chamada : TK_ID '(' lista_exp ')'
-	;
-lista_exp : /* empty */ | exp | exp ',' lista_exp       
+exp_fin : var | TK_NUMINT | TK_NEW tipo TK_OPEN_BRACKET exp TK_CLOSE_BRACKET | chamada | TK_OPEN_PARENTHESIS exp TK_CLOSE_PARENTHESIS
+	;     
 %%
  /*procedimentos auxiliares */
 
