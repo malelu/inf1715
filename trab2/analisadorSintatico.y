@@ -51,15 +51,7 @@ funcao	: TK_FUN TK_ID TK_OPEN_PARENTHESIS params TK_CLOSE_PARENTHESIS TK_COLLON 
                 lista_declvar
                 lista_comando
              TK_END TK_LINE
-	| TK_FUN TK_ID TK_OPEN_PARENTHESIS TK_CLOSE_PARENTHESIS TK_COLLON tipo TK_LINE
-                lista_declvar
-                lista_comando
-             TK_END TK_LINE
 	| TK_FUN TK_ID TK_OPEN_PARENTHESIS params TK_CLOSE_PARENTHESIS TK_LINE
-                lista_declvar
-                lista_comando
-             TK_END TK_LINE
-	| TK_FUN TK_ID TK_OPEN_PARENTHESIS TK_CLOSE_PARENTHESIS TK_LINE
                 lista_declvar
                 lista_comando
              TK_END TK_LINE
