@@ -37,7 +37,8 @@
 %token TK_OR 
 %token TK_NUMINT 
 %token TK_ID
-%token TK_LITERAL_STRING 
+%token TK_LITERAL_STRING
+%token TK_LINE 
 %token ERROR
 
 %%
@@ -46,10 +47,22 @@ programa  : funcao lista_funcao
 	;
 lista_funcao : /* vazio */ | funcao lista_funcao
 	;
-funcao    -> TK_FUN TK_ID TK_OPEN_PARENTHESIS [ params ] TK_CLOSE_PARENTHESIS [ TK_COLLON tipo ] NL
+funcao	: TK_FUN TK_ID TK_OPEN_PARENTHESIS params TK_CLOSE_PARENTHESIS TK_COLLON tipo TK_LINE
                 lista_declvar
                 lista_comando
-             TK_END NL
+             TK_END TK_LINE
+	| TK_FUN TK_ID TK_OPEN_PARENTHESIS TK_CLOSE_PARENTHESIS TK_COLLON tipo TK_LINE
+                lista_declvar
+                lista_comando
+             TK_END TK_LINE
+	| TK_FUN TK_ID TK_OPEN_PARENTHESIS params TK_CLOSE_PARENTHESIS TK_LINE
+                lista_declvar
+                lista_comando
+             TK_END TK_LINE
+	| TK_FUN TK_ID TK_OPEN_PARENTHESIS TK_CLOSE_PARENTHESIS TK_LINE
+                lista_declvar
+                lista_comando
+             TK_END TK_LINE
 	;
 params    : /*vazio*/ | parametro lista_parametro
 	;
@@ -61,25 +74,25 @@ tipo      : tipobase | TK_OPEN_BRACKET TK_CLOSE_BRACKET tipo
 	;
 tipobase  : TK_INT | TK_CHAR | TK_BOOL | TK_STRING
 	;
-lista_declvar /* vazio */ | declvar lista_declvar
+lista_declvar : /* vazio */ | declvar lista_declvar
 	;
-declvar   : TK_ID TK_COLLON tipo NL
+declvar   : TK_ID TK_COLLON tipo TK_LINE
 	;
-lista_comando : /* vazio */ | comando NL lista_comando
+lista_comando : /* vazio */ | comando TK_LINE lista_comando
 	;
 comando   : cmdif | cmdwhile | cmdatrib | cmdreturn | chamada 
 	;
-cmdif     : TK_IF exp NL
+cmdif     : TK_IF exp TK_LINE
                 lista_comando
              lista_else_if
              lista_else
              TK_END
 	;
-lista_else_if : /* vazio */ | TK_ELSE TK_IF exp NL lista_comando lista_else_if
+lista_else_if : /* vazio */ | TK_ELSE TK_IF exp TK_LINE lista_comando lista_else_if
 	;
-lista_else : /* vazio */ | TK_ELSE NL lista_comando lista_else
+lista_else : /* vazio */ | TK_ELSE TK_LINE lista_comando lista_else
 	;
-cmdwhile  : TK_WHILE exp NL
+cmdwhile  : TK_WHILE exp TK_LINE
                 lista_comando
              TK_LOOP
 	;
@@ -91,7 +104,7 @@ lista_exp  : /* vazio */ | exp sublista_exp
 	;
 sublista_exp : /* vazio */ | TK_COMMA exp sublista_exp
 	; 
-cmdreturn : TK_RETURN exp | TK_RETURN
+cmdreturn : TK_RET exp | TK_RET
 	;
  /*exp       : LITNUMERAL
            | LITSTRING
@@ -131,7 +144,7 @@ exp_times : exp_un | exp_times TK_TIMES exp_un | exp_times TK_DIVIDED exp_un
 	;
 exp_un : TK_NOT exp_un | exp_fin
 	;
-exp_fin : var | TK_NUMINT | TK_NEW tipo TK_OPEN_BRACKET exp TK_CLOSE_BRACKET | chamada | TK_OPEN_PARENTHESIS exp TK_CLOSE_PARENTHESIS
+exp_fin : TK_NUMINT | TK_NEW tipo TK_OPEN_BRACKET exp TK_CLOSE_BRACKET | chamada | TK_OPEN_PARENTHESIS exp TK_CLOSE_PARENTHESIS
 	;     
 %%
  /*procedimentos auxiliares */
