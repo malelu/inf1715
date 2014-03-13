@@ -47,11 +47,11 @@ programa  : funcao lista_funcao
 	;
 lista_funcao : /* vazio */ | funcao lista_funcao
 	;
-funcao	: TK_FUN TK_ID TK_OPEN_PARENTHESIS params TK_CLOSE_PARENTHESIS TK_COLLON tipo TK_LINE
+funcao	: TK_FUN TK_ID '(' params ')' ':' tipo TK_LINE
                 lista_declvar
                 lista_comando
              TK_END TK_LINE
-	| TK_FUN TK_ID TK_OPEN_PARENTHESIS params TK_CLOSE_PARENTHESIS TK_LINE
+	| TK_FUN TK_ID '(' params ')' TK_LINE
                 lista_declvar
                 lista_comando
              TK_END TK_LINE
@@ -66,7 +66,7 @@ tipo      : tipobase | TK_OPEN_BRACKET TK_CLOSE_BRACKET tipo
 	;
 tipobase  : TK_INT | TK_CHAR | TK_BOOL | TK_STRING
 	;
-lista_declvar : /* vazio */ | declvar lista_declvar
+lista_declvar : /* vazio */ | declvar lista_declvar  
 	;
 declvar   : TK_ID TK_COLLON tipo TK_LINE
 	;
