@@ -91,6 +91,7 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 	}
 {line} {
 	lineCount++;
+	return TK_LINE;
 }
 {isSpace} { }
 . {
