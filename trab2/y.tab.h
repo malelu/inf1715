@@ -52,29 +52,16 @@
      TK_NEW = 270,
      TK_RET = 271,
      TK_FUN = 272,
-     TK_OPEN_PARENTHESIS = 273,
-     TK_CLOSE_PARENTHESIS = 274,
-     TK_COMMA = 275,
-     TK_COLLON = 276,
-     TK_GREATER = 277,
-     TK_LESS = 278,
-     TK_GREATER_EQUAL = 279,
-     TK_LESS_EQUAL = 280,
-     TK_EQUAL = 281,
-     TK_NOT_EQUAL = 282,
-     TK_OPEN_BRACKET = 283,
-     TK_CLOSE_BRACKET = 284,
-     TK_PLUS = 285,
-     TK_MINUS = 286,
-     TK_TIMES = 287,
-     TK_DIVIDED = 288,
-     TK_AND = 289,
-     TK_OR = 290,
-     TK_NUMINT = 291,
-     TK_ID = 292,
-     TK_LITERAL_STRING = 293,
-     TK_LINE = 294,
-     ERROR = 295
+     TK_GREATER_EQUAL = 273,
+     TK_LESS_EQUAL = 274,
+     TK_NOT_EQUAL = 275,
+     TK_AND = 276,
+     TK_OR = 277,
+     TK_NUMINT = 278,
+     TK_ID = 279,
+     TK_LITERAL_STRING = 280,
+     TK_LINE = 281,
+     ERROR = 282
    };
 #endif
 /* Tokens.  */
@@ -93,29 +80,16 @@
 #define TK_NEW 270
 #define TK_RET 271
 #define TK_FUN 272
-#define TK_OPEN_PARENTHESIS 273
-#define TK_CLOSE_PARENTHESIS 274
-#define TK_COMMA 275
-#define TK_COLLON 276
-#define TK_GREATER 277
-#define TK_LESS 278
-#define TK_GREATER_EQUAL 279
-#define TK_LESS_EQUAL 280
-#define TK_EQUAL 281
-#define TK_NOT_EQUAL 282
-#define TK_OPEN_BRACKET 283
-#define TK_CLOSE_BRACKET 284
-#define TK_PLUS 285
-#define TK_MINUS 286
-#define TK_TIMES 287
-#define TK_DIVIDED 288
-#define TK_AND 289
-#define TK_OR 290
-#define TK_NUMINT 291
-#define TK_ID 292
-#define TK_LITERAL_STRING 293
-#define TK_LINE 294
-#define ERROR 295
+#define TK_GREATER_EQUAL 273
+#define TK_LESS_EQUAL 274
+#define TK_NOT_EQUAL 275
+#define TK_AND 276
+#define TK_OR 277
+#define TK_NUMINT 278
+#define TK_ID 279
+#define TK_LITERAL_STRING 280
+#define TK_LINE 281
+#define ERROR 282
 
 
 

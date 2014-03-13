@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int lineCount ;
+extern int numLinha ;
 
 extern int yydebug;
 
 void yyerror (const char * s)
 {	
 	printf("parser error %s \n",s);
-	printf("Erro de sintaxe na linha %d\n", lineCount);
+	printf("Erro de sintaxe na linha %d\n", numLinha);
 	exit(1);
 }
 

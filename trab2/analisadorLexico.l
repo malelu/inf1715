@@ -2,7 +2,6 @@
  /* declaração */
 %{
 #include <string.h>
-#include "analisadorLexico.h"
 #include "y.tab.h"
 
 union Valor{

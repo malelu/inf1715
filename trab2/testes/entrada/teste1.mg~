@@ -1,0 +1,5 @@
+fun main () : int
+	/*int int a;*/
+	a : int
+end
+

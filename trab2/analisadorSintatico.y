@@ -34,11 +34,11 @@ programa  : funcao lista_funcao
 	;
 lista_funcao : /* vazio */ | funcao lista_funcao
 	;
-funcao	: TK_FUN TK_ID '(' params ')' ':' tipo TK_LINE
+funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
                 lista_declvar
                 lista_comando
              TK_END TK_LINE
-	| TK_FUN TK_ID '(' params ')' TK_LINE
+	| TK_FUN TK_ID '(' params ')' nl
                 lista_declvar
                 lista_comando
              TK_END TK_LINE
@@ -85,25 +85,8 @@ sublista_exp : /* vazio */ | ',' exp sublista_exp
 	; 
 cmdreturn : TK_RET exp | TK_RET
 	;
- /*exp       : LITNUMERAL
-           | LITSTRING
-           | 'new' '[' exp ']' tipo
-           | '(' exp ')'
-           | chamada
-           | exp '+' exp
-           | exp '-' exp
-           | exp '*' exp
-           | exp '/' exp
-           | exp '>' exp
-           | exp '<' exp
-           | exp '>=' exp
-           | exp '<=' exp
-           | exp '=' exp
-           | exp '<>' exp
-           | exp 'and' exp
-           | exp 'or' exp
-           | 'not' exp
-	; */
+nl : /* vazio */ | TK_LINE nl
+	;
 exp : exp_or 
 	;
 exp_or : exp_and | exp_or TK_OR exp_and
@@ -123,7 +106,7 @@ exp_times : exp_un | exp_times '*' exp_un | exp_times '/' exp_un
 	;
 exp_un : TK_NOT exp_un | exp_fin
 	;
-exp_fin : TK_NUMINT | TK_NEW tipo '[' exp ']' | chamada | '(' exp ')'
+exp_fin : TK_NUMINT | TK_LITERAL_STRING | TK_NEW tipo '[' exp ']' | chamada | '(' exp ')'
 	;     
 %%
  /*procedimentos auxiliares */
