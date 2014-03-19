@@ -1,59 +1,50 @@
-int[] funcao (float a, char b)
-{
-	return 4;
-}
+fun funcao ( a : int, b : char) : []int
+	return 4
+end
 
-void funcao2 ()
-{
-	int b;
+fun funcao2 ()
+	b : int 
+end
+
+fun funcao3 ( a : []int )
+	return -4
+end
+
+fun main () int
+	a : int
+	b : int
+	c : int
+	cont : int
+	g : char
+	h : char
+	i : char
+	v : []char
+	a1 : []int
+
+	a = 67854
+	b = 7*9
+	c = 0xab
+	cont = 0
+
+	if ((a+b)-8*1 = c/7) or ( 4 <= e )
+		while cont < 20
+			cont = cont + 1
+
+	else if ((22>=cont) and (a-4 = 5)) or (d > 8)
+		a1 = new [4] int
 	
-}
-
-float funcao3 (int[] a)
-{	
-	return -4.78 ;
-}
-
-int main ()
-{
-	/* teste correto */
-	int a, b, c, cont;
-	float d, e, f ;
-	char g, h, i ;
-	char[] v;
-	int[] a1;
-	float [][] d1 ;
-	a = 56894;
-	b = 7;
-	c = 0xabc;
-	cont = 0;
-	d = -3.e4;
-	e = 4.5 ;
-	if(((a+b)-8*1 == c/7) || ( 4 <= e))
-	{
-		while (cont < 20)
-		{
-			cont = cont + 1;
-		}
-		
-	}
-	if((22>=cont) && ((a-4 == 5) || (d > -8)))
-		a1 = new int [4];
-	else 
-		a1 = 7-8/2/2 ;
-
-	if(-a == 9)
-		return 1 ;
 	else
-		if(-(a+!b)/new int [5])
-			return (a-9*4/5) ;
+		a1 = 7-8/2/2
 
-	{
-		{
-			while (!!!a)
-				a = 4 < 5;
-		}
-	}
-	
-	return new int [a<b];
-}
+	if (-a = 9) or (not b)
+		return 1
+
+	else 
+		if -(a + not b)/ new [5] int
+			return
+		while (not not not a) and (4 <> 5)
+			a = 7
+
+	return new [a<b] int
+end
+			
