@@ -45,8 +45,8 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 "new" {return TK_NEW;}
 "return" {return TK_RET;}
 "fun" {return TK_FUN;}
-"(" {return ')';}
-")" {return '(';}
+"(" {return '(';}
+")" {return ')';}
 "," {return ',';}
 ":" {return ':';}
 ">" {return '>';}

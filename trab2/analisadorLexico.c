@@ -933,12 +933,12 @@ YY_RULE_SETUP
 case 17:
 YY_RULE_SETUP
 #line 48 "analisadorLexico.l"
-{return ')';}
+{return '(';}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 49 "analisadorLexico.l"
-{return '(';}
+{return ')';}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP

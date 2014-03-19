@@ -34,7 +34,7 @@ Para executar o programa, siga os seguintes passos:
 *****************************************
 Relatório do trabalho:
 
-No trabalho foi implementado um analisador sintático para a linguagem monga.
+No trabalho foi implementado um analisador sintático para a linguagem mini-0.
 Nele, foram retiradas as ambiguidades da gramática, fornecida no site da displina, transformando-a em uma gramática BNF e garantindo não haver conflitos na mesma.
 Após essa garantia, o analisador léxico do trabalho anterior foi combinado ao analisador sintático e os dois foram testados juntos.
 Foram feitos diversos testes para a captura de erros. Um deles estava completamente correto e foi o maior, tratando o máximo de situações possíveis que pudessem ocorrer em um programa em linguagem monga. Já os outros testes possuiam obrigatoriamente erros de sintaxe ou erros léxicos (dois testes para garantir que os erros léxicos ainda eram capturados). Eram testes mais curtos, já que ao encontrar um erro o programa interrompia sua execução.
