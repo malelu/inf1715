@@ -132,11 +132,14 @@ exp_times : exp_un
 	| exp_times '*' exp_un 
 	| exp_times '/' exp_un
 	;
-exp_un : TK_NOT exp_un 
+exp_un : TK_NOT exp_un
+	| '-' exp_un 
 	| exp_fin
 	;
 exp_fin : TK_NUMINT 
-	| TK_LITERAL_STRING 
+	| TK_LITERAL_STRING
+	| TK_TRUE
+	| TK_FALSE 
 	| TK_NEW tipo '[' exp ']' 
 	| chamada 
 	| '(' exp ')'

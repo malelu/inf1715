@@ -6,6 +6,7 @@
 %token TK_INT
 %token TK_STRING
 %token TK_BOOL
+%token TK_TRUE
 %token TK_FALSE
 %token TK_NOT  
 %token TK_WHILE
@@ -135,7 +136,9 @@ exp_un : TK_NOT exp_un
 	| exp_fin
 	;
 exp_fin : TK_NUMINT 
-	| TK_LITERAL_STRING 
+	| TK_LITERAL_STRING
+	| TK_TRUE
+	| TK_FALSE 
 	| TK_NEW tipo '[' exp ']' 
 	| chamada 
 	| '(' exp ')'
