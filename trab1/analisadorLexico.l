@@ -16,7 +16,7 @@ line [\n]
 numInt {digit}+|{hexa}
 id (_|{letter})+(_|{letter}|{digit})*
 openComment "/*"
-comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")
+comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")|("//"[^\n]*)
 quotMark \"
 string {quotMark}(\\.|[^\\"\n])*{quotMark}
 
