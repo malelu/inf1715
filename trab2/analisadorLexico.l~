@@ -23,7 +23,7 @@ line [\n]
 numInt {digit}+|{hexa}
 id (_|{letter})+(_|{letter}|{digit})*
 openComment "/*"
-comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")
++comment ("/*"([^*]|\n|"*"+[^*/])*"*"*"*/")|("//"[^\n]*)
 quotMark \"
 string {quotMark}(\\.|[^\\"\n])*{quotMark}
 
@@ -45,8 +45,8 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 "new" {return TK_NEW;}
 "return" {return TK_RET;}
 "fun" {return TK_FUN;}
-"(" {return ')';}
-")" {return '(';}
+"(" {return '(';}
+")" {return ')';}
 "," {return ',';}
 ":" {return ':';}
 ">" {return '>';}
