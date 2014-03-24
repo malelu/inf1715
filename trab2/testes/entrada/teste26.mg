@@ -1,4 +1,4 @@
-int main ()
-{
-	new int [ 4 >= 5]
-}
+fun main () : int
+	if 4 < 5
+end
+

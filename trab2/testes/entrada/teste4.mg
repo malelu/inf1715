@@ -1,5 +1,4 @@
-int main ()
-{
-	float f;
-	if(
-}
+fun main () : int
+	f_ : char
+	if (
+end

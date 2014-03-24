@@ -1,5 +1,4 @@
-int main ()
-{
-	int a;
-	a = !{4};
-}
+fun main () : int
+	return ()
+end
+

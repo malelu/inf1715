@@ -1,5 +1,3 @@
-int main ()
-{
-	char c;
-	c = char b;
-}
+fun main () : int
+	" String aberta
+end

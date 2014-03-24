@@ -1,4 +1,3 @@
-int main ()
-{
-	return 4*;
-}
+fun main () : int [[]]
+end
+

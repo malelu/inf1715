@@ -35,8 +35,10 @@ fun main () int
 	
 	else
 		a1 = 7-8/2/2
+	end
 
 	if (-a = 9) or (not b)
+		f()
 		return 1
 
 	else 
@@ -44,7 +46,11 @@ fun main () int
 			return
 		while (not not not a) and (4 <> 5)
 			a = 7
+	end
 
 	return new [a<b] int
+
+	if 4 < 5
+	end
 end
 			

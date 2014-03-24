@@ -1,9 +1,5 @@
-int main()
-{
-	float b;
-	float a;
-	b=0.2 ;
-	a = -0.1;
-	if( (a+b == 0)
-		b = 0;
-}
+fun main () : int
+	a : int
+	a = 4 -+ 4
+end
+

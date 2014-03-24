@@ -49,7 +49,7 @@ lista_parametro : /* vazio */ | lista_parametro ',' parametro
 parametro : TK_ID ':' tipo
 	;
 entradas: TK_ID ':' tipo nl entradas
-	| TK_ID comando nl lista_comando
+	| comando nl lista_comando
 	| /* vazio */
 	;
 tipo      : tipobase | '[' ']' tipo
@@ -123,6 +123,7 @@ exp_less :  exp_add
 	| exp_less '=' exp_add
 	| exp_less TK_LESS_EQUAL exp_add
 	| exp_less TK_GREATER_EQUAL exp_add
+	| exp_less TK_NOT_EQUAL exp_add
 	;
 exp_add : exp_times 
 	| exp_add '+' exp_times 	/*{ $$.value = $1.value + $3.value; }*/

@@ -1,5 +1,5 @@
-int main ()
-{
-	int a;
-	a = 4 -+ 4;
-}
+fun main () : int
+	a : int
+	a = !{4}
+end
+

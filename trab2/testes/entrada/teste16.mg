@@ -1,4 +1,4 @@
-int main ()
-{
-	int b = 0;
-}
+fun main () : int
+	a (b())
+end
+

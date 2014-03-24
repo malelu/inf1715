@@ -1,8 +1,4 @@
-int fun ()
-{
-	int a;
+fun main () : int
+	return 4*
+end
 
-int main ()
-{
-	int b;
-}

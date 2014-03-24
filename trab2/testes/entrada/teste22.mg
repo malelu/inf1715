@@ -1,4 +1,4 @@
-int main ()
-{
-	int a, b
-}
+fun main () : int
+	/* comentario aberto
+end
+

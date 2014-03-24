@@ -49,7 +49,7 @@ lista_parametro : /* vazio */ | lista_parametro ',' parametro
 parametro : TK_ID ':' tipo
 	;
 entradas: TK_ID ':' tipo nl entradas
-	| TK_ID comando nl lista_comando
+	| comando nl lista_comando
 	| /* vazio */
 	;
 tipo      : tipobase | '[' ']' tipo
@@ -132,7 +132,8 @@ exp_times : exp_un
 	| exp_times '*' exp_un 
 	| exp_times '/' exp_un
 	;
-exp_un : TK_NOT exp_un 
+exp_un : TK_NOT exp_un
+	| '-' exp_un 
 	| exp_fin
 	;
 exp_fin : TK_NUMINT 
