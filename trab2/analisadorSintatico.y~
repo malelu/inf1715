@@ -123,6 +123,7 @@ exp_less :  exp_add
 	| exp_less '=' exp_add
 	| exp_less TK_LESS_EQUAL exp_add
 	| exp_less TK_GREATER_EQUAL exp_add
+	| exp_less TK_NOT_EQUAL exp_add
 	;
 exp_add : exp_times 
 	| exp_add '+' exp_times 	/*{ $$.value = $1.value + $3.value; }*/

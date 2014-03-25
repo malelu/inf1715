@@ -10,7 +10,7 @@ fun funcao3 ( a : []int )
 	return -4
 end
 
-fun main () int
+fun main () : int
 	a : int
 	b : int
 	c : int

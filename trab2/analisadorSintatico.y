@@ -37,10 +37,10 @@ lista_funcao : /* vazio */
 	;
 funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
                 entradas
-             TK_END TK_LINE
+             TK_END nl
 	| TK_FUN TK_ID '(' params ')' nl
                 entradas
-             TK_END TK_LINE
+             TK_END nl
 	;
 params	: /*vazio*/ | parametro lista_parametro
 	;
