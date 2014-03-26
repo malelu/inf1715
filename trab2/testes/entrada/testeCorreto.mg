@@ -33,12 +33,12 @@ fun main () : int
 
 	else if ((22>=cont) and (a-4 = 5)) or (d > 8)
 		a1 = new [4] int
+
+	else if not - 5
+		i =true
 	
 	else
-
-
-
-		a1 = 3
+		a1 = 7-8/2/2
 	end
 
 	if (-a = 9) or (not b)
@@ -48,13 +48,14 @@ fun main () : int
 	else 
 		if -(a + not b)/ new [5] int
 			return
+		end
 		while (not not not a) and (4 <> 5)
 			a = 7
+		loop
 	end
 
 	return new [a<b] int
 
 	if 4 < 5
 	end
-end
-	7-8/2/2		
+end	
