@@ -1509,10 +1509,17 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 56:
 
 /* Line 1806 of yacc.c  */
-#line 1516 "y.tab.c"
+#line 132 "analisadorSintatico.y"
+    { (yyval).iValue = (yyvsp[(1) - (3)]).iValue + (yyvsp[(3) - (3)]).iValue; }
+    break;
+
+
+
+/* Line 1806 of yacc.c  */
+#line 1523 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

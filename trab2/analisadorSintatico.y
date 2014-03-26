@@ -96,7 +96,9 @@ cmdwhile: TK_WHILE exp nl
                 lista_comando
           TK_LOOP
 	;
-cmdatrib: TK_ID '=' exp
+cmdatrib: var '=' exp
+	;
+var	: TK_ID | var '[' exp ']'
 	;
 chamada : TK_ID '(' lista_exp ')'
 	;
@@ -129,7 +131,7 @@ exp_less :  exp_add
 	| exp_less TK_NOT_EQUAL exp_add
 	;
 exp_add : exp_times 
-	| exp_add '+' exp_times 	/*{ $$.value = $1.value + $3.value; }*/
+	| exp_add '+' exp_times 	{ $$.iValue = $1.iValue + $3.iValue; }
 	| exp_add '-' exp_times		/*{ $$.value = $1.value - $3.value; }*/
 	;
 exp_times : exp_un 	
@@ -146,7 +148,7 @@ exp_fin : TK_NUMINT
 	| TK_FALSE 
 	| TK_NEW '[' exp ']' tipo 
 	| TK_ID '(' lista_exp ')'
-	| TK_ID 
+	| var 
 	| '(' exp ')'			/*{ $$.value = $2.value; }*/
 	;     
 %%

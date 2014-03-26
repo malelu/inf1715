@@ -52,101 +52,104 @@ Grammar
 
    31 cmdwhile: TK_WHILE exp nl lista_comando TK_LOOP
 
-   32 cmdatrib: TK_ID '=' exp
+   32 cmdatrib: var '=' exp
 
-   33 chamada: TK_ID '(' lista_exp ')'
+   33 var: TK_ID
+   34    | var '[' exp ']'
 
-   34 lista_exp: /* empty */
-   35          | exp sublista_exp
+   35 chamada: TK_ID '(' lista_exp ')'
 
-   36 sublista_exp: /* empty */
-   37             | ',' exp sublista_exp
+   36 lista_exp: /* empty */
+   37          | exp sublista_exp
 
-   38 cmdreturn: TK_RET exp
-   39          | TK_RET
+   38 sublista_exp: /* empty */
+   39             | ',' exp sublista_exp
 
-   40 nl: TK_LINE
-   41   | TK_LINE nl
+   40 cmdreturn: TK_RET exp
+   41          | TK_RET
 
-   42 exp: exp_or
+   42 nl: TK_LINE
+   43   | TK_LINE nl
 
-   43 exp_or: exp_and
-   44       | exp_or TK_OR exp_and
+   44 exp: exp_or
 
-   45 exp_and: exp_less
-   46        | exp_and TK_AND exp_less
+   45 exp_or: exp_and
+   46       | exp_or TK_OR exp_and
 
-   47 exp_less: exp_add
-   48         | exp_less '<' exp_add
-   49         | exp_less '>' exp_add
-   50         | exp_less '=' exp_add
-   51         | exp_less TK_LESS_EQUAL exp_add
-   52         | exp_less TK_GREATER_EQUAL exp_add
-   53         | exp_less TK_NOT_EQUAL exp_add
+   47 exp_and: exp_less
+   48        | exp_and TK_AND exp_less
 
-   54 exp_add: exp_times
-   55        | exp_add '+' exp_times
-   56        | exp_add '-' exp_times
+   49 exp_less: exp_add
+   50         | exp_less '<' exp_add
+   51         | exp_less '>' exp_add
+   52         | exp_less '=' exp_add
+   53         | exp_less TK_LESS_EQUAL exp_add
+   54         | exp_less TK_GREATER_EQUAL exp_add
+   55         | exp_less TK_NOT_EQUAL exp_add
 
-   57 exp_times: exp_un
-   58          | exp_times '*' exp_un
-   59          | exp_times '/' exp_un
+   56 exp_add: exp_times
+   57        | exp_add '+' exp_times
+   58        | exp_add '-' exp_times
 
-   60 exp_un: TK_NOT exp_un
-   61       | '-' exp_un
-   62       | exp_fin
+   59 exp_times: exp_un
+   60          | exp_times '*' exp_un
+   61          | exp_times '/' exp_un
 
-   63 exp_fin: TK_NUMINT
-   64        | TK_LITERAL_STRING
-   65        | TK_TRUE
-   66        | TK_FALSE
-   67        | TK_NEW '[' exp ']' tipo
-   68        | TK_ID '(' lista_exp ')'
-   69        | TK_ID
-   70        | '(' exp ')'
+   62 exp_un: TK_NOT exp_un
+   63       | '-' exp_un
+   64       | exp_fin
+
+   65 exp_fin: TK_NUMINT
+   66        | TK_LITERAL_STRING
+   67        | TK_TRUE
+   68        | TK_FALSE
+   69        | TK_NEW '[' exp ']' tipo
+   70        | TK_ID '(' lista_exp ')'
+   71        | var
+   72        | '(' exp ')'
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 4 5 33 68 70
-')' (41) 4 5 33 68 70
-'*' (42) 58
-'+' (43) 55
-',' (44) 9 37
-'-' (45) 56 61
-'/' (47) 59
+'(' (40) 4 5 35 70 72
+')' (41) 4 5 35 70 72
+'*' (42) 60
+'+' (43) 57
+',' (44) 9 39
+'-' (45) 58 63
+'/' (47) 61
 ':' (58) 4 10 11
-'<' (60) 48
-'=' (61) 32 50
-'>' (62) 49
-'[' (91) 15 67
-']' (93) 15 67
+'<' (60) 50
+'=' (61) 32 52
+'>' (62) 51
+'[' (91) 15 34 69
+']' (93) 15 34 69
 error (256)
 TK_CHAR (258) 17
 TK_INT (259) 16
 TK_STRING (260) 19
 TK_BOOL (261) 18
-TK_TRUE (262) 65
-TK_FALSE (263) 66
-TK_NOT (264) 60
+TK_TRUE (262) 67
+TK_FALSE (263) 68
+TK_NOT (264) 62
 TK_WHILE (265) 31
 TK_LOOP (266) 31
 TK_IF (267) 27 28
 TK_ELSE (268) 28 29
 TK_END (269) 4 5 27
-TK_NEW (270) 67
-TK_RET (271) 38 39
+TK_NEW (270) 69
+TK_RET (271) 40 41
 TK_FUN (272) 4 5
-TK_GREATER_EQUAL (273) 52
-TK_LESS_EQUAL (274) 51
-TK_NOT_EQUAL (275) 53
-TK_AND (276) 46
-TK_OR (277) 44
-TK_NUMINT (278) 63
-TK_ID (279) 4 5 10 11 32 33 68 69
-TK_LITERAL_STRING (280) 64
-TK_LINE (281) 40 41
+TK_GREATER_EQUAL (273) 54
+TK_LESS_EQUAL (274) 53
+TK_NOT_EQUAL (275) 55
+TK_AND (276) 48
+TK_OR (277) 46
+TK_NUMINT (278) 65
+TK_ID (279) 4 5 10 11 33 35 70
+TK_LITERAL_STRING (280) 66
+TK_LINE (281) 42 43
 ERROR (282)
 
 
@@ -169,7 +172,7 @@ parametro (47)
 entradas (48)
     on left: 11 12 13, on right: 4 5 11
 tipo (49)
-    on left: 14 15, on right: 4 10 11 15 67
+    on left: 14 15, on right: 4 10 11 15 69
 tipobase (50)
     on left: 16 17 18 19, on right: 14
 lista_comando (51)
@@ -184,32 +187,34 @@ cmdwhile (55)
     on left: 31, on right: 23
 cmdatrib (56)
     on left: 32, on right: 24
-chamada (57)
-    on left: 33, on right: 26
-lista_exp (58)
-    on left: 34 35, on right: 33 68
-sublista_exp (59)
-    on left: 36 37, on right: 35 37
-cmdreturn (60)
-    on left: 38 39, on right: 25
-nl (61)
-    on left: 40 41, on right: 4 5 11 12 21 27 28 29 31 41
-exp (62)
-    on left: 42, on right: 27 28 31 32 35 37 38 67 70
-exp_or (63)
-    on left: 43 44, on right: 42 44
-exp_and (64)
-    on left: 45 46, on right: 43 44 46
-exp_less (65)
-    on left: 47 48 49 50 51 52 53, on right: 45 46 48 49 50 51 52 53
-exp_add (66)
-    on left: 54 55 56, on right: 47 48 49 50 51 52 53 55 56
-exp_times (67)
-    on left: 57 58 59, on right: 54 55 56 58 59
-exp_un (68)
-    on left: 60 61 62, on right: 57 58 59 60 61
-exp_fin (69)
-    on left: 63 64 65 66 67 68 69 70, on right: 62
+var (57)
+    on left: 33 34, on right: 32 34 71
+chamada (58)
+    on left: 35, on right: 26
+lista_exp (59)
+    on left: 36 37, on right: 35 70
+sublista_exp (60)
+    on left: 38 39, on right: 37 39
+cmdreturn (61)
+    on left: 40 41, on right: 25
+nl (62)
+    on left: 42 43, on right: 4 5 11 12 21 27 28 29 31 43
+exp (63)
+    on left: 44, on right: 27 28 31 32 34 37 39 40 69 72
+exp_or (64)
+    on left: 45 46, on right: 44 46
+exp_and (65)
+    on left: 47 48, on right: 45 46 48
+exp_less (66)
+    on left: 49 50 51 52 53 54 55, on right: 47 48 50 51 52 53 54 55
+exp_add (67)
+    on left: 56 57 58, on right: 49 50 51 52 53 54 55 57 58
+exp_times (68)
+    on left: 59 60 61, on right: 56 57 58 60 61
+exp_un (69)
+    on left: 62 63 64, on right: 59 60 61 62 63
+exp_fin (70)
+    on left: 65 66 67 68 69 70 71 72, on right: 64
 
 
 state 0
@@ -413,12 +418,12 @@ state 22
 
 state 23
 
-   40 nl: TK_LINE .
-   41   | TK_LINE . nl
+   42 nl: TK_LINE .
+   43   | TK_LINE . nl
 
     TK_LINE  shift, and go to state 23
 
-    $default  reduce using rule 40 (nl)
+    $default  reduce using rule 42 (nl)
 
     nl  go to state 28
 
@@ -453,8 +458,9 @@ state 25
     cmdif      go to state 36
     cmdwhile   go to state 37
     cmdatrib   go to state 38
-    chamada    go to state 39
-    cmdreturn  go to state 40
+    var        go to state 39
+    chamada    go to state 40
+    cmdreturn  go to state 41
 
 
 state 26
@@ -463,7 +469,7 @@ state 26
 
     TK_ID  shift, and go to state 10
 
-    parametro  go to state 41
+    parametro  go to state 42
 
 
 state 27
@@ -476,15 +482,15 @@ state 27
     TK_BOOL    shift, and go to state 19
     '['        shift, and go to state 20
 
-    tipo      go to state 42
+    tipo      go to state 43
     tipobase  go to state 22
 
 
 state 28
 
-   41 nl: TK_LINE nl .
+   43 nl: TK_LINE nl .
 
-    $default  reduce using rule 41 (nl)
+    $default  reduce using rule 43 (nl)
 
 
 state 29
@@ -493,100 +499,104 @@ state 29
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 43
+    nl  go to state 44
 
 
 state 30
 
    31 cmdwhile: TK_WHILE . exp nl lista_comando TK_LOOP
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp        go to state 53
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp        go to state 55
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 31
 
    27 cmdif: TK_IF . exp nl lista_comando entradas_else TK_END
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp        go to state 61
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp        go to state 63
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 32
 
-   38 cmdreturn: TK_RET . exp
-   39          | TK_RET .
+   40 cmdreturn: TK_RET . exp
+   41          | TK_RET .
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    $default  reduce using rule 39 (cmdreturn)
+    $default  reduce using rule 41 (cmdreturn)
 
-    exp        go to state 62
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp        go to state 64
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 33
 
    11 entradas: TK_ID . ':' tipo nl entradas
-   32 cmdatrib: TK_ID . '=' exp
-   33 chamada: TK_ID . '(' lista_exp ')'
+   33 var: TK_ID .
+   35 chamada: TK_ID . '(' lista_exp ')'
 
-    '('  shift, and go to state 63
-    ':'  shift, and go to state 64
-    '='  shift, and go to state 65
+    '('  shift, and go to state 65
+    ':'  shift, and go to state 66
+
+    $default  reduce using rule 33 (var)
 
 
 state 34
 
     5 funcao: TK_FUN TK_ID '(' params ')' nl entradas . TK_END nl
 
-    TK_END  shift, and go to state 66
+    TK_END  shift, and go to state 67
 
 
 state 35
@@ -595,7 +605,7 @@ state 35
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 67
+    nl  go to state 68
 
 
 state 36
@@ -621,33 +631,42 @@ state 38
 
 state 39
 
+   32 cmdatrib: var . '=' exp
+   34 var: var . '[' exp ']'
+
+    '['  shift, and go to state 69
+    '='  shift, and go to state 70
+
+
+state 40
+
    26 comando: chamada .
 
     $default  reduce using rule 26 (comando)
 
 
-state 40
+state 41
 
    25 comando: cmdreturn .
 
     $default  reduce using rule 25 (comando)
 
 
-state 41
+state 42
 
     9 lista_parametro: lista_parametro ',' parametro .
 
     $default  reduce using rule 9 (lista_parametro)
 
 
-state 42
+state 43
 
    15 tipo: '[' ']' tipo .
 
     $default  reduce using rule 15 (tipo)
 
 
-state 43
+state 44
 
     4 funcao: TK_FUN TK_ID '(' params ')' ':' tipo nl . entradas TK_END nl
 
@@ -658,251 +677,266 @@ state 43
 
     $default  reduce using rule 13 (entradas)
 
-    entradas   go to state 68
+    entradas   go to state 71
     comando    go to state 35
     cmdif      go to state 36
     cmdwhile   go to state 37
     cmdatrib   go to state 38
-    chamada    go to state 39
-    cmdreturn  go to state 40
-
-
-state 44
-
-   65 exp_fin: TK_TRUE .
-
-    $default  reduce using rule 65 (exp_fin)
+    var        go to state 39
+    chamada    go to state 40
+    cmdreturn  go to state 41
 
 
 state 45
 
-   66 exp_fin: TK_FALSE .
+   67 exp_fin: TK_TRUE .
 
-    $default  reduce using rule 66 (exp_fin)
+    $default  reduce using rule 67 (exp_fin)
 
 
 state 46
 
-   60 exp_un: TK_NOT . exp_un
+   68 exp_fin: TK_FALSE .
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    exp_un   go to state 69
-    exp_fin  go to state 60
+    $default  reduce using rule 68 (exp_fin)
 
 
 state 47
 
-   67 exp_fin: TK_NEW . '[' exp ']' tipo
+   62 exp_un: TK_NOT . exp_un
 
-    '['  shift, and go to state 70
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var      go to state 54
+    exp_un   go to state 72
+    exp_fin  go to state 62
 
 
 state 48
 
-   63 exp_fin: TK_NUMINT .
+   69 exp_fin: TK_NEW . '[' exp ']' tipo
 
-    $default  reduce using rule 63 (exp_fin)
+    '['  shift, and go to state 73
 
 
 state 49
 
-   68 exp_fin: TK_ID . '(' lista_exp ')'
-   69        | TK_ID .
+   65 exp_fin: TK_NUMINT .
 
-    '('  shift, and go to state 71
-
-    $default  reduce using rule 69 (exp_fin)
+    $default  reduce using rule 65 (exp_fin)
 
 
 state 50
 
-   64 exp_fin: TK_LITERAL_STRING .
+   33 var: TK_ID .
+   70 exp_fin: TK_ID . '(' lista_exp ')'
 
-    $default  reduce using rule 64 (exp_fin)
+    '('  shift, and go to state 74
+
+    $default  reduce using rule 33 (var)
 
 
 state 51
 
-   70 exp_fin: '(' . exp ')'
+   66 exp_fin: TK_LITERAL_STRING .
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    exp        go to state 72
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    $default  reduce using rule 66 (exp_fin)
 
 
 state 52
 
-   61 exp_un: '-' . exp_un
+   72 exp_fin: '(' . exp ')'
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_un   go to state 73
-    exp_fin  go to state 60
+    var        go to state 54
+    exp        go to state 75
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 53
+
+   63 exp_un: '-' . exp_un
+
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var      go to state 54
+    exp_un   go to state 76
+    exp_fin  go to state 62
+
+
+state 54
+
+   34 var: var . '[' exp ']'
+   71 exp_fin: var .
+
+    '['  shift, and go to state 69
+
+    $default  reduce using rule 71 (exp_fin)
+
+
+state 55
 
    31 cmdwhile: TK_WHILE exp . nl lista_comando TK_LOOP
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 74
-
-
-state 54
-
-   42 exp: exp_or .
-   44 exp_or: exp_or . TK_OR exp_and
-
-    TK_OR  shift, and go to state 75
-
-    $default  reduce using rule 42 (exp)
-
-
-state 55
-
-   43 exp_or: exp_and .
-   46 exp_and: exp_and . TK_AND exp_less
-
-    TK_AND  shift, and go to state 76
-
-    $default  reduce using rule 43 (exp_or)
+    nl  go to state 77
 
 
 state 56
 
-   45 exp_and: exp_less .
-   48 exp_less: exp_less . '<' exp_add
-   49         | exp_less . '>' exp_add
-   50         | exp_less . '=' exp_add
-   51         | exp_less . TK_LESS_EQUAL exp_add
-   52         | exp_less . TK_GREATER_EQUAL exp_add
-   53         | exp_less . TK_NOT_EQUAL exp_add
+   44 exp: exp_or .
+   46 exp_or: exp_or . TK_OR exp_and
 
-    TK_GREATER_EQUAL  shift, and go to state 77
-    TK_LESS_EQUAL     shift, and go to state 78
-    TK_NOT_EQUAL      shift, and go to state 79
-    '='               shift, and go to state 80
-    '<'               shift, and go to state 81
-    '>'               shift, and go to state 82
+    TK_OR  shift, and go to state 78
 
-    $default  reduce using rule 45 (exp_and)
+    $default  reduce using rule 44 (exp)
 
 
 state 57
 
-   47 exp_less: exp_add .
-   55 exp_add: exp_add . '+' exp_times
-   56        | exp_add . '-' exp_times
+   45 exp_or: exp_and .
+   48 exp_and: exp_and . TK_AND exp_less
 
-    '+'  shift, and go to state 83
-    '-'  shift, and go to state 84
+    TK_AND  shift, and go to state 79
 
-    $default  reduce using rule 47 (exp_less)
+    $default  reduce using rule 45 (exp_or)
 
 
 state 58
 
-   54 exp_add: exp_times .
-   58 exp_times: exp_times . '*' exp_un
-   59          | exp_times . '/' exp_un
+   47 exp_and: exp_less .
+   50 exp_less: exp_less . '<' exp_add
+   51         | exp_less . '>' exp_add
+   52         | exp_less . '=' exp_add
+   53         | exp_less . TK_LESS_EQUAL exp_add
+   54         | exp_less . TK_GREATER_EQUAL exp_add
+   55         | exp_less . TK_NOT_EQUAL exp_add
 
-    '*'  shift, and go to state 85
-    '/'  shift, and go to state 86
+    TK_GREATER_EQUAL  shift, and go to state 80
+    TK_LESS_EQUAL     shift, and go to state 81
+    TK_NOT_EQUAL      shift, and go to state 82
+    '='               shift, and go to state 83
+    '<'               shift, and go to state 84
+    '>'               shift, and go to state 85
 
-    $default  reduce using rule 54 (exp_add)
+    $default  reduce using rule 47 (exp_and)
 
 
 state 59
 
-   57 exp_times: exp_un .
+   49 exp_less: exp_add .
+   57 exp_add: exp_add . '+' exp_times
+   58        | exp_add . '-' exp_times
 
-    $default  reduce using rule 57 (exp_times)
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+
+    $default  reduce using rule 49 (exp_less)
 
 
 state 60
 
-   62 exp_un: exp_fin .
+   56 exp_add: exp_times .
+   60 exp_times: exp_times . '*' exp_un
+   61          | exp_times . '/' exp_un
 
-    $default  reduce using rule 62 (exp_un)
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+
+    $default  reduce using rule 56 (exp_add)
 
 
 state 61
+
+   59 exp_times: exp_un .
+
+    $default  reduce using rule 59 (exp_times)
+
+
+state 62
+
+   64 exp_un: exp_fin .
+
+    $default  reduce using rule 64 (exp_un)
+
+
+state 63
 
    27 cmdif: TK_IF exp . nl lista_comando entradas_else TK_END
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 87
-
-
-state 62
-
-   38 cmdreturn: TK_RET exp .
-
-    $default  reduce using rule 38 (cmdreturn)
-
-
-state 63
-
-   33 chamada: TK_ID '(' . lista_exp ')'
-
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    $default  reduce using rule 34 (lista_exp)
-
-    lista_exp  go to state 88
-    exp        go to state 89
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    nl  go to state 90
 
 
 state 64
+
+   40 cmdreturn: TK_RET exp .
+
+    $default  reduce using rule 40 (cmdreturn)
+
+
+state 65
+
+   35 chamada: TK_ID '(' . lista_exp ')'
+
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    $default  reduce using rule 36 (lista_exp)
+
+    var        go to state 54
+    lista_exp  go to state 91
+    exp        go to state 92
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
+
+
+state 66
 
    11 entradas: TK_ID ':' . tipo nl entradas
 
@@ -912,712 +946,764 @@ state 64
     TK_BOOL    shift, and go to state 19
     '['        shift, and go to state 20
 
-    tipo      go to state 90
+    tipo      go to state 93
     tipobase  go to state 22
 
 
-state 65
-
-   32 cmdatrib: TK_ID '=' . exp
-
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    exp        go to state 91
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
-
-
-state 66
+state 67
 
     5 funcao: TK_FUN TK_ID '(' params ')' nl entradas TK_END . nl
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 92
+    nl  go to state 94
 
 
-state 67
+state 68
 
    12 entradas: comando nl . lista_comando
 
     TK_WHILE  shift, and go to state 30
     TK_IF     shift, and go to state 31
     TK_RET    shift, and go to state 32
-    TK_ID     shift, and go to state 93
+    TK_ID     shift, and go to state 95
 
     $default  reduce using rule 20 (lista_comando)
 
-    lista_comando  go to state 94
-    comando        go to state 95
+    lista_comando  go to state 96
+    comando        go to state 97
     cmdif          go to state 36
     cmdwhile       go to state 37
     cmdatrib       go to state 38
-    chamada        go to state 39
-    cmdreturn      go to state 40
-
-
-state 68
-
-    4 funcao: TK_FUN TK_ID '(' params ')' ':' tipo nl entradas . TK_END nl
-
-    TK_END  shift, and go to state 96
+    var            go to state 39
+    chamada        go to state 40
+    cmdreturn      go to state 41
 
 
 state 69
 
-   60 exp_un: TK_NOT exp_un .
+   34 var: var '[' . exp ']'
 
-    $default  reduce using rule 60 (exp_un)
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var        go to state 54
+    exp        go to state 98
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 70
 
-   67 exp_fin: TK_NEW '[' . exp ']' tipo
+   32 cmdatrib: var '=' . exp
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp        go to state 97
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp        go to state 99
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 71
 
-   68 exp_fin: TK_ID '(' . lista_exp ')'
+    4 funcao: TK_FUN TK_ID '(' params ')' ':' tipo nl entradas . TK_END nl
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    $default  reduce using rule 34 (lista_exp)
-
-    lista_exp  go to state 98
-    exp        go to state 89
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    TK_END  shift, and go to state 100
 
 
 state 72
 
-   70 exp_fin: '(' exp . ')'
+   62 exp_un: TK_NOT exp_un .
 
-    ')'  shift, and go to state 99
+    $default  reduce using rule 62 (exp_un)
 
 
 state 73
 
-   61 exp_un: '-' exp_un .
+   69 exp_fin: TK_NEW '[' . exp ']' tipo
 
-    $default  reduce using rule 61 (exp_un)
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var        go to state 54
+    exp        go to state 101
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 74
+
+   70 exp_fin: TK_ID '(' . lista_exp ')'
+
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    $default  reduce using rule 36 (lista_exp)
+
+    var        go to state 54
+    lista_exp  go to state 102
+    exp        go to state 92
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
+
+
+state 75
+
+   72 exp_fin: '(' exp . ')'
+
+    ')'  shift, and go to state 103
+
+
+state 76
+
+   63 exp_un: '-' exp_un .
+
+    $default  reduce using rule 63 (exp_un)
+
+
+state 77
 
    31 cmdwhile: TK_WHILE exp nl . lista_comando TK_LOOP
 
     TK_WHILE  shift, and go to state 30
     TK_IF     shift, and go to state 31
     TK_RET    shift, and go to state 32
-    TK_ID     shift, and go to state 93
+    TK_ID     shift, and go to state 95
 
     $default  reduce using rule 20 (lista_comando)
 
-    lista_comando  go to state 100
-    comando        go to state 95
+    lista_comando  go to state 104
+    comando        go to state 97
     cmdif          go to state 36
     cmdwhile       go to state 37
     cmdatrib       go to state 38
-    chamada        go to state 39
-    cmdreturn      go to state 40
-
-
-state 75
-
-   44 exp_or: exp_or TK_OR . exp_and
-
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    exp_and    go to state 101
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
-
-
-state 76
-
-   46 exp_and: exp_and TK_AND . exp_less
-
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    exp_less   go to state 102
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
-
-
-state 77
-
-   52 exp_less: exp_less TK_GREATER_EQUAL . exp_add
-
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    exp_add    go to state 103
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var            go to state 39
+    chamada        go to state 40
+    cmdreturn      go to state 41
 
 
 state 78
 
-   51 exp_less: exp_less TK_LESS_EQUAL . exp_add
+   46 exp_or: exp_or TK_OR . exp_and
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_add    go to state 104
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp_and    go to state 105
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 79
 
-   53 exp_less: exp_less TK_NOT_EQUAL . exp_add
+   48 exp_and: exp_and TK_AND . exp_less
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_add    go to state 105
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp_less   go to state 106
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 80
 
-   50 exp_less: exp_less '=' . exp_add
+   54 exp_less: exp_less TK_GREATER_EQUAL . exp_add
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_add    go to state 106
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp_add    go to state 107
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 81
 
-   48 exp_less: exp_less '<' . exp_add
+   53 exp_less: exp_less TK_LESS_EQUAL . exp_add
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_add    go to state 107
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp_add    go to state 108
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 82
 
-   49 exp_less: exp_less '>' . exp_add
+   55 exp_less: exp_less TK_NOT_EQUAL . exp_add
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_add    go to state 108
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp_add    go to state 109
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 83
 
-   55 exp_add: exp_add '+' . exp_times
+   52 exp_less: exp_less '=' . exp_add
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_times  go to state 109
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp_add    go to state 110
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 84
 
-   56 exp_add: exp_add '-' . exp_times
+   50 exp_less: exp_less '<' . exp_add
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_times  go to state 110
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp_add    go to state 111
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 85
 
-   58 exp_times: exp_times '*' . exp_un
+   51 exp_less: exp_less '>' . exp_add
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_un   go to state 111
-    exp_fin  go to state 60
+    var        go to state 54
+    exp_add    go to state 112
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 86
 
-   59 exp_times: exp_times '/' . exp_un
+   57 exp_add: exp_add '+' . exp_times
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp_un   go to state 112
-    exp_fin  go to state 60
+    var        go to state 54
+    exp_times  go to state 113
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
 state 87
+
+   58 exp_add: exp_add '-' . exp_times
+
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var        go to state 54
+    exp_times  go to state 114
+    exp_un     go to state 61
+    exp_fin    go to state 62
+
+
+state 88
+
+   60 exp_times: exp_times '*' . exp_un
+
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var      go to state 54
+    exp_un   go to state 115
+    exp_fin  go to state 62
+
+
+state 89
+
+   61 exp_times: exp_times '/' . exp_un
+
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var      go to state 54
+    exp_un   go to state 116
+    exp_fin  go to state 62
+
+
+state 90
 
    27 cmdif: TK_IF exp nl . lista_comando entradas_else TK_END
 
     TK_WHILE  shift, and go to state 30
     TK_IF     shift, and go to state 31
     TK_RET    shift, and go to state 32
-    TK_ID     shift, and go to state 93
+    TK_ID     shift, and go to state 95
 
     $default  reduce using rule 20 (lista_comando)
 
-    lista_comando  go to state 113
-    comando        go to state 95
+    lista_comando  go to state 117
+    comando        go to state 97
     cmdif          go to state 36
     cmdwhile       go to state 37
     cmdatrib       go to state 38
-    chamada        go to state 39
-    cmdreturn      go to state 40
+    var            go to state 39
+    chamada        go to state 40
+    cmdreturn      go to state 41
 
 
-state 88
+state 91
 
-   33 chamada: TK_ID '(' lista_exp . ')'
+   35 chamada: TK_ID '(' lista_exp . ')'
 
-    ')'  shift, and go to state 114
-
-
-state 89
-
-   35 lista_exp: exp . sublista_exp
-
-    ','  shift, and go to state 115
-
-    $default  reduce using rule 36 (sublista_exp)
-
-    sublista_exp  go to state 116
+    ')'  shift, and go to state 118
 
 
-state 90
+state 92
+
+   37 lista_exp: exp . sublista_exp
+
+    ','  shift, and go to state 119
+
+    $default  reduce using rule 38 (sublista_exp)
+
+    sublista_exp  go to state 120
+
+
+state 93
 
    11 entradas: TK_ID ':' tipo . nl entradas
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 117
+    nl  go to state 121
 
 
-state 91
-
-   32 cmdatrib: TK_ID '=' exp .
-
-    $default  reduce using rule 32 (cmdatrib)
-
-
-state 92
+state 94
 
     5 funcao: TK_FUN TK_ID '(' params ')' nl entradas TK_END nl .
 
     $default  reduce using rule 5 (funcao)
 
 
-state 93
+state 95
 
-   32 cmdatrib: TK_ID . '=' exp
-   33 chamada: TK_ID . '(' lista_exp ')'
+   33 var: TK_ID .
+   35 chamada: TK_ID . '(' lista_exp ')'
 
-    '('  shift, and go to state 63
-    '='  shift, and go to state 65
+    '('  shift, and go to state 65
+
+    $default  reduce using rule 33 (var)
 
 
-state 94
+state 96
 
    12 entradas: comando nl lista_comando .
 
     $default  reduce using rule 12 (entradas)
 
 
-state 95
+state 97
 
    21 lista_comando: comando . nl lista_comando
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 118
+    nl  go to state 122
 
 
-state 96
+state 98
+
+   34 var: var '[' exp . ']'
+
+    ']'  shift, and go to state 123
+
+
+state 99
+
+   32 cmdatrib: var '=' exp .
+
+    $default  reduce using rule 32 (cmdatrib)
+
+
+state 100
 
     4 funcao: TK_FUN TK_ID '(' params ')' ':' tipo nl entradas TK_END . nl
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 119
-
-
-state 97
-
-   67 exp_fin: TK_NEW '[' exp . ']' tipo
-
-    ']'  shift, and go to state 120
-
-
-state 98
-
-   68 exp_fin: TK_ID '(' lista_exp . ')'
-
-    ')'  shift, and go to state 121
-
-
-state 99
-
-   70 exp_fin: '(' exp ')' .
-
-    $default  reduce using rule 70 (exp_fin)
-
-
-state 100
-
-   31 cmdwhile: TK_WHILE exp nl lista_comando . TK_LOOP
-
-    TK_LOOP  shift, and go to state 122
+    nl  go to state 124
 
 
 state 101
 
-   44 exp_or: exp_or TK_OR exp_and .
-   46 exp_and: exp_and . TK_AND exp_less
+   69 exp_fin: TK_NEW '[' exp . ']' tipo
 
-    TK_AND  shift, and go to state 76
-
-    $default  reduce using rule 44 (exp_or)
+    ']'  shift, and go to state 125
 
 
 state 102
 
-   46 exp_and: exp_and TK_AND exp_less .
-   48 exp_less: exp_less . '<' exp_add
-   49         | exp_less . '>' exp_add
-   50         | exp_less . '=' exp_add
-   51         | exp_less . TK_LESS_EQUAL exp_add
-   52         | exp_less . TK_GREATER_EQUAL exp_add
-   53         | exp_less . TK_NOT_EQUAL exp_add
+   70 exp_fin: TK_ID '(' lista_exp . ')'
 
-    TK_GREATER_EQUAL  shift, and go to state 77
-    TK_LESS_EQUAL     shift, and go to state 78
-    TK_NOT_EQUAL      shift, and go to state 79
-    '='               shift, and go to state 80
-    '<'               shift, and go to state 81
-    '>'               shift, and go to state 82
-
-    $default  reduce using rule 46 (exp_and)
+    ')'  shift, and go to state 126
 
 
 state 103
 
-   52 exp_less: exp_less TK_GREATER_EQUAL exp_add .
-   55 exp_add: exp_add . '+' exp_times
-   56        | exp_add . '-' exp_times
+   72 exp_fin: '(' exp ')' .
 
-    '+'  shift, and go to state 83
-    '-'  shift, and go to state 84
-
-    $default  reduce using rule 52 (exp_less)
+    $default  reduce using rule 72 (exp_fin)
 
 
 state 104
 
-   51 exp_less: exp_less TK_LESS_EQUAL exp_add .
-   55 exp_add: exp_add . '+' exp_times
-   56        | exp_add . '-' exp_times
+   31 cmdwhile: TK_WHILE exp nl lista_comando . TK_LOOP
 
-    '+'  shift, and go to state 83
-    '-'  shift, and go to state 84
-
-    $default  reduce using rule 51 (exp_less)
+    TK_LOOP  shift, and go to state 127
 
 
 state 105
 
-   53 exp_less: exp_less TK_NOT_EQUAL exp_add .
-   55 exp_add: exp_add . '+' exp_times
-   56        | exp_add . '-' exp_times
+   46 exp_or: exp_or TK_OR exp_and .
+   48 exp_and: exp_and . TK_AND exp_less
 
-    '+'  shift, and go to state 83
-    '-'  shift, and go to state 84
+    TK_AND  shift, and go to state 79
 
-    $default  reduce using rule 53 (exp_less)
+    $default  reduce using rule 46 (exp_or)
 
 
 state 106
 
-   50 exp_less: exp_less '=' exp_add .
-   55 exp_add: exp_add . '+' exp_times
-   56        | exp_add . '-' exp_times
+   48 exp_and: exp_and TK_AND exp_less .
+   50 exp_less: exp_less . '<' exp_add
+   51         | exp_less . '>' exp_add
+   52         | exp_less . '=' exp_add
+   53         | exp_less . TK_LESS_EQUAL exp_add
+   54         | exp_less . TK_GREATER_EQUAL exp_add
+   55         | exp_less . TK_NOT_EQUAL exp_add
 
-    '+'  shift, and go to state 83
-    '-'  shift, and go to state 84
+    TK_GREATER_EQUAL  shift, and go to state 80
+    TK_LESS_EQUAL     shift, and go to state 81
+    TK_NOT_EQUAL      shift, and go to state 82
+    '='               shift, and go to state 83
+    '<'               shift, and go to state 84
+    '>'               shift, and go to state 85
 
-    $default  reduce using rule 50 (exp_less)
+    $default  reduce using rule 48 (exp_and)
 
 
 state 107
 
-   48 exp_less: exp_less '<' exp_add .
-   55 exp_add: exp_add . '+' exp_times
-   56        | exp_add . '-' exp_times
+   54 exp_less: exp_less TK_GREATER_EQUAL exp_add .
+   57 exp_add: exp_add . '+' exp_times
+   58        | exp_add . '-' exp_times
 
-    '+'  shift, and go to state 83
-    '-'  shift, and go to state 84
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
 
-    $default  reduce using rule 48 (exp_less)
+    $default  reduce using rule 54 (exp_less)
 
 
 state 108
 
-   49 exp_less: exp_less '>' exp_add .
-   55 exp_add: exp_add . '+' exp_times
-   56        | exp_add . '-' exp_times
+   53 exp_less: exp_less TK_LESS_EQUAL exp_add .
+   57 exp_add: exp_add . '+' exp_times
+   58        | exp_add . '-' exp_times
 
-    '+'  shift, and go to state 83
-    '-'  shift, and go to state 84
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
 
-    $default  reduce using rule 49 (exp_less)
+    $default  reduce using rule 53 (exp_less)
 
 
 state 109
 
-   55 exp_add: exp_add '+' exp_times .
-   58 exp_times: exp_times . '*' exp_un
-   59          | exp_times . '/' exp_un
+   55 exp_less: exp_less TK_NOT_EQUAL exp_add .
+   57 exp_add: exp_add . '+' exp_times
+   58        | exp_add . '-' exp_times
 
-    '*'  shift, and go to state 85
-    '/'  shift, and go to state 86
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
 
-    $default  reduce using rule 55 (exp_add)
+    $default  reduce using rule 55 (exp_less)
 
 
 state 110
 
-   56 exp_add: exp_add '-' exp_times .
-   58 exp_times: exp_times . '*' exp_un
-   59          | exp_times . '/' exp_un
+   52 exp_less: exp_less '=' exp_add .
+   57 exp_add: exp_add . '+' exp_times
+   58        | exp_add . '-' exp_times
 
-    '*'  shift, and go to state 85
-    '/'  shift, and go to state 86
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
 
-    $default  reduce using rule 56 (exp_add)
+    $default  reduce using rule 52 (exp_less)
 
 
 state 111
 
-   58 exp_times: exp_times '*' exp_un .
+   50 exp_less: exp_less '<' exp_add .
+   57 exp_add: exp_add . '+' exp_times
+   58        | exp_add . '-' exp_times
 
-    $default  reduce using rule 58 (exp_times)
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+
+    $default  reduce using rule 50 (exp_less)
 
 
 state 112
 
-   59 exp_times: exp_times '/' exp_un .
+   51 exp_less: exp_less '>' exp_add .
+   57 exp_add: exp_add . '+' exp_times
+   58        | exp_add . '-' exp_times
 
-    $default  reduce using rule 59 (exp_times)
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+
+    $default  reduce using rule 51 (exp_less)
 
 
 state 113
 
-   27 cmdif: TK_IF exp nl lista_comando . entradas_else TK_END
+   57 exp_add: exp_add '+' exp_times .
+   60 exp_times: exp_times . '*' exp_un
+   61          | exp_times . '/' exp_un
 
-    TK_ELSE  shift, and go to state 123
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
 
-    $default  reduce using rule 30 (entradas_else)
-
-    entradas_else  go to state 124
+    $default  reduce using rule 57 (exp_add)
 
 
 state 114
 
-   33 chamada: TK_ID '(' lista_exp ')' .
+   58 exp_add: exp_add '-' exp_times .
+   60 exp_times: exp_times . '*' exp_un
+   61          | exp_times . '/' exp_un
 
-    $default  reduce using rule 33 (chamada)
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+
+    $default  reduce using rule 58 (exp_add)
 
 
 state 115
 
-   37 sublista_exp: ',' . exp sublista_exp
+   60 exp_times: exp_times '*' exp_un .
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
-
-    exp        go to state 125
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    $default  reduce using rule 60 (exp_times)
 
 
 state 116
 
-   35 lista_exp: exp sublista_exp .
+   61 exp_times: exp_times '/' exp_un .
 
-    $default  reduce using rule 35 (lista_exp)
+    $default  reduce using rule 61 (exp_times)
 
 
 state 117
+
+   27 cmdif: TK_IF exp nl lista_comando . entradas_else TK_END
+
+    TK_ELSE  shift, and go to state 128
+
+    $default  reduce using rule 30 (entradas_else)
+
+    entradas_else  go to state 129
+
+
+state 118
+
+   35 chamada: TK_ID '(' lista_exp ')' .
+
+    $default  reduce using rule 35 (chamada)
+
+
+state 119
+
+   39 sublista_exp: ',' . exp sublista_exp
+
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
+
+    var        go to state 54
+    exp        go to state 130
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
+
+
+state 120
+
+   37 lista_exp: exp sublista_exp .
+
+    $default  reduce using rule 37 (lista_exp)
+
+
+state 121
 
    11 entradas: TK_ID ':' tipo nl . entradas
 
@@ -1628,45 +1714,54 @@ state 117
 
     $default  reduce using rule 13 (entradas)
 
-    entradas   go to state 126
+    entradas   go to state 131
     comando    go to state 35
     cmdif      go to state 36
     cmdwhile   go to state 37
     cmdatrib   go to state 38
-    chamada    go to state 39
-    cmdreturn  go to state 40
+    var        go to state 39
+    chamada    go to state 40
+    cmdreturn  go to state 41
 
 
-state 118
+state 122
 
    21 lista_comando: comando nl . lista_comando
 
     TK_WHILE  shift, and go to state 30
     TK_IF     shift, and go to state 31
     TK_RET    shift, and go to state 32
-    TK_ID     shift, and go to state 93
+    TK_ID     shift, and go to state 95
 
     $default  reduce using rule 20 (lista_comando)
 
-    lista_comando  go to state 127
-    comando        go to state 95
+    lista_comando  go to state 132
+    comando        go to state 97
     cmdif          go to state 36
     cmdwhile       go to state 37
     cmdatrib       go to state 38
-    chamada        go to state 39
-    cmdreturn      go to state 40
+    var            go to state 39
+    chamada        go to state 40
+    cmdreturn      go to state 41
 
 
-state 119
+state 123
+
+   34 var: var '[' exp ']' .
+
+    $default  reduce using rule 34 (var)
+
+
+state 124
 
     4 funcao: TK_FUN TK_ID '(' params ')' ':' tipo nl entradas TK_END nl .
 
     $default  reduce using rule 4 (funcao)
 
 
-state 120
+state 125
 
-   67 exp_fin: TK_NEW '[' exp ']' . tipo
+   69 exp_fin: TK_NEW '[' exp ']' . tipo
 
     TK_CHAR    shift, and go to state 16
     TK_INT     shift, and go to state 17
@@ -1674,180 +1769,183 @@ state 120
     TK_BOOL    shift, and go to state 19
     '['        shift, and go to state 20
 
-    tipo      go to state 128
+    tipo      go to state 133
     tipobase  go to state 22
 
 
-state 121
+state 126
 
-   68 exp_fin: TK_ID '(' lista_exp ')' .
+   70 exp_fin: TK_ID '(' lista_exp ')' .
 
-    $default  reduce using rule 68 (exp_fin)
+    $default  reduce using rule 70 (exp_fin)
 
 
-state 122
+state 127
 
    31 cmdwhile: TK_WHILE exp nl lista_comando TK_LOOP .
 
     $default  reduce using rule 31 (cmdwhile)
 
 
-state 123
+state 128
 
    28 entradas_else: TK_ELSE . TK_IF exp nl lista_comando entradas_else
    29              | TK_ELSE . nl lista_comando
 
-    TK_IF    shift, and go to state 129
+    TK_IF    shift, and go to state 134
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 130
+    nl  go to state 135
 
 
-state 124
+state 129
 
    27 cmdif: TK_IF exp nl lista_comando entradas_else . TK_END
 
-    TK_END  shift, and go to state 131
+    TK_END  shift, and go to state 136
 
 
-state 125
+state 130
 
-   37 sublista_exp: ',' exp . sublista_exp
+   39 sublista_exp: ',' exp . sublista_exp
 
-    ','  shift, and go to state 115
+    ','  shift, and go to state 119
 
-    $default  reduce using rule 36 (sublista_exp)
+    $default  reduce using rule 38 (sublista_exp)
 
-    sublista_exp  go to state 132
+    sublista_exp  go to state 137
 
 
-state 126
+state 131
 
    11 entradas: TK_ID ':' tipo nl entradas .
 
     $default  reduce using rule 11 (entradas)
 
 
-state 127
+state 132
 
    21 lista_comando: comando nl lista_comando .
 
     $default  reduce using rule 21 (lista_comando)
 
 
-state 128
+state 133
 
-   67 exp_fin: TK_NEW '[' exp ']' tipo .
+   69 exp_fin: TK_NEW '[' exp ']' tipo .
 
-    $default  reduce using rule 67 (exp_fin)
+    $default  reduce using rule 69 (exp_fin)
 
 
-state 129
+state 134
 
    28 entradas_else: TK_ELSE TK_IF . exp nl lista_comando entradas_else
 
-    TK_TRUE            shift, and go to state 44
-    TK_FALSE           shift, and go to state 45
-    TK_NOT             shift, and go to state 46
-    TK_NEW             shift, and go to state 47
-    TK_NUMINT          shift, and go to state 48
-    TK_ID              shift, and go to state 49
-    TK_LITERAL_STRING  shift, and go to state 50
-    '('                shift, and go to state 51
-    '-'                shift, and go to state 52
+    TK_TRUE            shift, and go to state 45
+    TK_FALSE           shift, and go to state 46
+    TK_NOT             shift, and go to state 47
+    TK_NEW             shift, and go to state 48
+    TK_NUMINT          shift, and go to state 49
+    TK_ID              shift, and go to state 50
+    TK_LITERAL_STRING  shift, and go to state 51
+    '('                shift, and go to state 52
+    '-'                shift, and go to state 53
 
-    exp        go to state 133
-    exp_or     go to state 54
-    exp_and    go to state 55
-    exp_less   go to state 56
-    exp_add    go to state 57
-    exp_times  go to state 58
-    exp_un     go to state 59
-    exp_fin    go to state 60
+    var        go to state 54
+    exp        go to state 138
+    exp_or     go to state 56
+    exp_and    go to state 57
+    exp_less   go to state 58
+    exp_add    go to state 59
+    exp_times  go to state 60
+    exp_un     go to state 61
+    exp_fin    go to state 62
 
 
-state 130
+state 135
 
    29 entradas_else: TK_ELSE nl . lista_comando
 
     TK_WHILE  shift, and go to state 30
     TK_IF     shift, and go to state 31
     TK_RET    shift, and go to state 32
-    TK_ID     shift, and go to state 93
+    TK_ID     shift, and go to state 95
 
     $default  reduce using rule 20 (lista_comando)
 
-    lista_comando  go to state 134
-    comando        go to state 95
+    lista_comando  go to state 139
+    comando        go to state 97
     cmdif          go to state 36
     cmdwhile       go to state 37
     cmdatrib       go to state 38
-    chamada        go to state 39
-    cmdreturn      go to state 40
+    var            go to state 39
+    chamada        go to state 40
+    cmdreturn      go to state 41
 
 
-state 131
+state 136
 
    27 cmdif: TK_IF exp nl lista_comando entradas_else TK_END .
 
     $default  reduce using rule 27 (cmdif)
 
 
-state 132
+state 137
 
-   37 sublista_exp: ',' exp sublista_exp .
+   39 sublista_exp: ',' exp sublista_exp .
 
-    $default  reduce using rule 37 (sublista_exp)
+    $default  reduce using rule 39 (sublista_exp)
 
 
-state 133
+state 138
 
    28 entradas_else: TK_ELSE TK_IF exp . nl lista_comando entradas_else
 
     TK_LINE  shift, and go to state 23
 
-    nl  go to state 135
+    nl  go to state 140
 
 
-state 134
+state 139
 
    29 entradas_else: TK_ELSE nl lista_comando .
 
     $default  reduce using rule 29 (entradas_else)
 
 
-state 135
+state 140
 
    28 entradas_else: TK_ELSE TK_IF exp nl . lista_comando entradas_else
 
     TK_WHILE  shift, and go to state 30
     TK_IF     shift, and go to state 31
     TK_RET    shift, and go to state 32
-    TK_ID     shift, and go to state 93
+    TK_ID     shift, and go to state 95
 
     $default  reduce using rule 20 (lista_comando)
 
-    lista_comando  go to state 136
-    comando        go to state 95
+    lista_comando  go to state 141
+    comando        go to state 97
     cmdif          go to state 36
     cmdwhile       go to state 37
     cmdatrib       go to state 38
-    chamada        go to state 39
-    cmdreturn      go to state 40
+    var            go to state 39
+    chamada        go to state 40
+    cmdreturn      go to state 41
 
 
-state 136
+state 141
 
    28 entradas_else: TK_ELSE TK_IF exp nl lista_comando . entradas_else
 
-    TK_ELSE  shift, and go to state 123
+    TK_ELSE  shift, and go to state 128
 
     $default  reduce using rule 30 (entradas_else)
 
-    entradas_else  go to state 137
+    entradas_else  go to state 142
 
 
-state 137
+state 142
 
    28 entradas_else: TK_ELSE TK_IF exp nl lista_comando entradas_else .
 
