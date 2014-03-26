@@ -37,10 +37,10 @@ lista_funcao : /* vazio */
 	;
 funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
                 entradas
-             TK_END TK_LINE
+             TK_END nl
 	| TK_FUN TK_ID '(' params ')' nl
                 entradas
-             TK_END TK_LINE
+             TK_END nl
 	;
 params	: /*vazio*/ | parametro lista_parametro
 	;
@@ -52,7 +52,7 @@ entradas: TK_ID ':' tipo nl entradas
 	| comando nl lista_comando
 	| /* vazio */
 	;
-tipo      : tipobase | '[' ']' tipo
+tipo    : tipobase | '[' ']' tipo
 	;
 tipobase: TK_INT 
 	| TK_CHAR 
@@ -79,15 +79,15 @@ cmdif	: TK_IF exp nl
              entradas_else
              TK_END
 	;
-entradas_else : TK_ELSE TK_IF exp TK_LINE lista_comando lista_else_if
-	| TK_ELSE TK_LINE lista_comando lista_else
+entradas_else : TK_ELSE TK_IF exp nl lista_comando lista_else_if
+	| TK_ELSE nl lista_comando lista_else
 	| /* vazio */
 	;
- lista_else_if : /* vazio */ 
-	| TK_ELSE TK_IF exp TK_LINE lista_comando lista_else_if
+lista_else_if : /* vazio */ 
+	| TK_ELSE TK_IF exp nl lista_comando lista_else_if
 	;
 lista_else : /* vazio */  
-	| TK_ELSE TK_LINE lista_comando lista_else
+	| TK_ELSE nl lista_comando lista_else
 	;
 cmdwhile  : TK_WHILE exp nl
                 lista_comando
@@ -106,7 +106,7 @@ sublista_exp : /* vazio */
 cmdreturn : TK_RET exp 
 	| TK_RET
 	;
-nl 	: /* vazio */ 
+nl 	: TK_LINE 
 	| TK_LINE nl
 	;
 exp 	: exp_or 
@@ -142,7 +142,8 @@ exp_fin : TK_NUMINT
 	| TK_TRUE
 	| TK_FALSE 
 	| TK_NEW tipo '[' exp ']' 
-	| chamada 
+	| TK_ID '(' lista_exp ')'
+	| TK_ID 
 	| '(' exp ')'
 	;     
 %%
