@@ -1,0 +1,7 @@
+line 1 => FUN
+line 1 => ID->main
+line 1 => OPEN_PARENTHESIS
+line 1 => CLOSE_PARENTHESIS
+line 1 => COLLON
+line 1 => INT
+line 2 => ERROR: OPEN COMMENT
