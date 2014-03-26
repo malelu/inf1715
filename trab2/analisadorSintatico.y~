@@ -76,7 +76,7 @@ comando	: cmdif
 	;
 cmdif	: TK_IF exp nl
                 lista_comando
-             entradas_else
+             	entradas_else
           TK_END
 	;
 entradas_else : TK_ELSE TK_IF exp nl lista_comando entradas_else

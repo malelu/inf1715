@@ -69,9 +69,12 @@
 #line 2 "analisadorSintatico.y"
 
 
+#include "token.h"
+
+
 
 /* Line 268 of yacc.c  */
-#line 75 "y.tab.c"
+#line 78 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -167,7 +170,7 @@ typedef int YYSTYPE;
 
 
 /* Line 343 of yacc.c  */
-#line 171 "y.tab.c"
+#line 174 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -485,14 +488,14 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    33,    33,    35,    36,    38,    41,    45,    45,    47,
-      47,    49,    51,    52,    53,    55,    55,    57,    58,    59,
-      60,    68,    69,    71,    72,    73,    74,    75,    77,    82,
-      83,    84,    92,    96,    98,   100,   101,   103,   104,   106,
-     107,   109,   110,   112,   114,   115,   117,   118,   120,   121,
-     122,   123,   124,   125,   126,   128,   129,   130,   132,   133,
-     134,   136,   137,   138,   140,   141,   142,   143,   144,   145,
-     146,   147
+       0,    36,    36,    38,    39,    41,    44,    48,    48,    50,
+      50,    52,    54,    55,    56,    58,    58,    60,    61,    62,
+      63,    71,    72,    74,    75,    76,    77,    78,    80,    85,
+      86,    87,    95,    99,   101,   103,   104,   106,   107,   109,
+     110,   112,   113,   115,   117,   118,   120,   121,   123,   124,
+     125,   126,   127,   128,   129,   131,   132,   133,   135,   136,
+     137,   139,   140,   141,   143,   144,   145,   146,   147,   148,
+     149,   150
 };
 #endif
 
@@ -1509,7 +1512,7 @@ yyreduce:
       
 
 /* Line 1806 of yacc.c  */
-#line 1513 "y.tab.c"
+#line 1516 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1740,7 +1743,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 149 "analisadorSintatico.y"
+#line 152 "analisadorSintatico.y"
 
  /*procedimentos auxiliares */
 

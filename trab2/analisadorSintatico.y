@@ -1,5 +1,8 @@
  /*declarações*/
 %{
+
+#include "token.h"
+
 %}
 
 %token TK_CHAR

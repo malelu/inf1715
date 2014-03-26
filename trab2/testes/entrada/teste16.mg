@@ -1,4 +1,4 @@
 fun main () : int
-	a (b())
+	a (b))
 end
 

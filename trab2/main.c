@@ -14,7 +14,7 @@ void yyerror (const char * s)
 
 int main (void)
 {
-	yydebug = 1;
+	//yydebug = 1;
 	yyparse();
 	printf ("Nao ha erros de sintaxe\n");	
 }

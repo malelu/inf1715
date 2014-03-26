@@ -39,6 +39,7 @@ fun main () : int
 	
 	else
 		a1 = 7-8/2/2
+		a (b())
 	end
 
 	if (-a = 9) or (not b)

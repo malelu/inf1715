@@ -3,6 +3,7 @@
 %{
 #include <string.h>
 #include "y.tab.h"
+#include "token.h"
 
 union Valor{
 	char* cValor;
