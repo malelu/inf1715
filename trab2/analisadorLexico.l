@@ -2,8 +2,8 @@
  /* declaração */
 %{
 #include <string.h>
-#include "y.tab.h"
 #include "token.h"
+#include "y.tab.h"
 
 union Valor{
 	char* cValor;
@@ -13,6 +13,7 @@ union Valor{
 int lineCount = 1;
 void check (int i, int j, int tam, char* sentence, char* text) ;
 char* createString (char* text) ;
+
 %}
 
  /* expressoes regulares */
@@ -31,71 +32,116 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 %%
 %line
  /* regras */
-"char" {return TK_CHAR;}
-"int" {return TK_INT;}
-"string" {return TK_STRING;}
-"bool" {return TK_BOOL;}
-"true" {return TK_TRUE;}
-"false" {return TK_FALSE;}
-"not" {return TK_NOT;}
-"while" {return TK_WHILE;}
-"loop" {return TK_LOOP;}
-"if" {return TK_IF;}
-"else" {return TK_ELSE;}
-"end" {return TK_END;}
-"new" {return TK_NEW;}
-"return" {return TK_RET;}
-"fun" {return TK_FUN;}
-"(" {return '(';}
-")" {return ')';}
-"," {return ',';}
-":" {return ':';}
-">" {return '>';}
-"<" {return '<';}
-">=" {return TK_GREATER_EQUAL;}
-"<=" {return TK_LESS_EQUAL;}
-"=" {return '=';}
-"<>" {return TK_NOT_EQUAL;}
-"[" {return '[';}
-"]" {return ']';}
-"+" {return '+';}
-"-" {return '-';}
-"*" {return '*';}
-"/" {return '/';}
-"and" {return TK_AND;}
-"or" {return TK_OR;}
+"char" {yylval.line = lineCount; return TK_CHAR;}
+
+"int" {yylval.line = lineCount; return TK_INT;}
+
+"string" {yylval.line = lineCount; return TK_STRING;}
+
+"bool" {yylval.line = lineCount; return TK_BOOL;}
+
+"true" {yylval.line = lineCount; return TK_TRUE;}
+
+"false" {yylval.line = lineCount; return TK_FALSE;}
+
+"not" {yylval.line = lineCount; return TK_NOT;}
+
+"while" {yylval.line = lineCount; return TK_WHILE;}
+
+"loop" {yylval.line = lineCount; return TK_LOOP;}
+
+"if" {yylval.line = lineCount; return TK_IF;}
+
+"else" {yylval.line = lineCount; return TK_ELSE;}
+
+"end" {yylval.line = lineCount; return TK_END;}
+
+"new" {yylval.line = lineCount; return TK_NEW;}
+
+"return" {yylval.line = lineCount; return TK_RET;}
+
+"fun" {yylval.line = lineCount; return TK_FUN;}
+
+"(" {yylval.line = lineCount; return '(';}
+
+")" {yylval.line = lineCount; return ')';}
+
+"," {yylval.line = lineCount; return ',';}
+
+":" {yylval.line = lineCount; return ':';}
+
+">" {yylval.line = lineCount; return '>';}
+
+"<" {yylval.line = lineCount; return '<';}
+
+">=" {yylval.line = lineCount; return TK_GREATER_EQUAL;}
+
+"<=" {yylval.line = lineCount; return TK_LESS_EQUAL;}
+
+"=" {yylval.line = lineCount; return '=';}
+
+"<>" {yylval.line = lineCount; return TK_NOT_EQUAL;}
+
+"[" {yylval.line = lineCount; return '[';}
+
+"]" {yylval.line = lineCount; return ']';}
+
+"+" {yylval.line = lineCount; return '+';}
+
+"-" {yylval.line = lineCount; return '-';}
+
+"*" {yylval.line = lineCount; return '*';}
+
+"/" {yylval.line = lineCount; return '/';}
+
+"and" {yylval.line = lineCount; return TK_AND;}
+
+"or" {yylval.line = lineCount; return TK_OR;}
+
 {numInt} {
-	val.cValor = yytext ;
-	if(val.cValor[0] != '0') 		/* caso o numero não esteja em hexadecimal */
-		val.iValor = atoi(val.cValor); 	
+	yylval.cValue = yytext ;
+	if(yylval.cValue[0] != '0') 		/* caso o numero não esteja em hexadecimal */
+		yylval.iValue = atoi(yylval.cValue); 	
 	else	
-		val.iValor = (int)strtol(val.cValor, 0, 0);
+		yylval.iValue = (int)strtol(yylval.cValue, 0, 0);
+
+	yylval.line = lineCount;
 	return TK_NUMINT;
 	}
+
 {id} {
-	val.cValor = yytext; 	
+	yylval.cValue = yytext;
+	yylval.line = lineCount; 	
 	return TK_ID;
 	}
+
 {string} { 
-	val.cValor = createString (yytext);
+	yylval.cValue = createString (yytext);
+	yylval.line = lineCount;
 	return TK_LITERAL_STRING;
 	}
+
 {comment} { } 
+
 {openComment} {
 	printf("line %d => ERROR: OPEN COMMENT", lineCount);
 	exit(1);
 }
+
 {quotMark} {
 	printf ("line: %d => ERROR: OPEN STRING", lineCount);
 	exit(1);
 	}
+
 {line} {
 	lineCount++;
 	return TK_LINE;
 }
+
 {isSpace} { }
 . {
-	val.cValor = yytext;
+	yylval.cValue = yytext;
+	yylval.line = lineCount;
 	return ERROR;
 } 
 

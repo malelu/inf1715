@@ -130,11 +130,11 @@ exp_less :  exp_add
 	;
 exp_add : exp_times 
 	| exp_add '+' exp_times 	/*{ $$.value = $1.value + $3.value; }*/
-	| exp_add '-' exp_times
+	| exp_add '-' exp_times		/*{ $$.value = $1.value - $3.value; }*/
 	;
 exp_times : exp_un 	
-	| exp_times '*' exp_un 
-	| exp_times '/' exp_un
+	| exp_times '*' exp_un 		/*{ $$.value = $1.value * $3.value; }*/
+	| exp_times '/' exp_un		/*{ $$.value = $1.value / $3.value; }*/
 	;
 exp_un : TK_NOT exp_un
 	| '-' exp_un 
@@ -147,7 +147,7 @@ exp_fin : TK_NUMINT
 	| TK_NEW '[' exp ']' tipo 
 	| TK_ID '(' lista_exp ')'
 	| TK_ID 
-	| '(' exp ')'
+	| '(' exp ')'			/*{ $$.value = $2.value; }*/
 	;     
 %%
  /*procedimentos auxiliares */

@@ -568,6 +568,7 @@ char *yytext;
 /* declaração */
 #line 4 "analisadorLexico.l"
 #include <string.h>
+#include "token.h"
 #include "y.tab.h"
 
 union Valor{
@@ -578,8 +579,9 @@ union Valor{
 int lineCount = 1;
 void check (int i, int j, int tam, char* sentence, char* text) ;
 char* createString (char* text) ;
+
 /* expressoes regulares */
-#line 583 "<stdout>"
+#line 585 "<stdout>"
 
 #define INITIAL 0
 
@@ -766,9 +768,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 30 "analisadorLexico.l"
+#line 32 "analisadorLexico.l"
 
-#line 772 "<stdout>"
+#line 774 "<stdout>"
 
 	if ( !(yy_init) )
 		{
@@ -853,212 +855,216 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 31 "analisadorLexico.l"
+#line 33 "analisadorLexico.l"
 
 	YY_BREAK
 /* regras */
 case 2:
 YY_RULE_SETUP
-#line 33 "analisadorLexico.l"
-{return TK_CHAR;}
+#line 35 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_CHAR;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 34 "analisadorLexico.l"
-{return TK_INT;}
+#line 37 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 35 "analisadorLexico.l"
-{return TK_STRING;}
+#line 39 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_STRING;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "analisadorLexico.l"
-{return TK_BOOL;}
+#line 41 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_BOOL;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 37 "analisadorLexico.l"
-{return TK_TRUE;}
+#line 43 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_TRUE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 38 "analisadorLexico.l"
-{return TK_FALSE;}
+#line 45 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_FALSE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "analisadorLexico.l"
-{return TK_NOT;}
+#line 47 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_NOT;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "analisadorLexico.l"
-{return TK_WHILE;}
+#line 49 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_WHILE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "analisadorLexico.l"
-{return TK_LOOP;}
+#line 51 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_LOOP;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "analisadorLexico.l"
-{return TK_IF;}
+#line 53 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_IF;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "analisadorLexico.l"
-{return TK_ELSE;}
+#line 55 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_ELSE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 44 "analisadorLexico.l"
-{return TK_END;}
+#line 57 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_END;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 45 "analisadorLexico.l"
-{return TK_NEW;}
+#line 59 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_NEW;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 46 "analisadorLexico.l"
-{return TK_RET;}
+#line 61 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_RET;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 47 "analisadorLexico.l"
-{return TK_FUN;}
+#line 63 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_FUN;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 48 "analisadorLexico.l"
-{return '(';}
+#line 65 "analisadorLexico.l"
+{yylval.line = lineCount; return '(';}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 49 "analisadorLexico.l"
-{return ')';}
+#line 67 "analisadorLexico.l"
+{yylval.line = lineCount; return ')';}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 50 "analisadorLexico.l"
-{return ',';}
+#line 69 "analisadorLexico.l"
+{yylval.line = lineCount; return ',';}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 51 "analisadorLexico.l"
-{return ':';}
+#line 71 "analisadorLexico.l"
+{yylval.line = lineCount; return ':';}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 52 "analisadorLexico.l"
-{return '>';}
+#line 73 "analisadorLexico.l"
+{yylval.line = lineCount; return '>';}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 53 "analisadorLexico.l"
-{return '<';}
+#line 75 "analisadorLexico.l"
+{yylval.line = lineCount; return '<';}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 54 "analisadorLexico.l"
-{return TK_GREATER_EQUAL;}
+#line 77 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_GREATER_EQUAL;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 55 "analisadorLexico.l"
-{return TK_LESS_EQUAL;}
+#line 79 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_LESS_EQUAL;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 56 "analisadorLexico.l"
-{return '=';}
+#line 81 "analisadorLexico.l"
+{yylval.line = lineCount; return '=';}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 57 "analisadorLexico.l"
-{return TK_NOT_EQUAL;}
+#line 83 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_NOT_EQUAL;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 58 "analisadorLexico.l"
-{return '[';}
+#line 85 "analisadorLexico.l"
+{yylval.line = lineCount; return '[';}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 59 "analisadorLexico.l"
-{return ']';}
+#line 87 "analisadorLexico.l"
+{yylval.line = lineCount; return ']';}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 60 "analisadorLexico.l"
-{return '+';}
+#line 89 "analisadorLexico.l"
+{yylval.line = lineCount; return '+';}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 61 "analisadorLexico.l"
-{return '-';}
+#line 91 "analisadorLexico.l"
+{yylval.line = lineCount; return '-';}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 62 "analisadorLexico.l"
-{return '*';}
+#line 93 "analisadorLexico.l"
+{yylval.line = lineCount; return '*';}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 63 "analisadorLexico.l"
-{return '/';}
+#line 95 "analisadorLexico.l"
+{yylval.line = lineCount; return '/';}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 64 "analisadorLexico.l"
-{return TK_AND;}
+#line 97 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_AND;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 65 "analisadorLexico.l"
-{return TK_OR;}
+#line 99 "analisadorLexico.l"
+{yylval.line = lineCount; return TK_OR;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 66 "analisadorLexico.l"
+#line 101 "analisadorLexico.l"
 {
-	val.cValor = yytext ;
-	if(val.cValor[0] != '0') 		/* caso o numero não esteja em hexadecimal */
-		val.iValor = atoi(val.cValor); 	
+	yylval.cValue = yytext ;
+	if(yylval.cValue[0] != '0') 		/* caso o numero não esteja em hexadecimal */
+		yylval.iValue = atoi(yylval.cValue); 	
 	else	
-		val.iValor = (int)strtol(val.cValor, 0, 0);
+		yylval.iValue = (int)strtol(yylval.cValue, 0, 0);
+
+	yylval.line = lineCount;
 	return TK_NUMINT;
 	}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 74 "analisadorLexico.l"
+#line 112 "analisadorLexico.l"
 {
-	val.cValor = yytext; 	
+	yylval.cValue = yytext;
+	yylval.line = lineCount; 	
 	return TK_ID;
 	}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 78 "analisadorLexico.l"
+#line 118 "analisadorLexico.l"
 { 
-	val.cValor = createString (yytext);
+	yylval.cValue = createString (yytext);
+	yylval.line = lineCount;
 	return TK_LITERAL_STRING;
 	}
 	YY_BREAK
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 82 "analisadorLexico.l"
+#line 124 "analisadorLexico.l"
 { } 
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 83 "analisadorLexico.l"
+#line 126 "analisadorLexico.l"
 {
 	printf("line %d => ERROR: OPEN COMMENT", lineCount);
 	exit(1);
@@ -1066,7 +1072,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 87 "analisadorLexico.l"
+#line 131 "analisadorLexico.l"
 {
 	printf ("line: %d => ERROR: OPEN STRING", lineCount);
 	exit(1);
@@ -1075,7 +1081,7 @@ YY_RULE_SETUP
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 91 "analisadorLexico.l"
+#line 136 "analisadorLexico.l"
 {
 	lineCount++;
 	return TK_LINE;
@@ -1083,23 +1089,24 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 95 "analisadorLexico.l"
+#line 141 "analisadorLexico.l"
 { }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 96 "analisadorLexico.l"
+#line 142 "analisadorLexico.l"
 {
-	val.cValor = yytext;
+	yylval.cValue = yytext;
+	yylval.line = lineCount;
 	return ERROR;
 } 
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 101 "analisadorLexico.l"
+#line 148 "analisadorLexico.l"
 ECHO;
 	YY_BREAK
-#line 1103 "<stdout>"
+#line 1110 "<stdout>"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2097,7 +2104,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 101 "analisadorLexico.l"
+#line 148 "analisadorLexico.l"
 
 
 
