@@ -77,18 +77,18 @@ comando	: cmdif
 cmdif	: TK_IF exp nl
                 lista_comando
              entradas_else
-             TK_END
+          TK_END
 	;
-entradas_else : TK_ELSE TK_IF exp nl lista_comando lista_else_if
-	| TK_ELSE nl lista_comando lista_else
+entradas_else : TK_ELSE TK_IF exp nl lista_comando entradas_else
+	| TK_ELSE nl lista_comando
 	| /* vazio */
 	;
-lista_else_if : /* vazio */ 
+/*lista_else_if : /* vazio 
 	| TK_ELSE TK_IF exp nl lista_comando lista_else_if
 	;
-lista_else : /* vazio */  
+lista_else : /* vazio *
 	| TK_ELSE nl lista_comando lista_else
-	;
+	; */
 cmdwhile  : TK_WHILE exp nl
                 lista_comando
              TK_LOOP

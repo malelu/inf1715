@@ -77,7 +77,7 @@ comando	: cmdif
 cmdif	: TK_IF exp nl
                 lista_comando
              entradas_else
-             TK_END
+          TK_END
 	;
 entradas_else : TK_ELSE TK_IF exp nl lista_comando lista_else_if
 	| TK_ELSE nl lista_comando lista_else
@@ -141,7 +141,7 @@ exp_fin : TK_NUMINT
 	| TK_LITERAL_STRING
 	| TK_TRUE
 	| TK_FALSE 
-	| TK_NEW tipo '[' exp ']' 
+	| TK_NEW '[' exp ']' tipo 
 	| TK_ID '(' lista_exp ')'
 	| TK_ID 
 	| '(' exp ')'
