@@ -1066,7 +1066,7 @@ case 39:
 YY_RULE_SETUP
 #line 126 "analisadorLexico.l"
 {
-	printf("line %d => ERROR: OPEN COMMENT", lineCount);
+	printf("line %d => ERROR: OPEN COMMENT\n", lineCount);
 	exit(1);
 }
 	YY_BREAK
@@ -1074,7 +1074,7 @@ case 40:
 YY_RULE_SETUP
 #line 131 "analisadorLexico.l"
 {
-	printf ("line: %d => ERROR: OPEN STRING", lineCount);
+	printf ("line: %d => ERROR: OPEN STRING\n", lineCount);
 	exit(1);
 	}
 	YY_BREAK
@@ -1083,18 +1083,19 @@ case 41:
 YY_RULE_SETUP
 #line 136 "analisadorLexico.l"
 {
+	yylval.line = lineCount ;
 	lineCount++;
 	return TK_LINE;
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 141 "analisadorLexico.l"
+#line 142 "analisadorLexico.l"
 { }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 142 "analisadorLexico.l"
+#line 143 "analisadorLexico.l"
 {
 	yylval.cValue = yytext;
 	yylval.line = lineCount;
@@ -1103,10 +1104,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 148 "analisadorLexico.l"
+#line 149 "analisadorLexico.l"
 ECHO;
 	YY_BREAK
-#line 1110 "<stdout>"
+#line 1111 "<stdout>"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2104,7 +2105,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 148 "analisadorLexico.l"
+#line 149 "analisadorLexico.l"
 
 
 

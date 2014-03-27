@@ -124,16 +124,17 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 {comment} { } 
 
 {openComment} {
-	printf("line %d => ERROR: OPEN COMMENT", lineCount);
+	printf("line %d => ERROR: OPEN COMMENT\n", lineCount);
 	exit(1);
 }
 
 {quotMark} {
-	printf ("line: %d => ERROR: OPEN STRING", lineCount);
+	printf ("line: %d => ERROR: OPEN STRING\n", lineCount);
 	exit(1);
 	}
 
 {line} {
+	yylval.line = lineCount ;
 	lineCount++;
 	return TK_LINE;
 }

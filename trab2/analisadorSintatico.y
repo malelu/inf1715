@@ -33,10 +33,15 @@
 
 %%
  /*regras de tradução */
-programa: funcao lista_funcao 
+programa: decl lista_decl 
+	| nl decl lista_decl
 	;
-lista_funcao : /* vazio */ 
-	| funcao lista_funcao
+decl	: funcao | global
+	;
+global	: TK_ID ':' tipo nl
+	;
+lista_decl : /* vazio */ 
+	| decl lista_decl
 	;
 funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
           	entradas
@@ -62,12 +67,6 @@ tipobase: TK_INT
 	| TK_BOOL 
 	| TK_STRING
 	;
-	/*
-	lista_declvar : /* vazio 
-	| declvar lista_declvar  
-	;
-declvar   : TK_ID ':' tipo nl
-	;*/
 lista_comando : /* vazio */ 
 	| comando nl lista_comando
 	;
@@ -77,23 +76,17 @@ comando	: cmdif
 	| cmdreturn 
 	| chamada 
 	;
-cmdif	: TK_IF exp nl
-                lista_comando
+cmdif	: TK_IF exp nl				
+                entradas
              	entradas_else
           TK_END
 	;
-entradas_else : TK_ELSE TK_IF exp nl lista_comando entradas_else
-	| TK_ELSE nl lista_comando
+entradas_else : TK_ELSE TK_IF exp nl entradas entradas_else
+	| TK_ELSE nl entradas
 	| /* vazio */
 	;
-/*lista_else_if : /* vazio 
-	| TK_ELSE TK_IF exp nl lista_comando lista_else_if
-	;
-lista_else : /* vazio *
-	| TK_ELSE nl lista_comando lista_else
-	; */
 cmdwhile: TK_WHILE exp nl
-                lista_comando
+                entradas
           TK_LOOP
 	;
 cmdatrib: var '=' exp
@@ -131,25 +124,25 @@ exp_less :  exp_add
 	| exp_less TK_NOT_EQUAL exp_add
 	;
 exp_add : exp_times 
-	| exp_add '+' exp_times 	{ $$.iValue = $1.iValue + $3.iValue; }
-	| exp_add '-' exp_times		/*{ $$.value = $1.value - $3.value; }*/
+	| exp_add '+' exp_times 	
+	| exp_add '-' exp_times		
 	;
 exp_times : exp_un 	
-	| exp_times '*' exp_un 		/*{ $$.value = $1.value * $3.value; }*/
-	| exp_times '/' exp_un		/*{ $$.value = $1.value / $3.value; }*/
+	| exp_times '*' exp_un 		
+	| exp_times '/' exp_un		
 	;
 exp_un : TK_NOT exp_un
 	| '-' exp_un 
 	| exp_fin
 	;
-exp_fin : TK_NUMINT 
+exp_fin : TK_NUMINT
 	| TK_LITERAL_STRING
 	| TK_TRUE
 	| TK_FALSE 
 	| TK_NEW '[' exp ']' tipo 
 	| TK_ID '(' lista_exp ')'
 	| var 
-	| '(' exp ')'			/*{ $$.value = $2.value; }*/
+	| '(' exp ')'			
 	;     
 %%
  /*procedimentos auxiliares */

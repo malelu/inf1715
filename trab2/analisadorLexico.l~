@@ -33,70 +33,116 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 %line
  /* regras */
 "char" {yylval.line = lineCount; return TK_CHAR;}
+
 "int" {yylval.line = lineCount; return TK_INT;}
+
 "string" {yylval.line = lineCount; return TK_STRING;}
+
 "bool" {yylval.line = lineCount; return TK_BOOL;}
+
 "true" {yylval.line = lineCount; return TK_TRUE;}
+
 "false" {yylval.line = lineCount; return TK_FALSE;}
+
 "not" {yylval.line = lineCount; return TK_NOT;}
+
 "while" {yylval.line = lineCount; return TK_WHILE;}
+
 "loop" {yylval.line = lineCount; return TK_LOOP;}
+
 "if" {yylval.line = lineCount; return TK_IF;}
+
 "else" {yylval.line = lineCount; return TK_ELSE;}
+
 "end" {yylval.line = lineCount; return TK_END;}
+
 "new" {yylval.line = lineCount; return TK_NEW;}
+
 "return" {yylval.line = lineCount; return TK_RET;}
+
 "fun" {yylval.line = lineCount; return TK_FUN;}
+
 "(" {yylval.line = lineCount; return '(';}
+
 ")" {yylval.line = lineCount; return ')';}
+
 "," {yylval.line = lineCount; return ',';}
+
 ":" {yylval.line = lineCount; return ':';}
+
 ">" {yylval.line = lineCount; return '>';}
+
 "<" {yylval.line = lineCount; return '<';}
+
 ">=" {yylval.line = lineCount; return TK_GREATER_EQUAL;}
+
 "<=" {yylval.line = lineCount; return TK_LESS_EQUAL;}
+
 "=" {yylval.line = lineCount; return '=';}
+
 "<>" {yylval.line = lineCount; return TK_NOT_EQUAL;}
+
 "[" {yylval.line = lineCount; return '[';}
+
 "]" {yylval.line = lineCount; return ']';}
+
 "+" {yylval.line = lineCount; return '+';}
+
 "-" {yylval.line = lineCount; return '-';}
+
 "*" {yylval.line = lineCount; return '*';}
+
 "/" {yylval.line = lineCount; return '/';}
+
 "and" {yylval.line = lineCount; return TK_AND;}
+
 "or" {yylval.line = lineCount; return TK_OR;}
+
 {numInt} {
-	val.cValor = yytext ;
-	if(val.cValor[0] != '0') 		/* caso o numero não esteja em hexadecimal */
-		val.iValor = atoi(val.cValor); 	
+	yylval.cValue = yytext ;
+	if(yylval.cValue[0] != '0') 		/* caso o numero não esteja em hexadecimal */
+		yylval.iValue = atoi(yylval.cValue); 	
 	else	
-		val.iValor = (int)strtol(val.cValor, 0, 0);
+		yylval.iValue = (int)strtol(yylval.cValue, 0, 0);
+
+	yylval.line = lineCount;
 	return TK_NUMINT;
 	}
+
 {id} {
-	val.cValor = yytext; 	
+	yylval.cValue = yytext;
+	yylval.line = lineCount; 	
 	return TK_ID;
 	}
+
 {string} { 
-	val.cValor = createString (yytext);
+	yylval.cValue = createString (yytext);
+	yylval.line = lineCount;
 	return TK_LITERAL_STRING;
 	}
+
 {comment} { } 
+
 {openComment} {
-	printf("line %d => ERROR: OPEN COMMENT", lineCount);
+	printf("line %d => ERROR: OPEN COMMENT\n", lineCount);
 	exit(1);
 }
+
 {quotMark} {
 	printf ("line: %d => ERROR: OPEN STRING", lineCount);
 	exit(1);
 	}
+
 {line} {
+	yylval.line = lineCount ;
 	lineCount++;
 	return TK_LINE;
 }
+
 {isSpace} { }
 . {
-	val.cValor = yytext;
+	yylval.cValue = yytext;
+	yylval.line = lineCount;
 	return ERROR;
 } 
 
