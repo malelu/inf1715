@@ -64,4 +64,26 @@ fun main () : int
 	end
 end	
 
+fun f()
+end
+
+fun f()
+   x:int
+end
+
+fun f()
+   x:int
+   y()
+end
+
+fun f()
+   x:int
+   z:int
+   y()
+end
+
+fun f()
+   y()
+end
+
 global : string

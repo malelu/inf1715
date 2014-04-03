@@ -10,10 +10,10 @@ Diretórios e arquivos:
 
 	- Diretório testes
 		- Diretório entrada
-			- teste1.mg a teste34.mg
+			- teste1.mg a teste29.mg
 			- testeCorreto.mg
 		- Diretório gabarito
-			- teste1.mg.out.exp a teste34.mg.out.exp
+			- teste1.mg.out.exp a teste29.mg.out.exp
 			- testeCorreto.mg.out.exp
 		- Diretório saida
 	- main.c
