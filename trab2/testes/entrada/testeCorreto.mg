@@ -2,6 +2,9 @@ fun funcao ( a : int, b : char) : []int
 	return 4
 end
 
+glob : int
+glob2 : []char
+
 fun funcao2 ()
 	b : int 
 end
@@ -60,3 +63,5 @@ fun main () : int
 	if 4 < 5
 	end
 end	
+
+global : string
