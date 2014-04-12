@@ -114,12 +114,17 @@ entradas_else : TK_ELSE TK_IF exp nl entradas entradas_else
 					  	  AST_addChild($$.node, block_else); }
 
 	| TK_ELSE nl entradas			{ $$.node = AST_new(AST_ELSE, $1.line);
-						}
+						  AST* block = AST_new(AST_BLOCK, $3.line);
+						  AST_addChildren(block, $3.node);
+					  	  AST_addChild($$.node, block); }
+
 	| /* vazio */				{ $$.node = NULL; }
 	;
 cmdwhile: TK_WHILE exp nl			{ $$.node = AST_new(AST_WHILE, $1.line);
-                entradas
-          TK_LOOP				}
+                entradas			  AST_addChild($$.node, $2.node);
+          TK_LOOP				  AST* block = AST_new(AST_BLOCK, $4.line);
+						  AST_addChildren(block, $4.node);
+					  	  AST_addChild($$.node, block); }
 	;
 cmdatrib: var '=' exp				{ $$.node = AST_new(AST_ATRIB, $1.line);
 						  AST_addChild($$.node, $1.node);
