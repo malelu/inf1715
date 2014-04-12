@@ -16,4 +16,9 @@ struct AST_ {
    AST* prevSibling;
 };
 
+AST AST_new(node_name, int line);
+AST_addChildren($$.node, $2.node); 
+AST_addChild(parent_node, node);
+AST AST_prependSibling(AST right_node, AST left_node); 
+
 #endif

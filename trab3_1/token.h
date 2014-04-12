@@ -1,3 +1,6 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
 typedef struct {
 	char* cValue;
 	int iValue;
@@ -5,3 +8,5 @@ typedef struct {
 } Token ;
 
 #define YYSTYPE Token
+
+#endif
