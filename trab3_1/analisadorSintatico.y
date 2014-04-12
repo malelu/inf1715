@@ -35,8 +35,8 @@
 %%
  /*regras de tradução */
 programa: decl lista_decl 			{ $$.node = AST_new(AST_PROGRAM, 1);
-						  AST_addChildren($$.node, $2.node); }}
-	| nl decl lista_decl
+						  AST_addChildren($$.node, $2.node); }
+	| nl decl lista_decl			{ }
 	;
 decl	: funcao 				{ $$.node = $1.node; }
 	| global				{ $$.node = $1.node; }
