@@ -2,7 +2,7 @@
 Aluna: Marina Leao Lucena
 Professor: Hisham Muhammad
 Matéria: Compiladores
-Trabalho: Analisador sintático
+Trabalho: AST
 *****************************************
 
 *****************************************
@@ -34,9 +34,70 @@ Para executar o programa, siga os seguintes passos:
 *****************************************
 Relatório do trabalho:
 
-No trabalho foi implementado um analisador sintático para a linguagem mini-0.
-Nele, foram retiradas as ambiguidades da gramática, fornecida no site da displina, transformando-a em uma gramática BNF e garantindo não haver conflitos na mesma.
-Após essa garantia, o analisador léxico do trabalho anterior foi combinado ao analisador sintático e os dois foram testados juntos.
+No trabalho foi implementado uma Árvore de Sintaxe Abstrata para a linguagem mini-0.
+Em conjunto com o Analisador SIntático do trabalho anterior, a árvore é montada, por bottom up a cada passo da gramática.
+Os nós são:
+
+	AST_PROGRAM
+	AST_GLOBAL
+	AST_FUN
+	AST_BLOCK
+	AST_PARAM
+	AST_INT : não tem nós filhos
+	AST_CHAR : não tem nós filhos
+	AST_BOOL : não tem nós filhos
+	AST_STRING : não tem nós filhos
+	AST_IF
+	AST_BLOCK_ELSE
+	AST_ELSEIF
+	AST_ELSE
+	AST_WHILE
+	AST_ATRIB
+	AST_CALL : tem 2 filhos
+		 filho 1 : nó contendo o valor do ID
+		 filho 2 :
+	AST_RET
+	AST_OR : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_AND : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_LESS : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_GREATER : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_EQUAL : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_LESS_EQUAL : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_GREATER_EQUAL : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_NOT_EQUAL : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_PLUS : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_MINUS : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_TIMES : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_DIVIDED : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
+	AST_NOT
+	AST_NEG
+	AST_TRUE : não tem nós filhos
+	AST_FALSE : não tem nós filhos
+	AST_NEW
 Foram feitos diversos testes para a captura de erros. Um deles estava completamente correto e foi o maior, tratando o máximo de situações possíveis que pudessem ocorrer em um programa em linguagem monga. Já os outros testes possuiam obrigatoriamente erros de sintaxe ou erros léxicos (dois testes para garantir que os erros léxicos ainda eram capturados). Eram testes mais curtos, já que ao encontrar um erro o programa interrompia sua execução.
 Ao compilarmos o programa, um arquivo y.tab.h é gerado. Esse arquivo é incluído na main através do comando "#include" e nele está contido o enum com todos os tokens utilizados.
 

@@ -72,14 +72,15 @@ AST_newFromToken( int value)
 	node->intVal = value ;
 	node->stringVal = NULL ;
 
-	return node ;
-	
+	return node ;	
 }
 
 AST_prettyPrinter (AST node)
 {
+	print("%d", node->intVal) ;
 	while (node->lastChild != NULL)
 	{
-		print("%
+		if(node->type != NULL)
+			//print(type
 	}
 }

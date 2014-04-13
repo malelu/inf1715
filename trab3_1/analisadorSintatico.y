@@ -35,7 +35,9 @@
 %%
  /*regras de tradução */
 programa: decl lista_decl 			{ $$.node = AST_new(AST_PROGRAM, 1);
-						  AST_addChildren($$.node, $2.node); }
+						  AST_addChild($$.node, $1.node);
+						  AST_addChildren($$.node, $2.node); 
+						  AST_prettyPrinter($$.node); }
 
 	| nl decl lista_decl			{ $$.node = AST_new(AST_PROGRAM, 1);
 						  AST_addChildren($$.node, $2.node); }

@@ -75,11 +75,11 @@
 
 
 /* Line 268 of yacc.c  */
-#line 79 "analisadorSintatico.tab.c"
+#line 79 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 
 /* Enabling verbose error messages.  */
@@ -129,6 +129,33 @@
      ERROR = 282
    };
 #endif
+/* Tokens.  */
+#define TK_CHAR 258
+#define TK_INT 259
+#define TK_STRING 260
+#define TK_BOOL 261
+#define TK_TRUE 262
+#define TK_FALSE 263
+#define TK_NOT 264
+#define TK_WHILE 265
+#define TK_LOOP 266
+#define TK_IF 267
+#define TK_ELSE 268
+#define TK_END 269
+#define TK_NEW 270
+#define TK_RET 271
+#define TK_FUN 272
+#define TK_GREATER_EQUAL 273
+#define TK_LESS_EQUAL 274
+#define TK_NOT_EQUAL 275
+#define TK_AND 276
+#define TK_OR 277
+#define TK_NUMINT 278
+#define TK_ID 279
+#define TK_LITERAL_STRING 280
+#define TK_LINE 281
+#define ERROR 282
+
 
 
 
@@ -144,7 +171,7 @@ typedef int YYSTYPE;
 
 
 /* Line 343 of yacc.c  */
-#line 148 "analisadorSintatico.tab.c"
+#line 175 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -2095,7 +2122,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 2099 "analisadorSintatico.tab.c"
+#line 2126 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

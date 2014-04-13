@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "ast.h"
 
 extern int lineCount ;
 
@@ -17,4 +18,5 @@ int main (void)
 	//yydebug = 1;
 	yyparse();
 	printf ("Nao ha erros de sintaxe\n");	
+	//AST_prettyPrinter() ;
 }
