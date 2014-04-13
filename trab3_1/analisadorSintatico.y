@@ -36,7 +36,9 @@
  /*regras de tradução */
 programa: decl lista_decl 			{ $$.node = AST_new(AST_PROGRAM, 1);
 						  AST_addChildren($$.node, $2.node); }
-	| nl decl lista_decl			{ }
+
+	| nl decl lista_decl			{ $$.node = AST_new(AST_PROGRAM, 1);
+						  AST_addChildren($$.node, $2.node); }
 	;
 decl	: funcao 				{ $$.node = $1.node; }
 	| global				{ $$.node = $1.node; }
@@ -223,7 +225,7 @@ exp_un : TK_NOT exp_un				{ $$.node = AST_new(($$.node, AST_new(AST_NOT, $1.line
 
 	| exp_fin				{ $$.node = $1.node; }
 	;
-exp_fin : TK_NUMINT				{ $$.node = AST_newFromToken($1); }
+exp_fin : TK_NUMINT				{ $$.node = AST_newFromToken($1.iValue); }
 	| TK_LITERAL_STRING			{ $$.node = AST_newFromToken($1); }
 	| TK_TRUE				{ $$.node = AST_new(AST_TRUE, $1.line) ; }
 	| TK_FALSE 				{ $$.node = AST_new(AST_FALSE, $1.line) ; }

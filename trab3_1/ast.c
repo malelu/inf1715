@@ -1,6 +1,6 @@
 #include "ast.h"
 
-AST AST_new (char* node_name, int line)
+AST AST_new (char* node_type, int line)
 {
 	AST* node ;
 	node->firstChild = NULL ;
@@ -9,7 +9,11 @@ AST AST_new (char* node_name, int line)
 	node->nextSibling = NULL ;
 	node->prevSibling = NULL ;
 	node->line = line ;
-	node.type
+	node->type = node_type ;
+	node->intVal = NULL ;
+	node->stringVal = NULL ;
+
+	return node ;
 }
 
 void AST_addChild(parent_node, node)
@@ -53,4 +57,29 @@ AST AST_prependSibling(AST right_node, AST left_node)
 	left_node->nextSibling = right_node ;
 
 	return right_node ;
+}
+
+AST_newFromToken( int value) 
+{
+	AST* node ;
+	node->firstChild = NULL ;
+	node->lastChild = NULL ;
+	node->parent = NULL ;
+	node->nextSibling = NULL ;
+	node->prevSibling = NULL ;
+	node->line = NULL ;
+	node->type = NULL ;
+	node->intVal = value ;
+	node->stringVal = NULL ;
+
+	return node ;
+	
+}
+
+AST_prettyPrinter (AST node)
+{
+	while (node->lastChild != NULL)
+	{
+		print("%
+	}
 }

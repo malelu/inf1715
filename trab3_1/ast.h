@@ -16,9 +16,11 @@ struct AST_ {
    AST* prevSibling;
 };
 
-AST AST_new (char* node_name, int line);
+AST AST_new (char* node_type, int line);
 AST_addChildren (AST parent_node, AST first_child); 
 AST_addChild (AST parent_node, AST node);
 AST AST_prependSibling (AST right_node, AST left_node); 
+AST_newFromToken( int value) ;
+AST_prettyPrinter (AST node) ;
 
 #endif
