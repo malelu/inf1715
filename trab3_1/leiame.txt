@@ -39,20 +39,42 @@ Em conjunto com o Analisador SIntático do trabalho anterior, a árvore é monta
 Os nós são:
 
 	AST_PROGRAM
-	AST_GLOBAL
-	AST_FUN
+	AST_GLOBAL : tem 2 filhos
+		 filho 1 : nó contendo o valor do ID
+		 filho 2 : nó representando o tipo do ID
+	AST_FUN : tem 4 filhos
+		 filho 1 :
+		 filho 2 :
+		 filho 3 :
+		 filho 4 :
 	AST_BLOCK
-	AST_PARAM
+	AST_PARAM : tem 2 filhos
+		 filho 1 : nó contendo o valor do ID
+		 filho 2 : nó representando o tipo do ID
 	AST_INT : não tem nós filhos
 	AST_CHAR : não tem nós filhos
 	AST_BOOL : não tem nós filhos
 	AST_STRING : não tem nós filhos
-	AST_IF
+	AST_IF : tem 3 filhos
+		 filho 1 :
+		 filho 2 :
+		 filho 3 :
 	AST_BLOCK_ELSE
-	AST_ELSEIF
-	AST_ELSE
-	AST_WHILE
-	AST_ATRIB
+	AST_ELSEIF : tem 3 filhos
+		 filho 1 :
+		 filho 2 :
+		 filho 3 :
+
+	AST_ELSE : tem 1 filho
+		 filho : nó do tipo block representando o bloco de código interno à contrução
+
+	AST_WHILE : tem 2 filhos
+		 filho 1 :
+		 filho 2 : nó do tipo block representando o bloco de código interno à contrução
+
+	AST_ATRIB : tem 2 filhos
+		 filho 1 :
+		 filho 2 :
 	AST_CALL : tem 2 filhos
 		 filho 1 : nó contendo o valor do ID
 		 filho 2 :
@@ -98,8 +120,7 @@ Os nós são:
 	AST_TRUE : não tem nós filhos
 	AST_FALSE : não tem nós filhos
 	AST_NEW
-Foram feitos diversos testes para a captura de erros. Um deles estava completamente correto e foi o maior, tratando o máximo de situações possíveis que pudessem ocorrer em um programa em linguagem monga. Já os outros testes possuiam obrigatoriamente erros de sintaxe ou erros léxicos (dois testes para garantir que os erros léxicos ainda eram capturados). Eram testes mais curtos, já que ao encontrar um erro o programa interrompia sua execução.
-Ao compilarmos o programa, um arquivo y.tab.h é gerado. Esse arquivo é incluído na main através do comando "#include" e nele está contido o enum com todos os tokens utilizados.
+
 
 
 

@@ -32,74 +32,75 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 %%
 %line
  /* regras */
-"char" {yylval.line = lineCount; return TK_CHAR;}
+"char" {yylval.line = lineCount; yylval.node = NULL; return TK_CHAR;}
 
-"int" {yylval.line = lineCount; return TK_INT;}
+"int" {yylval.line = lineCount; yylval.node = NULL; return TK_INT;}
 
-"string" {yylval.line = lineCount; return TK_STRING;}
+"string" {yylval.line = lineCount; yylval.node = NULL; return TK_STRING;}
 
-"bool" {yylval.line = lineCount; return TK_BOOL;}
+"bool" {yylval.line = lineCount; yylval.node = NULL; return TK_BOOL;}
 
-"true" {yylval.line = lineCount; return TK_TRUE;}
+"true" {yylval.line = lineCount; yylval.node = NULL; return TK_TRUE;}
 
-"false" {yylval.line = lineCount; return TK_FALSE;}
+"false" {yylval.line = lineCount; yylval.node = NULL; return TK_FALSE;}
 
-"not" {yylval.line = lineCount; return TK_NOT;}
+"not" {yylval.line = lineCount; yylval.node = NULL; return TK_NOT;}
 
-"while" {yylval.line = lineCount; return TK_WHILE;}
+"while" {yylval.line = lineCount; yylval.node = NULL; return TK_WHILE;}
 
-"loop" {yylval.line = lineCount; return TK_LOOP;}
+"loop" {yylval.line = lineCount; yylval.node = NULL; return TK_LOOP;}
 
-"if" {yylval.line = lineCount; return TK_IF;}
+"if" {yylval.line = lineCount; yylval.node = NULL; return TK_IF;}
 
-"else" {yylval.line = lineCount; return TK_ELSE;}
+"else" {yylval.line = lineCount; yylval.node = NULL; return TK_ELSE;}
 
-"end" {yylval.line = lineCount; return TK_END;}
+"end" {yylval.line = lineCount; yylval.node = NULL; return TK_END;}
 
-"new" {yylval.line = lineCount; return TK_NEW;}
+"new" {yylval.line = lineCount; yylval.node = NULL; return TK_NEW;}
 
-"return" {yylval.line = lineCount; return TK_RET;}
+"return" {yylval.line = lineCount; yylval.node = NULL; return TK_RET;}
 
-"fun" {yylval.line = lineCount; return TK_FUN;}
+"fun" {yylval.line = lineCount; yylval.node = NULL; return TK_FUN;}
 
-"(" {yylval.line = lineCount; return '(';}
+"(" {yylval.line = lineCount; yylval.node = NULL; return '(';}
 
-")" {yylval.line = lineCount; return ')';}
+")" {yylval.line = lineCount; yylval.node = NULL; return ')';}
 
-"," {yylval.line = lineCount; return ',';}
+"," {yylval.line = lineCount; yylval.node = NULL; return ',';}
 
-":" {yylval.line = lineCount; return ':';}
+":" {yylval.line = lineCount; yylval.node = NULL; return ':';}
 
-">" {yylval.line = lineCount; return '>';}
+">" {yylval.line = lineCount; yylval.node = NULL; return '>';}
 
-"<" {yylval.line = lineCount; return '<';}
+"<" {yylval.line = lineCount; yylval.node = NULL; return '<';}
 
-">=" {yylval.line = lineCount; return TK_GREATER_EQUAL;}
+">=" {yylval.line = lineCount; yylval.node = NULL; return TK_GREATER_EQUAL;}
 
-"<=" {yylval.line = lineCount; return TK_LESS_EQUAL;}
+"<=" {yylval.line = lineCount; yylval.node = NULL; return TK_LESS_EQUAL;}
 
-"=" {yylval.line = lineCount; return '=';}
+"=" {yylval.line = lineCount; yylval.node = NULL; return '=';}
 
-"<>" {yylval.line = lineCount; return TK_NOT_EQUAL;}
+"<>" {yylval.line = lineCount; yylval.node = NULL; return TK_NOT_EQUAL;}
 
-"[" {yylval.line = lineCount; return '[';}
+"[" {yylval.line = lineCount; yylval.node = NULL; return '[';}
 
-"]" {yylval.line = lineCount; return ']';}
+"]" {yylval.line = lineCount; yylval.node = NULL; return ']';}
 
-"+" {yylval.line = lineCount; return '+';}
+"+" {yylval.line = lineCount; yylval.node = NULL; return '+';}
 
-"-" {yylval.line = lineCount; return '-';}
+"-" {yylval.line = lineCount; yylval.node = NULL; return '-';}
 
-"*" {yylval.line = lineCount; return '*';}
+"*" {yylval.line = lineCount; yylval.node = NULL; return '*';}
 
-"/" {yylval.line = lineCount; return '/';}
+"/" {yylval.line = lineCount; yylval.node = NULL; return '/';}
 
-"and" {yylval.line = lineCount; return TK_AND;}
+"and" {yylval.line = lineCount; yylval.node = NULL; return TK_AND;}
 
-"or" {yylval.line = lineCount; return TK_OR;}
+"or" {yylval.line = lineCount; yylval.node = NULL; return TK_OR;}
 
 {numInt} {
 	yylval.cValue = yytext ;
+	yylval.node = NULL;
 	if(yylval.cValue[0] != '0') 		/* caso o numero não esteja em hexadecimal */
 		yylval.iValue = atoi(yylval.cValue); 	
 	else	
@@ -110,12 +111,14 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 	}
 
 {id} {
+	yylval.node = NULL;
 	yylval.cValue = yytext;
 	yylval.line = lineCount; 	
 	return TK_ID;
 	}
 
 {string} { 
+	yylval.node = NULL;
 	yylval.cValue = createString (yytext);
 	yylval.line = lineCount;
 	return TK_LITERAL_STRING;
@@ -134,6 +137,7 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 	}
 
 {line} {
+	yylval.node = NULL;
 	yylval.line = lineCount ;
 	lineCount++;
 	return TK_LINE;
@@ -141,6 +145,7 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 
 {isSpace} { }
 . {
+	yylval.node = NULL;
 	yylval.cValue = yytext;
 	yylval.line = lineCount;
 	return ERROR;

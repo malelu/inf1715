@@ -1,6 +1,6 @@
 #include "ast.h"
 
-AST AST_new (char* node_type, int line)
+AST* AST_new (int node_type, int line)
 {
 	AST* node ;
 	node->firstChild = NULL ;
@@ -8,15 +8,15 @@ AST AST_new (char* node_type, int line)
 	node->parent = NULL ;
 	node->nextSibling = NULL ;
 	node->prevSibling = NULL ;
-	node->line = line ;
-	node->type = node_type ;
-	node->intVal = NULL ;
+	node->line = &line ;
+	node->type = &node_type ;
+	node->intVal = 0 ;
 	node->stringVal = NULL ;
 
 	return node ;
 }
 
-void AST_addChild(parent_node, node)
+void AST_addChild(AST* parent_node, AST* node)
 {
 	if(parent_node->firstChild == NULL)
 	{
@@ -34,7 +34,7 @@ void AST_addChild(parent_node, node)
 	node->parent = parent_node ;
 }
 
-AST AST_addChildren (AST parent_node, AST last_child)
+void AST_addChildren (AST* parent_node, AST* last_child)
 {
 	last_child = node ;
 	parent_node->lastChild = node ;
@@ -51,7 +51,7 @@ AST AST_addChildren (AST parent_node, AST last_child)
 
 }
 
-AST AST_prependSibling(AST right_node, AST left_node)
+AST* AST_prependSibling(AST* right_node, AST* left_node)
 {
 	right_node->previousSibling = left_node ;
 	left_node->nextSibling = right_node ;
@@ -59,7 +59,7 @@ AST AST_prependSibling(AST right_node, AST left_node)
 	return right_node ;
 }
 
-AST_newFromToken( int value) 
+AST* AST_newNumFromToken( int value)
 {
 	AST* node ;
 	node->firstChild = NULL ;
@@ -69,13 +69,29 @@ AST_newFromToken( int value)
 	node->prevSibling = NULL ;
 	node->line = NULL ;
 	node->type = NULL ;
-	node->intVal = value ;
+	node->intVal = &value ;
 	node->stringVal = NULL ;
 
 	return node ;	
 }
 
-AST_prettyPrinter (AST node)
+AST* AST_newStringFromToken( char* value)
+{
+	AST* node ;
+	node->firstChild = NULL ;
+	node->lastChild = NULL ;
+	node->parent = NULL ;
+	node->nextSibling = NULL ;
+	node->prevSibling = NULL ;
+	node->line = NULL ;
+	node->type = NULL ;
+	node->intVal = NULL ;
+	node->stringVal = value ;
+
+	return node ;
+}
+
+void AST_prettyPrinter (AST* node)
 {
 	print("%d", node->intVal) ;
 	while (node->lastChild != NULL)
