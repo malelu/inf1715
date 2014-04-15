@@ -1,16 +1,19 @@
 #include "ast.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 AST* AST_new (int node_type, int line)
 {
+	printf("oi");
 	AST* node ;
+	printf("oi");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
 	node->nextSibling = NULL ;
 	node->prevSibling = NULL ;
-	node->line = &line ;
-	node->type = &node_type ;
+	node->line = line ;
+	node->type = node_type ;
 	node->intVal = 0 ;
 	node->stringVal = NULL ;
 
@@ -19,6 +22,7 @@ AST* AST_new (int node_type, int line)
 
 void AST_addChild(AST* parent_node, AST* node)
 {
+	printf("oi");
 	if(parent_node->firstChild == NULL)
 	{
 		parent_node->firstChild = node ;
@@ -37,7 +41,9 @@ void AST_addChild(AST* parent_node, AST* node)
 
 void AST_addChildren (AST* parent_node, AST* last_child)
 {
+	printf("oi");
 	AST* node = last_child ;
+	printf("oi");
 	parent_node->lastChild = node ;
 
 	while (node->prevSibling != NULL)
@@ -48,12 +54,11 @@ void AST_addChildren (AST* parent_node, AST* last_child)
 	node->parent = parent_node ;
 	parent_node->firstChild = node ;
 
-	return parent_node ;
-
 }
 
 AST* AST_prependSibling(AST* right_node, AST* left_node)
 {
+	printf("oi");
 	right_node->prevSibling = left_node ;
 	left_node->nextSibling = right_node ;
 
@@ -62,15 +67,17 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 
 AST* AST_newNumFromToken( int value)
 {
+	printf("oi");
 	AST* node ;
+	printf("oi");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
 	node->nextSibling = NULL ;
 	node->prevSibling = NULL ;
-	node->line = NULL ;
-	node->type = NULL ;
-	node->intVal = &value ;
+	node->line = 0 ;
+	node->type = 0 ;
+	node->intVal = value ;
 	node->stringVal = NULL ;
 
 	return node ;	
@@ -78,15 +85,17 @@ AST* AST_newNumFromToken( int value)
 
 AST* AST_newStringFromToken( char* value)
 {
+	printf("oi");
 	AST* node ;
+	printf("oi");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
 	node->nextSibling = NULL ;
 	node->prevSibling = NULL ;
-	node->line = NULL ;
-	node->type = NULL ;
-	node->intVal = NULL ;
+	node->line = 0 ;
+	node->type = 0 ;
+	node->intVal = 0 ;
 	node->stringVal = value ;
 
 	return node ;

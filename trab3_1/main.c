@@ -6,6 +6,15 @@ extern int lineCount ;
 
 extern int yydebug;
 
+extern AST* programa ;
+
+
+void prettyPrinter(AST* node)
+{
+	printf("oi");
+	//printf("%d", node->line);
+}
+
 void yyerror (const char * s)
 {	
 	printf("parser error %s \n",s);
@@ -18,5 +27,5 @@ int main (void)
 	//yydebug = 1;
 	yyparse();
 	printf ("Nao ha erros de sintaxe\n");	
-	//AST_prettyPrinter() ;
+	prettyPrinter(programa) ;
 }

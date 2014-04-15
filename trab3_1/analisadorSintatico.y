@@ -3,6 +3,7 @@
 #include "ast.h"
 #include "token.h"
 
+AST* programa ;
 
 %}
 
@@ -34,12 +35,12 @@
 
 %%
  /*regras de tradução */
-programa: decl lista_decl 			{ $$.node = AST_new(AST_PROGRAM, 1);
+programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
+						printf("ola");
 						  AST_addChild($$.node, $1.node);
 						  AST_addChildren($$.node, $2.node); }
-						  //AST_prettyPrinter($$.node); }
 
-	| nl decl lista_decl			{ $$.node = AST_new(AST_PROGRAM, 1);
+	| nl decl lista_decl			{ programa = AST_new(AST_PROGRAM, 1);
 						  AST_addChildren($$.node, $2.node); }
 	;
 decl	: funcao 				{ $$.node = $1.node; }

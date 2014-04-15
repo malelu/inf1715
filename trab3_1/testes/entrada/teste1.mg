@@ -1,4 +1,4 @@
 fun main () : int
-	a : int int
+	a : int
 end
 
