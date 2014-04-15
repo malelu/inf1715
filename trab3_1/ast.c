@@ -4,8 +4,8 @@
 
 AST* AST_new (int node_type, int line)
 {
-	printf("oi");
-	AST* node ;
+	
+	AST* node = (AST*) malloc(sizeof(AST)) ;
 	printf("oi");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
