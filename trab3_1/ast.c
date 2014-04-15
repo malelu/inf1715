@@ -41,8 +41,8 @@ void AST_addChild(AST* parent_node, AST* node)
 
 void AST_addChildren (AST* parent_node, AST* last_child)
 {
-	printf("oi");
-	AST* node = last_child ;
+	AST* node = (AST*) malloc(sizeof(AST)) ;
+	node = last_child ;
 	printf("oi");
 	parent_node->lastChild = node ;
 
@@ -67,8 +67,7 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 
 AST* AST_newNumFromToken( int value)
 {
-	printf("oi");
-	AST* node ;
+	AST* node = (AST*) malloc(sizeof(AST)) ;
 	printf("oi");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
@@ -85,8 +84,7 @@ AST* AST_newNumFromToken( int value)
 
 AST* AST_newStringFromToken( char* value)
 {
-	printf("oi");
-	AST* node ;
+	AST* node = (AST*) malloc(sizeof(AST)) ;
 	printf("oi");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
