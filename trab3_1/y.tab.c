@@ -1532,8 +1532,7 @@ yyreduce:
 #line 37 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_PROGRAM, 1);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (2)]).node);
-						  AST_addChildren((yyval).node, (yyvsp[(2) - (2)]).node); 
-						  AST_prettyPrinter((yyval).node); }
+						  AST_addChildren((yyval).node, (yyvsp[(2) - (2)]).node); }
     break;
 
   case 3:
@@ -2063,7 +2062,7 @@ yyreduce:
 
 /* Line 1806 of yacc.c  */
 #line 230 "analisadorSintatico.y"
-    { (yyval).node = newNumFromToken((yyvsp[(1) - (1)]).iValue); }
+    { (yyval).node = AST_newNumFromToken((yyvsp[(1) - (1)]).iValue); }
     break;
 
   case 71:
@@ -2122,7 +2121,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 2126 "y.tab.c"
+#line 2125 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

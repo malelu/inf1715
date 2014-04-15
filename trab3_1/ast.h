@@ -60,6 +60,6 @@ void AST_addChild (AST* parent_node, AST* node);
 AST* AST_prependSibling (AST* right_node, AST* left_node); 
 AST* AST_newNumFromToken( int value) ;
 AST* AST_newStringFromToken( char* value) ;
-void AST_prettyPrinter (AST* node) ;
+//void AST_prettyPrinter (AST* node) ;
 
 #endif
