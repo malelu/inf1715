@@ -112,19 +112,13 @@ void prettyPrinter(AST* node)
 	printAST (printed_node->type) ;
 	//if(printed_node->stringVal != NULL)
 		//fprintf(stderr, " %s\n", printed_node->stringVal);
+	if(printed_node->intVal != NULL)
+		fprintf(stderr, " %d", printed_node->intVal);
 
 
 	if(printed_node->firstChild == NULL)
-	{
-		//if(printed_node->nextSibling != NULL)
-			fprintf(stderr, " @%d\n", printed_node->line);
-		//else
-		//{
-		//	fprintf(stderr, " @%d\n", printed_node->line);
-		//	addTab (numTab-1) ;
-		//	fprintf(stderr, " }\n");
-		//}
-	}
+		fprintf(stderr, " @%d\n", printed_node->line);
+
 	else if(printed_node->firstChild != NULL)
 	{	
 		fprintf(stderr, " @%d { \n", printed_node->line);
@@ -140,11 +134,8 @@ void prettyPrinter(AST* node)
 		prettyPrinter(printed_node->nextSibling) ;
 	}
 	else
-	{
-		//fprintf(stderr, "}\n");
 		numTab--;
-		
-	}
+
 }
 
 

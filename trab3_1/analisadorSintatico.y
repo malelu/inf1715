@@ -36,7 +36,7 @@ AST* programa ;
 %%
  /*regras de tradução */
 programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
-						//fprintf(stderr, "ooooo\n");
+						fprintf(stderr, "ooooo\n");
 						//fprintf(stderr, "decl    %d\n", $1.node);
 						  //AST_addChild(programa, $1.node);
 						  AST_prependSibling($2.node, $1.node);
@@ -83,10 +83,15 @@ funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
 						  AST* block = AST_new(AST_BLOCK, $9.line);
 						  AST_addChildren(block, $9.node);
 						  AST_prependSibling($7.node, $4.node);
-						  AST_prependSibling(block, $7.node);
-					  	  AST_addChildren($$.node, block);
-						/*fprintf(stderr, "FUN\n");					  
-						fprintf(stderr, "string    %s\n", $2.cValue);*/
+						  if($9.node != NULL)
+						  {
+						  	AST_prependSibling(block, $7.node);
+					  	  	AST_addChildren($$.node, block);
+						  }
+						  else
+						   	AST_addChildren($$.node, $7.node);
+						/*fprintf(stderr, "FUN\n");	*/				  
+						fprintf(stderr, "string    %s\n", $2.cValue);
 						//fprintf(stderr, "tipo    %d\n", $7.node);
 						/*fprintf(stderr, "%d\n", $$.node);*/
 						//fprintf(stderr, "oi   %d\n"); 
@@ -101,18 +106,23 @@ funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
 	| TK_FUN TK_ID '(' params ')' nl	
 		entradas
 	  TK_END nl				{ $$.node = AST_new(AST_FUN, $1.line);
-                				  $$.node->stringVal = $2.cValue ;
+                				  $$.node->stringVal = $2.cValue ;						
           					  //AST_addChild($$.node, $4.node);					
 					 	  AST* block = AST_new(AST_BLOCK, $7.line);
-          					  AST_addChildren(block, $7.node);
-						  AST_prependSibling(block, $4.node);
-					  	  AST_addChildren($$.node, block);
+    	  					  AST_addChildren(block, $7.node);
+						  if($7.node != NULL)
+						  {					  
+						  	AST_prependSibling(block, $4.node);
+					  	  	AST_addChildren($$.node, block);
+						  }
+						  else
+							AST_addChildren($$.node, $4.node);
 						  //AST_prependSibling($7.node, $4.node);
 						//fprintf(stderr, "FUN\n");					  
-						//fprintf(stderr, "string    %s\n", $2.cValue);
+						fprintf(stderr, "string    %s\n", $2.cValue);
 						//fprintf(stderr, "entradas    %d\n", $7.node);
 						//fprintf(stderr, "%d\n", $$.node);
-						fprintf(stderr, "params %d\n", $4.node->type);  
+						//fprintf(stderr, "params %d\n", $4.node->type);  
 						//fprintf(stderr, "block first  %d\n", block->firstChild) ;
 						//fprintf(stderr, "block last  %d\n", block->lastChild) ; 						 }
 } 
