@@ -101,6 +101,9 @@ void prettyPrinter(AST* node)
 {	
 	int numTab = 0 ;
 
+	AST* parent_node = (AST*) malloc(sizeof(AST)) ;
+
+
 	while(node != NULL)
 	{
 		addTab (numTab) ;
@@ -119,7 +122,8 @@ void prettyPrinter(AST* node)
 			fprintf(stderr, " @%d\n", node->line);
 			
 		}
-	
+		
+		parent_node = node ;
 		node = node->firstChild ;
 		numTab++ ;
 	}

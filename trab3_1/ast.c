@@ -65,6 +65,7 @@ void AST_addChildren (AST* parent_node, AST* last_child)
 		while (node->prevSibling != NULL)
 		{
 			node->parent = parent_node ;
+			node = node->prevSibling ;
 		}
 
 		node->parent = parent_node ;
@@ -82,9 +83,19 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 		left_node->nextSibling = (AST*) malloc(sizeof(AST)) ;
 		right_node->prevSibling = left_node ;
 		left_node->nextSibling = right_node ;
+
+		return right_node ;
 	}
+
+	else if(right_node != NULL && left_node == NULL)
+		return right_node ;
+
+	else if(right_node == NULL && left_node != NULL)
+		return left_node ;
+	else
+		return NULL ;
 	//fprintf(stderr, "saiu4\n");
-	return right_node ;
+	
 }
 
 AST* AST_newNumFromToken( int value)

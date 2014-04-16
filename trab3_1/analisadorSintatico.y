@@ -83,10 +83,20 @@ funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
 		entradas
 	  TK_END nl				{ $$.node = AST_new(AST_FUN, $1.line);
                 				  $$.node->stringVal = $2.cValue ;
-          					  AST_addChild($$.node, $4.node);
+          					  AST_addChild($$.node, $4.node);					
 					 	  AST* block = AST_new(AST_BLOCK, $7.line);
+						fprintf(stderr, "ENTROUUUUUUUUUUUUU\n");
           					  AST_addChildren(block, $7.node);
-					  	  AST_addChild($$.node, block); } 
+						fprintf(stderr, "SAIUUUUUUUUUUUUU\n");
+					  	  AST_addChild($$.node, block);
+						  AST_prependSibling($7.node, $4.node);
+						fprintf(stderr, "FUN\n");					  
+						//fprintf(stderr, "string    %s\n", $2.cValue);
+						fprintf(stderr, "entradas    %d\n", $7.node);
+						//fprintf(stderr, "%d\n", $$.node);
+						fprintf(stderr, "params %d\n", $4.node);  
+						fprintf(stderr, "block first  %d\n", block->firstChild) ;
+						fprintf(stderr, "block last  %d\n", block->lastChild) ; 						 } 
 	;
 params	: /*vazio*/ 				{ $$.node = NULL; //fprintf(stderr, "params2   %d\n", $$.node);
 						}
@@ -107,9 +117,13 @@ entradas: TK_ID ':' tipo nl entradas		{ $$.node = AST_new(AST_DECLVAR, $1.line);
 						  AST_addChild($$.node, $3.node); 
 						  //fprintf(stderr, "entradas\n");
 						  //fprintf(stderr, "no 5   %d\n", $5.node);
+						fprintf(stderr, "DECLVAR   %d\n", $$.node);
 						  AST_prependSibling($5.node, $$.node); }
 
-	| comando nl lista_comando		{ $$.node = AST_prependSibling($3.node, $1.node); }
+	| comando nl lista_comando		{ $$.node = AST_prependSibling($3.node, $1.node); 
+						fprintf(stderr, "$$comando   %d\n", $$.node);
+						fprintf(stderr, "comando   %d\n", $1.node);
+						fprintf(stderr, "lista_comando   %d\n", $3.node);}
 	| /* vazio */				{ $$.node = NULL; }
 	;
 tipo    : tipobase 				{ $$.node = $1.node; }//fprintf(stderr, "TIPO\n");
@@ -130,7 +144,8 @@ comando	: cmdif 				{ $$.node = $1.node; }
 	| cmdwhile 				{ $$.node = $1.node; }
 	| cmdatrib 				{ $$.node = $1.node; }
 	| cmdreturn 				{ $$.node = $1.node; }
-	| chamada 				{ $$.node = $1.node; }
+	| chamada 				{ $$.node = $1.node; 
+						fprintf(stderr, "chamada indo comando   %d\n", $$.node);}
 	;
 cmdif	: TK_IF exp nl				
 		entradas
@@ -178,7 +193,8 @@ var	: TK_ID 				{ $$.node = AST_newStringFromToken($1.cValue, $1.line); }
 	;
 chamada : TK_ID '(' lista_exp ')'		{ $$.node = AST_new(AST_CALL, $1.line);
 						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
-						  AST_addChild($$.node, $3.node); }	
+						  AST_addChild($$.node, $3.node); 
+						fprintf(stderr, "chamada   %d\n", $$.node);}	
 	;
 lista_exp  : /* vazio */ 			{ $$.node = NULL; }
 	| exp sublista_exp			{ $$.node = AST_prependSibling($2.node, $1.node); }

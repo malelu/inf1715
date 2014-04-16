@@ -113,7 +113,6 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 {id} {
 	yylval.node = NULL;
 	yylval.cValue = yytext;
-fprintf(stderr, "LEXICO    %s\n", yylval.cValue);
 	yylval.line = lineCount; 	
 	return TK_ID;
 	}
