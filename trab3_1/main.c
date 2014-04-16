@@ -8,6 +8,7 @@ extern int yydebug;
 
 extern AST* programa ;
 
+extern int numTab = 0 ;
 
 void printAST (int type)
 {
@@ -97,7 +98,35 @@ void addTab (int numTab)
 		fprintf(stderr, "  ");
 	}
 }
+
+
 void prettyPrinter(AST* node)
+{	
+	AST* printed_node = (AST*) malloc(sizeof(AST)) ;
+	printed_node = node ;
+
+	/* imprime nó */
+	addTab (numTab) ;
+	printAST (printed_node->type) ;
+	//if(printed_node->stringVal != NULL)
+		//fprintf(stderr, " %s\n", printed_node->stringVal);
+	fprintf(stderr, " @%d\n", printed_node->line);
+	if(printed_node->firstChild != NULL)
+	{	
+		numTab++ ;
+		prettyPrinter(printed_node->firstChild) ;
+	}
+	if(printed_node->nextSibling != NULL)
+	{
+		prettyPrinter(printed_node->nextSibling) ;
+	}
+	else
+		numTab--;
+}
+
+
+
+/*void prettyPrinter(AST* node)
 {	
 	int numTab = 0 ;
 
@@ -123,11 +152,12 @@ void prettyPrinter(AST* node)
 			
 		}
 		
-		node = parent_node->firstChild ;
+		if(node->parent != NULL)
+			node = parent_node->firstChild ;
 		node = node->firstChild ;
 		numTab++ ;
 	}
-}
+}*/
 
 void yyerror (const char * s)
 {	

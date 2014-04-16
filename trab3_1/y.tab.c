@@ -1587,11 +1587,7 @@ yyreduce:
 
 /* Line 1806 of yacc.c  */
 #line 62 "analisadorSintatico.y"
-    { (yyval).node = AST_prependSibling((yyvsp[(2) - (2)]).node, (yyvsp[(1) - (2)]).node); 
-						fprintf(stderr, "NODE 1->    %d\n", (yyvsp[(1) - (2)]).node);
-						fprintf(stderr, "NODE 2->    %d\n", (yyvsp[(2) - (2)]).node);
-						fprintf(stderr, "$$NODE->    %d\n", (yyval).node);
-						fprintf(stderr, "$$NODE->PREV->    %d\n", (yyval).node->prevSibling);}
+    { (yyval).node = AST_prependSibling((yyvsp[(2) - (2)]).node, (yyvsp[(1) - (2)]).node); }
     break;
 
   case 9:
@@ -2178,7 +2174,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 2182 "y.tab.c"
+#line 2178 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

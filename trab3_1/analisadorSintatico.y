@@ -59,11 +59,11 @@ global	: TK_ID ':' tipo nl			{ $$.node = AST_new(AST_GLOBAL, $1.line);
 						  AST_addChild($$.node, $3.node); }
 	;
 lista_decl : /* vazio */ 			{ $$.node = NULL; }
-	| decl lista_decl			{ $$.node = AST_prependSibling($2.node, $1.node); 
-						fprintf(stderr, "NODE 1->    %d\n", $1.node);
-						fprintf(stderr, "NODE 2->    %d\n", $2.node);
-						fprintf(stderr, "$$NODE->    %d\n", $$.node);
-						fprintf(stderr, "$$NODE->PREV->    %d\n", $$.node->prevSibling);}
+	| decl lista_decl			{ $$.node = AST_prependSibling($2.node, $1.node); }
+						//fprintf(stderr, "NODE 1->    %d\n", $1.node);
+						//fprintf(stderr, "NODE 2->    %d\n", $2.node);
+						//fprintf(stderr, "$$NODE->    %d\n", $$.node);
+						//fprintf(stderr, "$$NODE->PREV->    %d\n", $$.node->prevSibling);}
 	;
 funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl	
 		entradas
