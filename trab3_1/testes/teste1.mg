@@ -1,5 +1,5 @@
-/*fun main () : int
+fun main () : int
 	a : int
-end*/
+end
 
 

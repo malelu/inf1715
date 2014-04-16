@@ -116,20 +116,22 @@ void prettyPrinter(AST* node)
 
 	if(printed_node->firstChild == NULL)
 	{
-		if(printed_node->nextSibling != NULL)
+		//if(printed_node->nextSibling != NULL)
 			fprintf(stderr, " @%d\n", printed_node->line);
-		else
-		{
-			fprintf(stderr, " @%d\n", printed_node->line);
-			addTab (numTab-1) ;
-			fprintf(stderr, " }\n", printed_node->line);
-		}
+		//else
+		//{
+		//	fprintf(stderr, " @%d\n", printed_node->line);
+		//	addTab (numTab-1) ;
+		//	fprintf(stderr, " }\n");
+		//}
 	}
 	else if(printed_node->firstChild != NULL)
 	{	
 		fprintf(stderr, " @%d { \n", printed_node->line);
 		numTab++ ;
 		prettyPrinter(printed_node->firstChild) ;
+		addTab (numTab) ;
+		fprintf(stderr, " }\n");
 	}
 
 
@@ -157,8 +159,7 @@ int main (void)
 {
 	//yydebug = 1;
 	yyparse();
-	fprintf(stderr, "Nao ha erros de sintaxe\n");
-	printf ("Nao ha erros de sintaxe\n");	
+	//fprintf(stderr, "Nao ha erros de sintaxe\n");
 	prettyPrinter(programa) ;
 }
 

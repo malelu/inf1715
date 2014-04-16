@@ -1,9 +1,5 @@
-fun main () : int
-	b : int
-	c : char
-	b = 3
-	if (b = 4)
-		b = 0
-	else )
+fun main ()	
+	while cont < 20
+		cont = cont + 1
+	loop
 end
-

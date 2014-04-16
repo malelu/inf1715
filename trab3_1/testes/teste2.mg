@@ -1,1 +1,1 @@
-/*global : char*/
+global : char
