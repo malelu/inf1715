@@ -52,14 +52,15 @@ enum ast { AST_CHAR = 283,
 	     AST_ATRIB,
 	     AST_NEG,
 	     AST_CALL,
-	     AST_DECLVAR
+	     AST_DECLVAR,
+	     AST_NUMINT
 };
 
 AST* AST_new (int node_type, int line);
 void AST_addChildren (AST* parent_node, AST* first_child); 
 void AST_addChild (AST* parent_node, AST* node);
 AST* AST_prependSibling (AST* right_node, AST* left_node); 
-AST* AST_newNumFromToken( int value) ;
+AST* AST_newNumFromToken( int value, int line, int type) ;
 AST* AST_newStringFromToken( char* value, int line, int type) ;
 //void AST_prettyPrinter (AST* node) ;
 

@@ -867,7 +867,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 37 "analisadorLexico.l"
-{yylval.line = lineCount; yylval.node = NULL; return TK_INT;}
+{yylval.line = lineCount; yylval.node = NULL; fprintf(stderr, "INT lexico\n"); return TK_INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP

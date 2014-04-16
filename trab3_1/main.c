@@ -86,6 +86,8 @@ void printAST (int type)
 		fprintf(stderr, "AST_CALL");
 	else if (type == 319)
 		fprintf(stderr, "AST_DECLVAR");
+	else if (type == 320)
+		fprintf(stderr, "AST_NUMINT");
 	else
 		fprintf(stderr, "NO AST");
 }

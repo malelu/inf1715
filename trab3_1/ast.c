@@ -79,6 +79,10 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 	//fprintf(stderr, "entrou4\n");
 	if(right_node != NULL && left_node != NULL)
 	{
+		while(left_node->nextSibling != NULL)
+		{
+			left_node = left_node->nextSibling ;
+		}
 		right_node->prevSibling = (AST*) malloc(sizeof(AST)) ;
 		left_node->nextSibling = (AST*) malloc(sizeof(AST)) ;
 		right_node->prevSibling = left_node ;
@@ -98,7 +102,7 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 	
 }
 
-AST* AST_newNumFromToken( int value)
+AST* AST_newNumFromToken( int value, int line, int type)
 {
 	AST* node = (AST*) malloc(sizeof(AST)) ;
 	//fprintf(stderr, "entrou5\n");
@@ -107,8 +111,8 @@ AST* AST_newNumFromToken( int value)
 	node->parent = NULL ;
 	node->nextSibling = NULL ;
 	node->prevSibling = NULL ;
-	node->line = 0 ;
-	node->type = 0 ;
+	node->line = line ;
+	node->type = type ;
 	node->intVal = value ;
 	node->stringVal = NULL ;
 	//fprintf(stderr, "saiu5\n");
