@@ -83,27 +83,43 @@ void printAST (int type)
 		fprintf(stderr, "AST_NEG");
 	else if (type == 318)
 		fprintf(stderr, "AST_CALL");
+	else
+		fprintf(stderr, "NO AST");
+}
+
+void addTab (int numTab)
+{
+	int cont;
+	for(cont=0;cont<numTab;cont++)
+	{
+		fprintf(stderr, "  ");
+	}
 }
 void prettyPrinter(AST* node)
 {	
+	int numTab = 0 ;
+
 	while(node != NULL)
 	{
+		addTab (numTab) ;
 		printAST (node->type) ;
-		if(node->stringVal != NULL)
-			fprintf(stderr, " %s\n", node->stringVal);
+		//if(node->stringVal != NULL)
+			//fprintf(stderr, " %s\n", node->stringVal);
 		fprintf(stderr, " @%d\n", node->line);
 
 		while(node->nextSibling != NULL)
 		{	
 			node = node->nextSibling ;
+			addTab (numTab) ;
 			printAST (node->type) ;
-			if(node->stringVal != NULL)
-				fprintf(stderr, " %s\n", node->stringVal);
+			//if(node->stringVal != NULL)
+				//fprintf(stderr, " %s\n", node->stringVal);
 			fprintf(stderr, " @%d\n", node->line);
 			
 		}
 	
 		node = node->firstChild ;
+		numTab++ ;
 	}
 }
 

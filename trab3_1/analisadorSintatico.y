@@ -52,7 +52,7 @@ decl	: funcao 				{ $$.node = $1.node; }
 	| global				{ $$.node = $1.node; }
 	;
 global	: TK_ID ':' tipo nl			{ $$.node = AST_new(AST_GLOBAL, $1.line);
- 						  AST_addChild($$.node, AST_newStringFromToken($1.cValue));
+ 						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
 						  AST_addChild($$.node, $3.node); }
 	;
 lista_decl : /* vazio */ 			{ $$.node = NULL; }
@@ -97,11 +97,11 @@ lista_parametro : /* vazio */ 			{ $$.node = NULL; }
 	| lista_parametro ',' parametro		{ $$.node = AST_prependSibling($3.node, $1.node); }
 	;
 parametro : TK_ID ':' tipo			{ $$.node = AST_new(AST_PARAM, $1.line);
-						  AST_addChild($$.node, AST_newStringFromToken($1.cValue));
+						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
 						  AST_addChild($$.node, $3.node); }
 	;
 entradas: TK_ID ':' tipo nl entradas		{ $$.node = AST_new(AST_BLOCK, $1.line);
-						  AST_addChild($$.node, AST_newStringFromToken($1.cValue));
+						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
 						  AST_addChild($$.node, $3.node); 
 						  fprintf(stderr, "entradas\n");
 						  fprintf(stderr, "no 5   %d\n", $5.node);
@@ -171,11 +171,11 @@ cmdatrib: var '=' exp				{ $$.node = AST_new(AST_ATRIB, $1.line);
 						  AST_addChild($$.node, $1.node);
 						  AST_addChild($$.node, $3.node); }
 	;
-var	: TK_ID 				{ $$.node = AST_newStringFromToken($1.cValue); }
+var	: TK_ID 				{ $$.node = AST_newStringFromToken($1.cValue, $1.line); }
 	| var '[' exp ']'			{ $$.node = AST_prependSibling($3.node, $1.node); }
 	;
 chamada : TK_ID '(' lista_exp ')'		{ $$.node = AST_new(AST_CALL, $1.line);
-						  AST_addChild($$.node, AST_newStringFromToken($1.cValue));
+						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
 						  AST_addChild($$.node, $3.node); }	
 	;
 lista_exp  : /* vazio */ 			{ $$.node = NULL; }
@@ -255,7 +255,7 @@ exp_un : TK_NOT exp_un				{ $$.node = AST_new(AST_NOT, $1.line);
 	| exp_fin				{ $$.node = $1.node; }
 	;
 exp_fin : TK_NUMINT				{ $$.node = AST_newNumFromToken($1.iValue); }
-	| TK_LITERAL_STRING			{ $$.node = AST_newStringFromToken($1.cValue); }
+	| TK_LITERAL_STRING			{ $$.node = AST_newStringFromToken($1.cValue, $1.line); }
 	| TK_TRUE				{ $$.node = AST_new(AST_TRUE, $1.line) ; }
 	| TK_FALSE 				{ $$.node = AST_new(AST_FALSE, $1.line) ; }
 	| TK_NEW '[' exp ']' tipo 		{ $$.node = AST_new(AST_NEW, $1.line);
@@ -263,7 +263,7 @@ exp_fin : TK_NUMINT				{ $$.node = AST_newNumFromToken($1.iValue); }
 						  AST_addChild($$.node, $5.node); }
 
 	| TK_ID '(' lista_exp ')'		{ $$.node = AST_new(AST_CALL, $1.line);
-						  AST_addChild($$.node, AST_newStringFromToken($1.cValue));
+						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
 						  AST_addChild($$.node, $3.node); }
 	| var 					{ $$.node = $1.node; }
 	| '(' exp ')'				{ $$.node = $2.node; }	
