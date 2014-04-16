@@ -3,12 +3,10 @@
 #include "ast.h"
 
 extern int lineCount ;
-
 extern int yydebug;
-
 extern AST* programa ;
-
 extern int numTab = 0 ;
+extern int error = 0 ;
 
 void addTab (int numTab)
 {
@@ -25,15 +23,14 @@ void prettyPrinter(AST* node)
 
 	addTab (numTab) ;
 	printAST (node->type) ;
-	//if(node->stringVal != NULL)
-		//fprintf(stderr, " %s\n", node->stringVal);
-	if(node->intVal != NULL)
-		fprintf(stderr, " %d", node->intVal);
 
+	if(node->stringVal != NULL)
+		fprintf(stderr, " [%s]", node->stringVal);
+	if(node->type == AST_NUMINT)
+		fprintf(stderr, " [%d]", node->intVal);
 
 	if(node->firstChild == NULL)
 		fprintf(stderr, " @%d\n", node->line);
-
 	else if(node->firstChild != NULL)
 	{	
 		fprintf(stderr, " @%d { \n", node->line);
@@ -43,11 +40,8 @@ void prettyPrinter(AST* node)
 		fprintf(stderr, " }\n");
 	}
 
-
 	if(node->nextSibling != NULL)
-	{
 		prettyPrinter(node->nextSibling) ;
-	}
 	else
 		numTab--;
 
@@ -58,7 +52,7 @@ void yyerror (const char * s)
 {	
 	printf("parser error %s \n",s);
 	printf("Erro de sintaxe na linha %d\n", lineCount);
-	exit(1);
+	error = 1;
 }
 
 int main (void)
@@ -67,5 +61,9 @@ int main (void)
 	yyparse();
 	//fprintf(stderr, "Nao ha erros de sintaxe\n");
 	prettyPrinter(programa) ;
+	if (error == 0)
+		return 0 ;
+	else
+		return 1 ;
 }
 

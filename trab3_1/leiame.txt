@@ -16,6 +16,7 @@ Diretórios e arquivos:
 		-teste5.mg
 		-teste6.mg
 		-teste7.mg
+		-teste8.mg
 	- main.c
 	- analisadorLexico.l
 	- analisadorSintatico.y

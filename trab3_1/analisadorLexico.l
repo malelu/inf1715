@@ -34,7 +34,7 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
  /* regras */
 "char" {yylval.line = lineCount; yylval.node = NULL; return TK_CHAR;}
 
-"int" {yylval.line = lineCount; yylval.node = NULL; fprintf(stderr, "INT lexico\n"); return TK_INT;}
+"int" {yylval.line = lineCount; yylval.node = NULL; return TK_INT;}
 
 "string" {yylval.line = lineCount; yylval.node = NULL; return TK_STRING;}
 
@@ -112,8 +112,9 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 
 {id} {
 	yylval.node = NULL;
-	yylval.cValue = yytext;
-	yylval.line = lineCount; 	
+	yylval.cValue = strndup(yytext, yyleng);
+	yylval.line = lineCount; 
+	fprintf(stderr, "%s\n", yylval.cValue);	
 	return TK_ID;
 	}
 
