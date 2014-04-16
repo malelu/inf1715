@@ -1,5 +1,8 @@
-fun main () : int
-	b : int a : int
+fun f()
+   x:string
 end
 
-
+fun f()
+   x:int
+   g()
+end

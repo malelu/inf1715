@@ -51,7 +51,8 @@ enum ast { AST_CHAR = 283,
 	     AST_PARAM,
 	     AST_ATRIB,
 	     AST_NEG,
-	     AST_CALL
+	     AST_CALL,
+	     AST_DECLVAR
 };
 
 AST* AST_new (int node_type, int line);

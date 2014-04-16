@@ -36,12 +36,12 @@ AST* programa ;
 %%
  /*regras de tradução */
 programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
-						fprintf(stderr, "ooooo\n");
-						fprintf(stderr, "decl    %d\n", $1.node);
+						//fprintf(stderr, "ooooo\n");
+						//fprintf(stderr, "decl    %d\n", $1.node);
 						  AST_addChild(programa, $1.node);
-						fprintf(stderr, "$$->    %d\n", programa->firstChild);
+						/*fprintf(stderr, "$$->    %d\n", programa->firstChild);
 						fprintf(stderr, "$$->    %d\n", programa->lastChild);
-						fprintf(stderr, "lista_decl    %d\n", $2.node);
+						fprintf(stderr, "lista_decl    %d\n", $2.node);*/
 						  AST_addChildren(programa, $2.node); }
 
 	| nl decl lista_decl			{ programa = AST_new(AST_PROGRAM, 1);
@@ -67,12 +67,12 @@ funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
 						  AST* block = AST_new(AST_BLOCK, $9.line);
 						  AST_addChildren(block, $9.node);
 					  	  AST_addChild($$.node, block);
-						fprintf(stderr, "FUN\n");					  
+						/*fprintf(stderr, "FUN\n");					  
 						fprintf(stderr, "string    %s\n", $2.cValue);
 						fprintf(stderr, "tipo    %d\n", $7.node);
 						fprintf(stderr, "%d\n", $$.node);
 						fprintf(stderr, "%d\n", $4.node);  
-						fprintf(stderr, "block   %d\n", block);
+						fprintf(stderr, "block   %d\n", block);*/
 						  AST_prependSibling($7.node, $4.node);
 						  AST_prependSibling(block, $7.node);
 						  
@@ -88,10 +88,12 @@ funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
           					  AST_addChildren(block, $7.node);
 					  	  AST_addChild($$.node, block); } 
 	;
-params	: /*vazio*/ 				{ $$.node = NULL; fprintf(stderr, "params2   %d\n", $$.node);}
+params	: /*vazio*/ 				{ $$.node = NULL; //fprintf(stderr, "params2   %d\n", $$.node);
+						}
 	| parametro lista_parametro		{ $$.node = AST_prependSibling($2.node, $1.node);
-						fprintf(stderr, "aaaaaaaa\n"); 
-						fprintf(stderr, "params   %d\n", $$.node);}
+						//fprintf(stderr, "aaaaaaaa\n"); 
+						//fprintf(stderr, "params   %d\n", $$.node);
+						}
 	;
 lista_parametro : /* vazio */ 			{ $$.node = NULL; }
 	| lista_parametro ',' parametro		{ $$.node = AST_prependSibling($3.node, $1.node); }
@@ -100,23 +102,23 @@ parametro : TK_ID ':' tipo			{ $$.node = AST_new(AST_PARAM, $1.line);
 						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
 						  AST_addChild($$.node, $3.node); }
 	;
-entradas: TK_ID ':' tipo nl entradas		{ $$.node = AST_new(AST_BLOCK, $1.line);
+entradas: TK_ID ':' tipo nl entradas		{ $$.node = AST_new(AST_DECLVAR, $1.line);
 						  AST_addChild($$.node, AST_newStringFromToken($1.cValue, $1.line));
 						  AST_addChild($$.node, $3.node); 
-						  fprintf(stderr, "entradas\n");
-						  fprintf(stderr, "no 5   %d\n", $5.node);
+						  //fprintf(stderr, "entradas\n");
+						  //fprintf(stderr, "no 5   %d\n", $5.node);
 						  AST_prependSibling($5.node, $$.node); }
 
 	| comando nl lista_comando		{ $$.node = AST_prependSibling($3.node, $1.node); }
 	| /* vazio */				{ $$.node = NULL; }
 	;
-tipo    : tipobase 				{ $$.node = $1.node; fprintf(stderr, "TIPO\n");
-						fprintf(stderr, "%d\n", $1.node);
-						fprintf(stderr, "$$  %d\n", $$.node);}
+tipo    : tipobase 				{ $$.node = $1.node; }//fprintf(stderr, "TIPO\n");
+						//fprintf(stderr, "%d\n", $1.node);
+						//fprintf(stderr, "$$  %d\n", $$.node);}
 	| '[' ']' tipo				{ $$.node = $3.node; }
 	;
-tipobase: TK_INT 				{ $$.node = AST_new(AST_INT, $1.line) ; fprintf(stderr, "INT\n"); 
-						fprintf(stderr, "%d\n", $$.node);}
+tipobase: TK_INT 				{ $$.node = AST_new(AST_INT, $1.line) ;} //fprintf(stderr, "INT\n"); 
+						//fprintf(stderr, "%d\n", $$.node);}
 	| TK_CHAR 				{ $$.node = AST_new(AST_CHAR, $1.line) ; }
 	| TK_BOOL 				{ $$.node = AST_new(AST_BOOL, $1.line) ; }
 	| TK_STRING				{ $$.node = AST_new(AST_STRING, $1.line) ; }
