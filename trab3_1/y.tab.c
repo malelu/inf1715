@@ -1553,11 +1553,11 @@ yyreduce:
 #line 53 "analisadorSintatico.y"
     { programa = AST_new(AST_PROGRAM, 1);
 						  //AST_addChild(programa, $1.node);
-						  AST_prependSibling((yyvsp[(2) - (3)]).node, (yyvsp[(1) - (3)]).node);
-						  if((yyvsp[(2) - (3)]).node != NULL)
-						  	AST_addChildren(programa, (yyvsp[(2) - (3)]).node); 
+						  AST_prependSibling((yyvsp[(3) - (3)]).node, (yyvsp[(2) - (3)]).node);
+						  if((yyvsp[(3) - (3)]).node != NULL)
+						  	AST_addChildren(programa, (yyvsp[(3) - (3)]).node); 
 						  else
-							AST_addChildren(programa, (yyvsp[(1) - (3)]).node); 
+							AST_addChildren(programa, (yyvsp[(2) - (3)]).node); 
 						}
     break;
 
@@ -1565,7 +1565,7 @@ yyreduce:
 
 /* Line 1806 of yacc.c  */
 #line 62 "analisadorSintatico.y"
-    { (yyval).node = (yyvsp[(1) - (1)]).node; fprintf(stderr, "DECL->    %d\n", (yyval).node);}
+    { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 5:
@@ -1618,7 +1618,7 @@ yyreduce:
 						  else
 						   	AST_addChildren((yyval).node, (yyvsp[(7) - (11)]).node);
 						/*fprintf(stderr, "FUN\n");	*/				  
-						fprintf(stderr, "string    %s\n", (yyvsp[(2) - (11)]).cValue);
+						fprintf(stderr, "%s\n", (yyvsp[(2) - (11)]).cValue);
 						//fprintf(stderr, "tipo    %d\n", $7.node);
 						/*fprintf(stderr, "%d\n", $$.node);*/
 						//fprintf(stderr, "oi   %d\n"); 

@@ -52,14 +52,14 @@ programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
 
 	| nl decl lista_decl			{ programa = AST_new(AST_PROGRAM, 1);
 						  //AST_addChild(programa, $1.node);
-						  AST_prependSibling($2.node, $1.node);
-						  if($2.node != NULL)
-						  	AST_addChildren(programa, $2.node); 
+						  AST_prependSibling($3.node, $2.node);
+						  if($3.node != NULL)
+						  	AST_addChildren(programa, $3.node); 
 						  else
-							AST_addChildren(programa, $1.node); 
+							AST_addChildren(programa, $2.node); 
 						}
 	;
-decl	: funcao 				{ $$.node = $1.node; fprintf(stderr, "DECL->    %d\n", $$.node);}
+decl	: funcao 				{ $$.node = $1.node; }
 	| global				{ $$.node = $1.node; }
 	;
 global	: TK_ID ':' tipo nl			{ $$.node = AST_new(AST_GLOBAL, $1.line);
@@ -91,7 +91,7 @@ funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl
 						  else
 						   	AST_addChildren($$.node, $7.node);
 						/*fprintf(stderr, "FUN\n");	*/				  
-						fprintf(stderr, "string    %s\n", $2.cValue);
+						fprintf(stderr, "%s\n", $2.cValue);
 						//fprintf(stderr, "tipo    %d\n", $7.node);
 						/*fprintf(stderr, "%d\n", $$.node);*/
 						//fprintf(stderr, "oi   %d\n"); 
