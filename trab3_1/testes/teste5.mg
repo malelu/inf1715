@@ -5,7 +5,11 @@ fun f( c: string , d: int)
 		return 1
 	else if 2>=5
 		x = 4
+	else if 4 <> 100
+		return 6
 	else
-		g(new [4] int)
+		if true
+			g(new [4] int)
+		end
 	end
 end

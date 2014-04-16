@@ -6,7 +6,6 @@ AST* AST_new (int node_type, int line)
 {
 	
 	AST* node = (AST*) malloc(sizeof(AST)) ;
-	//fprintf(stderr, "entrou\n");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
@@ -16,16 +15,12 @@ AST* AST_new (int node_type, int line)
 	node->type = node_type ;
 	node->intVal = 0 ;
 	node->stringVal = NULL ;
-	//fprintf(stderr, "saiu\n");
-	//fprintf(stderr, "%d\n", node->line);
-	//fprintf(stderr, "%d\n", node->type);
 
 	return node ;
 }
 
 void AST_addChild(AST* parent_node, AST* node)
 {
-	//fprintf(stderr, "entrou2\n");
 	if(node != NULL)
 	{
 		if(parent_node->firstChild == NULL)
@@ -47,9 +42,6 @@ void AST_addChild(AST* parent_node, AST* node)
 		}
 		node->parent = parent_node ;
 	}
-	
-	
-	//fprintf(stderr, "saiu2\n");
 }
 
 void AST_addChildren (AST* parent_node, AST* last_child)
@@ -59,7 +51,6 @@ void AST_addChildren (AST* parent_node, AST* last_child)
 	{
 		AST* node = (AST*) malloc(sizeof(AST)) ;
 		node = last_child ;
-		//fprintf(stderr, "entrou3\n");
 		parent_node->lastChild = node ;
 
 		while (node->prevSibling != NULL)
@@ -70,13 +61,11 @@ void AST_addChildren (AST* parent_node, AST* last_child)
 
 		node->parent = parent_node ;
 		parent_node->firstChild = node ;
-		//fprintf(stderr, "saiu3\n");
 	}
 }
 
 AST* AST_prependSibling(AST* right_node, AST* left_node)
 {
-	//fprintf(stderr, "entrou4\n");
 	if(right_node != NULL && left_node != NULL)
 	{
 		while(left_node->nextSibling != NULL)
@@ -98,14 +87,12 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 		return left_node ;
 	else
 		return NULL ;
-	//fprintf(stderr, "saiu4\n");
 	
 }
 
 AST* AST_newNumFromToken( int value, int line, int type)
 {
 	AST* node = (AST*) malloc(sizeof(AST)) ;
-	//fprintf(stderr, "entrou5\n");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
@@ -115,14 +102,12 @@ AST* AST_newNumFromToken( int value, int line, int type)
 	node->type = type ;
 	node->intVal = value ;
 	node->stringVal = NULL ;
-	//fprintf(stderr, "saiu5\n");
 	return node ;	
 }
 
 AST* AST_newStringFromToken( char* value, int line, int type)
 {
 	AST* node = (AST*) malloc(sizeof(AST)) ;
-	//fprintf(stderr, "entrou6\n");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
@@ -132,88 +117,87 @@ AST* AST_newStringFromToken( char* value, int line, int type)
 	node->type = type ;
 	node->intVal = 0 ;
 	node->stringVal = value ;
-	//fprintf(stderr, "saiu6\n");
 	return node ;
 }
 
 void printAST (int type)
 {
 	if (type == 283)
-		 fprintf(stderr, "AST_CHAR");
+		 fprintf(stdout, "AST_CHAR");
 	else if (type == 284)
-		fprintf(stderr, "AST_INT");
+		fprintf(stdout, "AST_INT");
 	else if (type == 285)
-		fprintf(stderr, "AST_STRING");
+		fprintf(stdout, "AST_STRING");
 	else if (type == 286)
-		fprintf(stderr, "AST_BOOL");
+		fprintf(stdout, "AST_BOOL");
 	else if (type == 287)
-		fprintf(stderr, "AST_TRUE");
+		fprintf(stdout, "AST_TRUE");
 	else if (type == 288)
-		fprintf(stderr, "AST_FALSE");
+		fprintf(stdout, "AST_FALSE");
 	else if (type == 289)
-		fprintf(stderr, "AST_NOT");
+		fprintf(stdout, "AST_NOT");
 	else if (type == 290)
-		fprintf(stderr, "AST_WHILE");
+		fprintf(stdout, "AST_WHILE");
 	else if (type == 291)
-		fprintf(stderr, "AST_IF");
+		fprintf(stdout, "AST_IF");
 	else if (type == 292)
-		fprintf(stderr, "AST_ELSE");
+		fprintf(stdout, "AST_ELSE");
 	else if (type == 293)
-		fprintf(stderr, "AST_END");
+		fprintf(stdout, "AST_END");
 	else if (type == 294)
-		fprintf(stderr, "AST_NEW");
+		fprintf(stdout, "AST_NEW");
 	else if (type == 295)
-		fprintf(stderr, "AST_RET");
+		fprintf(stdout, "AST_RET");
 	else if (type == 296)
-		fprintf(stderr, "AST_FUN");
+		fprintf(stdout, "AST_FUN");
 	else if (type == 297)
-		fprintf(stderr, "AST_GREATER");
+		fprintf(stdout, "AST_GREATER");
 	else if (type == 298)
-		fprintf(stderr, "AST_LESS");
+		fprintf(stdout, "AST_LESS");
 	else if (type == 299)
-		fprintf(stderr, "AST_GREATER_EQUAL");
+		fprintf(stdout, "AST_GREATER_EQUAL");
 	else if (type == 300)
-		fprintf(stderr, "AST_LESS_EQUAL");
+		fprintf(stdout, "AST_LESS_EQUAL");
 	else if (type == 301)
-		fprintf(stderr, "AST_EQUAL");
+		fprintf(stdout, "AST_EQUAL");
 	else if (type == 302)
-		fprintf(stderr, "AST_NOT_EQUAL");
+		fprintf(stdout, "AST_NOT_EQUAL");
 	else if (type == 303)
-		fprintf(stderr, "AST_PLUS");
+		fprintf(stdout, "AST_PLUS");
 	else if (type == 304)
-		fprintf(stderr, "AST_MINUS");
+		fprintf(stdout, "AST_MINUS");
 	else if (type == 305)
-		fprintf(stderr, "AST_TIMES");
+		fprintf(stdout, "AST_TIMES");
 	else if (type == 306)
-		fprintf(stderr, "AST_DIVIDED");
+		fprintf(stdout, "AST_DIVIDED");
 	else if (type == 307)
-		fprintf(stderr, "AST_AND");
+		fprintf(stdout, "AST_AND");
 	else if (type == 308)
-		fprintf(stderr, "AST_OR");
+		fprintf(stdout, "AST_OR");
 	else if (type == 309)
-		fprintf(stderr, "AST_ID");
+		fprintf(stdout, "AST_ID");
 	else if (type == 310)
-		fprintf(stderr, "AST_PROGRAM");
+		fprintf(stdout, "AST_PROGRAM");
 	else if (type == 311)
-		fprintf(stderr, "AST_GLOBAL");
+		fprintf(stdout, "AST_GLOBAL");
 	else if (type == 312)
-		fprintf(stderr, "AST_BLOCK");
+		fprintf(stdout, "AST_BLOCK");
 	else if (type == 313)
-		fprintf(stderr, "AST_BLOCK_ELSE");
+		fprintf(stdout, "AST_BLOCK_ELSE");
 	else if (type == 314)
-		fprintf(stderr, "AST_ELSEIF");
+		fprintf(stdout, "AST_ELSEIF");
 	else if (type == 315)
-		fprintf(stderr, "AST_PARAM");
+		fprintf(stdout, "AST_PARAM");
 	else if (type == 316)
-		fprintf(stderr, "AST_ATRIB");
+		fprintf(stdout, "AST_ATRIB");
 	else if (type == 317)
-		fprintf(stderr, "AST_NEG");
+		fprintf(stdout, "AST_NEG");
 	else if (type == 318)
-		fprintf(stderr, "AST_CALL");
+		fprintf(stdout, "AST_CALL");
 	else if (type == 319)
-		fprintf(stderr, "AST_DECLVAR");
+		fprintf(stdout, "AST_DECLVAR");
 	else if (type == 320)
-		fprintf(stderr, "AST_NUMINT");
+		fprintf(stdout, "AST_NUMINT");
 	else
-		fprintf(stderr, "NO AST");
+		fprintf(stdout, "NO AST");
 }

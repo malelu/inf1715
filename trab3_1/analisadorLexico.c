@@ -1046,13 +1046,12 @@ YY_RULE_SETUP
 	yylval.node = NULL;
 	yylval.cValue = strndup(yytext, yyleng);
 	yylval.line = lineCount; 
-	fprintf(stderr, "%s\n", yylval.cValue);	
 	return TK_ID;
 	}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 121 "analisadorLexico.l"
+#line 120 "analisadorLexico.l"
 { 
 	yylval.node = NULL;
 	yylval.cValue = createString (yytext);
@@ -1063,12 +1062,12 @@ YY_RULE_SETUP
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 128 "analisadorLexico.l"
+#line 127 "analisadorLexico.l"
 { } 
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 130 "analisadorLexico.l"
+#line 129 "analisadorLexico.l"
 {
 	printf("line %d => ERROR: OPEN COMMENT\n", lineCount);
 	exit(1);
@@ -1076,7 +1075,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 135 "analisadorLexico.l"
+#line 134 "analisadorLexico.l"
 {
 	printf ("line: %d => ERROR: OPEN STRING\n", lineCount);
 	exit(1);
@@ -1085,7 +1084,7 @@ YY_RULE_SETUP
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 140 "analisadorLexico.l"
+#line 139 "analisadorLexico.l"
 {
 	yylval.node = NULL;
 	yylval.line = lineCount ;
@@ -1095,12 +1094,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 147 "analisadorLexico.l"
+#line 146 "analisadorLexico.l"
 { }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 148 "analisadorLexico.l"
+#line 147 "analisadorLexico.l"
 {
 	yylval.node = NULL;
 	yylval.cValue = yytext;
@@ -1110,10 +1109,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 155 "analisadorLexico.l"
+#line 154 "analisadorLexico.l"
 ECHO;
 	YY_BREAK
-#line 1117 "<stdout>"
+#line 1116 "<stdout>"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2111,7 +2110,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 155 "analisadorLexico.l"
+#line 154 "analisadorLexico.l"
 
 
 

@@ -114,7 +114,6 @@ string {quotMark}(\\.|[^\\"\n])*{quotMark}
 	yylval.node = NULL;
 	yylval.cValue = strndup(yytext, yyleng);
 	yylval.line = lineCount; 
-	fprintf(stderr, "%s\n", yylval.cValue);	
 	return TK_ID;
 	}
 
