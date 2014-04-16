@@ -97,7 +97,7 @@ void addTab (int numTab)
 	int cont;
 	for(cont=0;cont<numTab;cont++)
 	{
-		fprintf(stderr, "  ");
+		fprintf(stderr, "   ");
 	}
 }
 
@@ -115,7 +115,16 @@ void prettyPrinter(AST* node)
 
 
 	if(printed_node->firstChild == NULL)
-		fprintf(stderr, " @%d\n", printed_node->line);
+	{
+		if(printed_node->nextSibling != NULL)
+			fprintf(stderr, " @%d\n", printed_node->line);
+		else
+		{
+			fprintf(stderr, " @%d\n", printed_node->line);
+			addTab (numTab-1) ;
+			fprintf(stderr, " }\n", printed_node->line);
+		}
+	}
 	else if(printed_node->firstChild != NULL)
 	{	
 		fprintf(stderr, " @%d { \n", printed_node->line);
@@ -136,40 +145,6 @@ void prettyPrinter(AST* node)
 	}
 }
 
-
-
-/*void prettyPrinter(AST* node)
-{	
-	int numTab = 0 ;
-
-	AST* parent_node = (AST*) malloc(sizeof(AST)) ;
-
-
-	while(node != NULL)
-	{
-		addTab (numTab) ;
-		printAST (node->type) ;
-		//if(node->stringVal != NULL)
-			//fprintf(stderr, " %s\n", node->stringVal);
-		fprintf(stderr, " @%d\n", node->line);
-
-		while(node->nextSibling != NULL)
-		{	
-			node = node->nextSibling ;
-			addTab (numTab) ;
-			printAST (node->type) ;
-			//if(node->stringVal != NULL)
-				//fprintf(stderr, " %s\n", node->stringVal);
-			fprintf(stderr, " @%d\n", node->line);
-			
-		}
-		
-		if(node->parent != NULL)
-			node = parent_node->firstChild ;
-		node = node->firstChild ;
-		numTab++ ;
-	}
-}*/
 
 void yyerror (const char * s)
 {	
