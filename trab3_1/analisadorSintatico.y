@@ -37,13 +37,16 @@ AST* programa ;
  /*regras de tradução */
 programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
 						fprintf(stderr, "ooooo\n");
-						  AST_addChild($$.node, $1.node);
+						fprintf(stderr, "decl    %d\n", $1.node);
+						  AST_addChild(programa, $1.node);
+						fprintf(stderr, "$$->    %d\n", programa->firstChild);
+						fprintf(stderr, "$$->    %d\n", programa->lastChild);
 						fprintf(stderr, "lista_decl    %d\n", $2.node);
-						  AST_addChildren($$.node, $2.node); }
+						  AST_addChildren(programa, $2.node); }
 
 	| nl decl lista_decl			{ programa = AST_new(AST_PROGRAM, 1);
-						  AST_addChild($$.node, $1.node);
-						  AST_addChildren($$.node, $2.node); }
+						  AST_addChild(programa, $1.node);
+						  AST_addChildren(programa, $2.node); }
 	;
 decl	: funcao 				{ $$.node = $1.node; }
 	| global				{ $$.node = $1.node; }
@@ -58,24 +61,28 @@ lista_decl : /* vazio */ 			{ $$.node = NULL; }
 funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl	
 		entradas
 	  TK_END nl				{ $$.node = AST_new(AST_FUN, $1.line);
-						  fprintf(stderr, "FUN\n");
-					          AST_addChild($$.node, AST_newStringFromToken($2.cValue));
+						  $$.node->stringVal = $2.cValue ;
 						  AST_addChild($$.node, $7.node);
+						  AST_addChild($$.node, $4.node);
+						  AST* block = AST_new(AST_BLOCK, $9.line);
+						  AST_addChildren(block, $9.node);
+					  	  AST_addChild($$.node, block);
+						fprintf(stderr, "FUN\n");					  
+						fprintf(stderr, "string    %s\n", $2.cValue);
 						fprintf(stderr, "tipo    %d\n", $7.node);
 						fprintf(stderr, "%d\n", $$.node);
-						fprintf(stderr, "%d\n", $4.node);
-	  					  AST_addChild($$.node, $4.node);
+						fprintf(stderr, "%d\n", $4.node);  
+						fprintf(stderr, "block   %d\n", block);
+						  AST_prependSibling($7.node, $4.node);
+						  AST_prependSibling(block, $7.node);
 						  
-					  	  AST* block = AST_new(AST_BLOCK, $9.line);
-						fprintf(stderr, "no 9   %d\n", $9.node);
-          					  AST_addChildren(block, $9.node);
-					  	  AST_addChild($$.node, block);
+          					  
 						}
 
 	| TK_FUN TK_ID '(' params ')' nl	
 		entradas
 	  TK_END nl				{ $$.node = AST_new(AST_FUN, $1.line);
-                				  AST_addChild($$.node, AST_newStringFromToken($2.cValue));
+                				  $$.node->stringVal = $2.cValue ;
           					  AST_addChild($$.node, $4.node);
 					 	  AST* block = AST_new(AST_BLOCK, $7.line);
           					  AST_addChildren(block, $7.node);

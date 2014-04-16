@@ -76,7 +76,7 @@ void AST_addChildren (AST* parent_node, AST* last_child)
 AST* AST_prependSibling(AST* right_node, AST* left_node)
 {
 	fprintf(stderr, "entrou4\n");
-	if(right_node != NULL)
+	if(right_node != NULL && left_node != NULL)
 	{
 		right_node->prevSibling = (AST*) malloc(sizeof(AST)) ;
 		left_node->nextSibling = (AST*) malloc(sizeof(AST)) ;
