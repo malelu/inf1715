@@ -84,7 +84,7 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 		right_node->prevSibling = left_node ;
 		left_node->nextSibling = right_node ;
 
-		return right_node ;
+		return left_node ;
 	}
 
 	else if(right_node != NULL && left_node == NULL)

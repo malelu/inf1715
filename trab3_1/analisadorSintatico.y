@@ -38,17 +38,20 @@ AST* programa ;
 programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
 						//fprintf(stderr, "ooooo\n");
 						//fprintf(stderr, "decl    %d\n", $1.node);
-						  AST_addChild(programa, $1.node);
-						/*fprintf(stderr, "$$->    %d\n", programa->firstChild);
+						  //AST_addChild(programa, $1.node);
+						  AST_prependSibling($2.node, $1.node);
+						  AST_addChildren(programa, $2.node); 
+						fprintf(stderr, "$$->    %d\n", programa->firstChild);
 						fprintf(stderr, "$$->    %d\n", programa->lastChild);
-						fprintf(stderr, "lista_decl    %d\n", $2.node);*/
-						  AST_addChildren(programa, $2.node); }
+						fprintf(stderr, "lista_decl    %d\n", $2.node);
+						fprintf(stderr, "DECL    %d\n", $1.node);}
 
 	| nl decl lista_decl			{ programa = AST_new(AST_PROGRAM, 1);
-						  AST_addChild(programa, $1.node);
+						  //AST_addChild(programa, $1.node);
+						  AST_prependSibling($2.node, $1.node);
 						  AST_addChildren(programa, $2.node); }
 	;
-decl	: funcao 				{ $$.node = $1.node; }
+decl	: funcao 				{ $$.node = $1.node; fprintf(stderr, "DECL->    %d\n", $$.node);}
 	| global				{ $$.node = $1.node; }
 	;
 global	: TK_ID ':' tipo nl			{ $$.node = AST_new(AST_GLOBAL, $1.line);
@@ -56,7 +59,11 @@ global	: TK_ID ':' tipo nl			{ $$.node = AST_new(AST_GLOBAL, $1.line);
 						  AST_addChild($$.node, $3.node); }
 	;
 lista_decl : /* vazio */ 			{ $$.node = NULL; }
-	| decl lista_decl			{ $$.node = AST_prependSibling($2.node, $1.node); }
+	| decl lista_decl			{ $$.node = AST_prependSibling($2.node, $1.node); 
+						fprintf(stderr, "NODE 1->    %d\n", $1.node);
+						fprintf(stderr, "NODE 2->    %d\n", $2.node);
+						fprintf(stderr, "$$NODE->    %d\n", $$.node);
+						fprintf(stderr, "$$NODE->PREV->    %d\n", $$.node->prevSibling);}
 	;
 funcao	: TK_FUN TK_ID '(' params ')' ':' tipo nl	
 		entradas

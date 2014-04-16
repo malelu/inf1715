@@ -492,14 +492,14 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    38,    38,    47,    51,    52,    54,    58,    59,    61,
-      82,   101,   103,   108,   109,   111,   115,   123,   127,   129,
-     132,   134,   136,   137,   138,   140,   141,   143,   144,   145,
-     146,   147,   150,   162,   172,   177,   179,   187,   191,   192,
-     194,   199,   200,   202,   203,   205,   207,   209,   210,   212,
-     214,   215,   219,   220,   224,   225,   229,   233,   237,   241,
-     245,   249,   250,   254,   258,   259,   263,   267,   270,   273,
-     275,   276,   277,   278,   279,   283,   286,   287
+       0,    38,    38,    49,    54,    55,    57,    61,    62,    68,
+      89,   108,   110,   115,   116,   118,   122,   130,   134,   136,
+     139,   141,   143,   144,   145,   147,   148,   150,   151,   152,
+     153,   154,   157,   169,   179,   184,   186,   194,   198,   199,
+     201,   206,   207,   209,   210,   212,   214,   216,   217,   219,
+     221,   222,   226,   227,   231,   232,   236,   240,   244,   248,
+     252,   256,   257,   261,   265,   266,   270,   274,   277,   280,
+     282,   283,   284,   285,   286,   290,   293,   294
 };
 #endif
 
@@ -1534,40 +1534,43 @@ yyreduce:
     { programa = AST_new(AST_PROGRAM, 1);
 						//fprintf(stderr, "ooooo\n");
 						//fprintf(stderr, "decl    %d\n", $1.node);
-						  AST_addChild(programa, (yyvsp[(1) - (2)]).node);
-						/*fprintf(stderr, "$$->    %d\n", programa->firstChild);
+						  //AST_addChild(programa, $1.node);
+						  AST_prependSibling((yyvsp[(2) - (2)]).node, (yyvsp[(1) - (2)]).node);
+						  AST_addChildren(programa, (yyvsp[(2) - (2)]).node); 
+						fprintf(stderr, "$$->    %d\n", programa->firstChild);
 						fprintf(stderr, "$$->    %d\n", programa->lastChild);
-						fprintf(stderr, "lista_decl    %d\n", $2.node);*/
-						  AST_addChildren(programa, (yyvsp[(2) - (2)]).node); }
+						fprintf(stderr, "lista_decl    %d\n", (yyvsp[(2) - (2)]).node);
+						fprintf(stderr, "DECL    %d\n", (yyvsp[(1) - (2)]).node);}
     break;
 
   case 3:
 
 /* Line 1806 of yacc.c  */
-#line 47 "analisadorSintatico.y"
+#line 49 "analisadorSintatico.y"
     { programa = AST_new(AST_PROGRAM, 1);
-						  AST_addChild(programa, (yyvsp[(1) - (3)]).node);
+						  //AST_addChild(programa, $1.node);
+						  AST_prependSibling((yyvsp[(2) - (3)]).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChildren(programa, (yyvsp[(2) - (3)]).node); }
     break;
 
   case 4:
 
 /* Line 1806 of yacc.c  */
-#line 51 "analisadorSintatico.y"
-    { (yyval).node = (yyvsp[(1) - (1)]).node; }
+#line 54 "analisadorSintatico.y"
+    { (yyval).node = (yyvsp[(1) - (1)]).node; fprintf(stderr, "DECL->    %d\n", (yyval).node);}
     break;
 
   case 5:
 
 /* Line 1806 of yacc.c  */
-#line 52 "analisadorSintatico.y"
+#line 55 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 6:
 
 /* Line 1806 of yacc.c  */
-#line 54 "analisadorSintatico.y"
+#line 57 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_GLOBAL, (yyvsp[(1) - (4)]).line);
  						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (4)]).node); }
@@ -1576,21 +1579,25 @@ yyreduce:
   case 7:
 
 /* Line 1806 of yacc.c  */
-#line 58 "analisadorSintatico.y"
+#line 61 "analisadorSintatico.y"
     { (yyval).node = NULL; }
     break;
 
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 59 "analisadorSintatico.y"
-    { (yyval).node = AST_prependSibling((yyvsp[(2) - (2)]).node, (yyvsp[(1) - (2)]).node); }
+#line 62 "analisadorSintatico.y"
+    { (yyval).node = AST_prependSibling((yyvsp[(2) - (2)]).node, (yyvsp[(1) - (2)]).node); 
+						fprintf(stderr, "NODE 1->    %d\n", (yyvsp[(1) - (2)]).node);
+						fprintf(stderr, "NODE 2->    %d\n", (yyvsp[(2) - (2)]).node);
+						fprintf(stderr, "$$NODE->    %d\n", (yyval).node);
+						fprintf(stderr, "$$NODE->PREV->    %d\n", (yyval).node->prevSibling);}
     break;
 
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 63 "analisadorSintatico.y"
+#line 70 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_FUN, (yyvsp[(1) - (11)]).line);
 						  (yyval).node->stringVal = (yyvsp[(2) - (11)]).cValue ;
 						  AST_addChild((yyval).node, (yyvsp[(7) - (11)]).node);
@@ -1614,7 +1621,7 @@ yyreduce:
   case 10:
 
 /* Line 1806 of yacc.c  */
-#line 84 "analisadorSintatico.y"
+#line 91 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_FUN, (yyvsp[(1) - (9)]).line);
                 				  (yyval).node->stringVal = (yyvsp[(2) - (9)]).cValue ;
           					  AST_addChild((yyval).node, (yyvsp[(4) - (9)]).node);					
@@ -1636,7 +1643,7 @@ yyreduce:
   case 11:
 
 /* Line 1806 of yacc.c  */
-#line 101 "analisadorSintatico.y"
+#line 108 "analisadorSintatico.y"
     { (yyval).node = NULL; //fprintf(stderr, "params2   %d\n", $$.node);
 						}
     break;
@@ -1644,7 +1651,7 @@ yyreduce:
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 103 "analisadorSintatico.y"
+#line 110 "analisadorSintatico.y"
     { (yyval).node = AST_prependSibling((yyvsp[(2) - (2)]).node, (yyvsp[(1) - (2)]).node);
 						//fprintf(stderr, "aaaaaaaa\n"); 
 						//fprintf(stderr, "params   %d\n", $$.node);
@@ -1654,21 +1661,21 @@ yyreduce:
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 108 "analisadorSintatico.y"
+#line 115 "analisadorSintatico.y"
     { (yyval).node = NULL; }
     break;
 
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 109 "analisadorSintatico.y"
+#line 116 "analisadorSintatico.y"
     { (yyval).node = AST_prependSibling((yyvsp[(3) - (3)]).node, (yyvsp[(1) - (3)]).node); }
     break;
 
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 111 "analisadorSintatico.y"
+#line 118 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_PARAM, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (3)]).cValue, (yyvsp[(1) - (3)]).line));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -1677,7 +1684,7 @@ yyreduce:
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 115 "analisadorSintatico.y"
+#line 122 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_DECLVAR, (yyvsp[(1) - (5)]).line);
 						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (5)]).cValue, (yyvsp[(1) - (5)]).line));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (5)]).node); 
@@ -1690,7 +1697,7 @@ yyreduce:
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 123 "analisadorSintatico.y"
+#line 130 "analisadorSintatico.y"
     { (yyval).node = AST_prependSibling((yyvsp[(3) - (3)]).node, (yyvsp[(1) - (3)]).node); 
 						fprintf(stderr, "$$comando   %d\n", (yyval).node);
 						fprintf(stderr, "comando   %d\n", (yyvsp[(1) - (3)]).node);
@@ -1700,98 +1707,98 @@ yyreduce:
   case 18:
 
 /* Line 1806 of yacc.c  */
-#line 127 "analisadorSintatico.y"
+#line 134 "analisadorSintatico.y"
     { (yyval).node = NULL; }
     break;
 
   case 19:
 
 /* Line 1806 of yacc.c  */
-#line 129 "analisadorSintatico.y"
+#line 136 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 20:
 
 /* Line 1806 of yacc.c  */
-#line 132 "analisadorSintatico.y"
+#line 139 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(3) - (3)]).node; }
     break;
 
   case 21:
 
 /* Line 1806 of yacc.c  */
-#line 134 "analisadorSintatico.y"
+#line 141 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_INT, (yyvsp[(1) - (1)]).line) ;}
     break;
 
   case 22:
 
 /* Line 1806 of yacc.c  */
-#line 136 "analisadorSintatico.y"
+#line 143 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_CHAR, (yyvsp[(1) - (1)]).line) ; }
     break;
 
   case 23:
 
 /* Line 1806 of yacc.c  */
-#line 137 "analisadorSintatico.y"
+#line 144 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_BOOL, (yyvsp[(1) - (1)]).line) ; }
     break;
 
   case 24:
 
 /* Line 1806 of yacc.c  */
-#line 138 "analisadorSintatico.y"
+#line 145 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_STRING, (yyvsp[(1) - (1)]).line) ; }
     break;
 
   case 25:
 
 /* Line 1806 of yacc.c  */
-#line 140 "analisadorSintatico.y"
+#line 147 "analisadorSintatico.y"
     { (yyval).node = NULL; }
     break;
 
   case 26:
 
 /* Line 1806 of yacc.c  */
-#line 141 "analisadorSintatico.y"
+#line 148 "analisadorSintatico.y"
     { (yyval).node = AST_prependSibling((yyvsp[(3) - (3)]).node, (yyvsp[(1) - (3)]).node); }
     break;
 
   case 27:
 
 /* Line 1806 of yacc.c  */
-#line 143 "analisadorSintatico.y"
+#line 150 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 28:
 
 /* Line 1806 of yacc.c  */
-#line 144 "analisadorSintatico.y"
+#line 151 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 29:
 
 /* Line 1806 of yacc.c  */
-#line 145 "analisadorSintatico.y"
+#line 152 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 30:
 
 /* Line 1806 of yacc.c  */
-#line 146 "analisadorSintatico.y"
+#line 153 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 31:
 
 /* Line 1806 of yacc.c  */
-#line 147 "analisadorSintatico.y"
+#line 154 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; 
 						fprintf(stderr, "chamada indo comando   %d\n", (yyval).node);}
     break;
@@ -1799,7 +1806,7 @@ yyreduce:
   case 32:
 
 /* Line 1806 of yacc.c  */
-#line 153 "analisadorSintatico.y"
+#line 160 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_IF, (yyvsp[(1) - (6)]).line);			
                					  AST_addChild((yyval).node, (yyvsp[(2) - (6)]).node);
              					  AST* block = AST_new(AST_BLOCK, (yyvsp[(4) - (6)]).line);
@@ -1813,7 +1820,7 @@ yyreduce:
   case 33:
 
 /* Line 1806 of yacc.c  */
-#line 163 "analisadorSintatico.y"
+#line 170 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_ELSEIF, (yyvsp[(1) - (6)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (6)]).node);
 						  AST* block = AST_new(AST_BLOCK, (yyvsp[(5) - (6)]).line);
@@ -1827,7 +1834,7 @@ yyreduce:
   case 34:
 
 /* Line 1806 of yacc.c  */
-#line 172 "analisadorSintatico.y"
+#line 179 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_ELSE, (yyvsp[(1) - (3)]).line);
 						  AST* block = AST_new(AST_BLOCK, (yyvsp[(3) - (3)]).line);
 						  AST_addChildren(block, (yyvsp[(3) - (3)]).node);
@@ -1837,14 +1844,14 @@ yyreduce:
   case 35:
 
 /* Line 1806 of yacc.c  */
-#line 177 "analisadorSintatico.y"
+#line 184 "analisadorSintatico.y"
     { (yyval).node = NULL; }
     break;
 
   case 36:
 
 /* Line 1806 of yacc.c  */
-#line 181 "analisadorSintatico.y"
+#line 188 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_WHILE, (yyvsp[(1) - (5)]).line);
                 				  AST_addChild((yyval).node, (yyvsp[(2) - (5)]).node);
           					  AST* block = AST_new(AST_BLOCK, (yyvsp[(4) - (5)]).line);
@@ -1855,7 +1862,7 @@ yyreduce:
   case 37:
 
 /* Line 1806 of yacc.c  */
-#line 187 "analisadorSintatico.y"
+#line 194 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_ATRIB, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -1864,21 +1871,21 @@ yyreduce:
   case 38:
 
 /* Line 1806 of yacc.c  */
-#line 191 "analisadorSintatico.y"
+#line 198 "analisadorSintatico.y"
     { (yyval).node = AST_newStringFromToken((yyvsp[(1) - (1)]).cValue, (yyvsp[(1) - (1)]).line); }
     break;
 
   case 39:
 
 /* Line 1806 of yacc.c  */
-#line 192 "analisadorSintatico.y"
+#line 199 "analisadorSintatico.y"
     { (yyval).node = AST_prependSibling((yyvsp[(3) - (4)]).node, (yyvsp[(1) - (4)]).node); }
     break;
 
   case 40:
 
 /* Line 1806 of yacc.c  */
-#line 194 "analisadorSintatico.y"
+#line 201 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_CALL, (yyvsp[(1) - (4)]).line);
 						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (4)]).node); 
@@ -1888,28 +1895,28 @@ yyreduce:
   case 41:
 
 /* Line 1806 of yacc.c  */
-#line 199 "analisadorSintatico.y"
+#line 206 "analisadorSintatico.y"
     { (yyval).node = NULL; }
     break;
 
   case 42:
 
 /* Line 1806 of yacc.c  */
-#line 200 "analisadorSintatico.y"
+#line 207 "analisadorSintatico.y"
     { (yyval).node = AST_prependSibling((yyvsp[(2) - (2)]).node, (yyvsp[(1) - (2)]).node); }
     break;
 
   case 43:
 
 /* Line 1806 of yacc.c  */
-#line 202 "analisadorSintatico.y"
+#line 209 "analisadorSintatico.y"
     { (yyval).node = NULL; }
     break;
 
   case 45:
 
 /* Line 1806 of yacc.c  */
-#line 205 "analisadorSintatico.y"
+#line 212 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_RET, (yyvsp[(1) - (2)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(2) - (2)]).node); }
     break;
@@ -1917,42 +1924,42 @@ yyreduce:
   case 46:
 
 /* Line 1806 of yacc.c  */
-#line 207 "analisadorSintatico.y"
+#line 214 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_RET, (yyvsp[(1) - (1)]).line); }
     break;
 
   case 47:
 
 /* Line 1806 of yacc.c  */
-#line 209 "analisadorSintatico.y"
+#line 216 "analisadorSintatico.y"
     {}
     break;
 
   case 48:
 
 /* Line 1806 of yacc.c  */
-#line 210 "analisadorSintatico.y"
+#line 217 "analisadorSintatico.y"
     {}
     break;
 
   case 49:
 
 /* Line 1806 of yacc.c  */
-#line 212 "analisadorSintatico.y"
+#line 219 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 50:
 
 /* Line 1806 of yacc.c  */
-#line 214 "analisadorSintatico.y"
+#line 221 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 51:
 
 /* Line 1806 of yacc.c  */
-#line 215 "analisadorSintatico.y"
+#line 222 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_OR, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -1961,14 +1968,14 @@ yyreduce:
   case 52:
 
 /* Line 1806 of yacc.c  */
-#line 219 "analisadorSintatico.y"
+#line 226 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 53:
 
 /* Line 1806 of yacc.c  */
-#line 220 "analisadorSintatico.y"
+#line 227 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_AND, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -1977,14 +1984,14 @@ yyreduce:
   case 54:
 
 /* Line 1806 of yacc.c  */
-#line 224 "analisadorSintatico.y"
+#line 231 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 55:
 
 /* Line 1806 of yacc.c  */
-#line 225 "analisadorSintatico.y"
+#line 232 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_LESS, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -1993,7 +2000,7 @@ yyreduce:
   case 56:
 
 /* Line 1806 of yacc.c  */
-#line 229 "analisadorSintatico.y"
+#line 236 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_GREATER, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2002,7 +2009,7 @@ yyreduce:
   case 57:
 
 /* Line 1806 of yacc.c  */
-#line 233 "analisadorSintatico.y"
+#line 240 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_EQUAL, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2011,7 +2018,7 @@ yyreduce:
   case 58:
 
 /* Line 1806 of yacc.c  */
-#line 237 "analisadorSintatico.y"
+#line 244 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_LESS_EQUAL, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2020,7 +2027,7 @@ yyreduce:
   case 59:
 
 /* Line 1806 of yacc.c  */
-#line 241 "analisadorSintatico.y"
+#line 248 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_GREATER_EQUAL, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2029,7 +2036,7 @@ yyreduce:
   case 60:
 
 /* Line 1806 of yacc.c  */
-#line 245 "analisadorSintatico.y"
+#line 252 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_NOT_EQUAL, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2038,14 +2045,14 @@ yyreduce:
   case 61:
 
 /* Line 1806 of yacc.c  */
-#line 249 "analisadorSintatico.y"
+#line 256 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 62:
 
 /* Line 1806 of yacc.c  */
-#line 250 "analisadorSintatico.y"
+#line 257 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_PLUS, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2054,7 +2061,7 @@ yyreduce:
   case 63:
 
 /* Line 1806 of yacc.c  */
-#line 254 "analisadorSintatico.y"
+#line 261 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_MINUS, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2063,14 +2070,14 @@ yyreduce:
   case 64:
 
 /* Line 1806 of yacc.c  */
-#line 258 "analisadorSintatico.y"
+#line 265 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 65:
 
 /* Line 1806 of yacc.c  */
-#line 259 "analisadorSintatico.y"
+#line 266 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_TIMES, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2079,7 +2086,7 @@ yyreduce:
   case 66:
 
 /* Line 1806 of yacc.c  */
-#line 263 "analisadorSintatico.y"
+#line 270 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_DIVIDED, (yyvsp[(1) - (3)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(1) - (3)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
@@ -2088,7 +2095,7 @@ yyreduce:
   case 67:
 
 /* Line 1806 of yacc.c  */
-#line 267 "analisadorSintatico.y"
+#line 274 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_NOT, (yyvsp[(1) - (2)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(2) - (2)]).node); }
     break;
@@ -2096,7 +2103,7 @@ yyreduce:
   case 68:
 
 /* Line 1806 of yacc.c  */
-#line 270 "analisadorSintatico.y"
+#line 277 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_NEG, (yyvsp[(1) - (2)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(2) - (2)]).node); }
     break;
@@ -2104,42 +2111,42 @@ yyreduce:
   case 69:
 
 /* Line 1806 of yacc.c  */
-#line 273 "analisadorSintatico.y"
+#line 280 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 70:
 
 /* Line 1806 of yacc.c  */
-#line 275 "analisadorSintatico.y"
+#line 282 "analisadorSintatico.y"
     { (yyval).node = AST_newNumFromToken((yyvsp[(1) - (1)]).iValue); }
     break;
 
   case 71:
 
 /* Line 1806 of yacc.c  */
-#line 276 "analisadorSintatico.y"
+#line 283 "analisadorSintatico.y"
     { (yyval).node = AST_newStringFromToken((yyvsp[(1) - (1)]).cValue, (yyvsp[(1) - (1)]).line); }
     break;
 
   case 72:
 
 /* Line 1806 of yacc.c  */
-#line 277 "analisadorSintatico.y"
+#line 284 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_TRUE, (yyvsp[(1) - (1)]).line) ; }
     break;
 
   case 73:
 
 /* Line 1806 of yacc.c  */
-#line 278 "analisadorSintatico.y"
+#line 285 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_FALSE, (yyvsp[(1) - (1)]).line) ; }
     break;
 
   case 74:
 
 /* Line 1806 of yacc.c  */
-#line 279 "analisadorSintatico.y"
+#line 286 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_NEW, (yyvsp[(1) - (5)]).line);
 						  AST_addChild((yyval).node, (yyvsp[(3) - (5)]).node);
 						  AST_addChild((yyval).node, (yyvsp[(5) - (5)]).node); }
@@ -2148,7 +2155,7 @@ yyreduce:
   case 75:
 
 /* Line 1806 of yacc.c  */
-#line 283 "analisadorSintatico.y"
+#line 290 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_CALL, (yyvsp[(1) - (4)]).line);
 						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (4)]).node); }
@@ -2157,21 +2164,21 @@ yyreduce:
   case 76:
 
 /* Line 1806 of yacc.c  */
-#line 286 "analisadorSintatico.y"
+#line 293 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(1) - (1)]).node; }
     break;
 
   case 77:
 
 /* Line 1806 of yacc.c  */
-#line 287 "analisadorSintatico.y"
+#line 294 "analisadorSintatico.y"
     { (yyval).node = (yyvsp[(2) - (3)]).node; }
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 2175 "y.tab.c"
+#line 2182 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2402,7 +2409,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 289 "analisadorSintatico.y"
+#line 296 "analisadorSintatico.y"
 
  /*procedimentos auxiliares */
 

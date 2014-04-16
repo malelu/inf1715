@@ -123,7 +123,7 @@ void prettyPrinter(AST* node)
 			
 		}
 		
-		parent_node = node ;
+		node = parent_node->firstChild ;
 		node = node->firstChild ;
 		numTab++ ;
 	}
