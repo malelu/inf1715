@@ -1572,7 +1572,7 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 57 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_GLOBAL, (yyvsp[(1) - (4)]).line);
- 						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line));
+ 						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line, AST_ID));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (4)]).node); }
     break;
 
@@ -1673,7 +1673,7 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 118 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_PARAM, (yyvsp[(1) - (3)]).line);
-						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (3)]).cValue, (yyvsp[(1) - (3)]).line));
+						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (3)]).cValue, (yyvsp[(1) - (3)]).line, AST_ID));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (3)]).node); }
     break;
 
@@ -1682,7 +1682,7 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 122 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_DECLVAR, (yyvsp[(1) - (5)]).line);
-						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (5)]).cValue, (yyvsp[(1) - (5)]).line));
+						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (5)]).cValue, (yyvsp[(1) - (5)]).line, AST_ID));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (5)]).node); 
 						  //fprintf(stderr, "entradas\n");
 						  //fprintf(stderr, "no 5   %d\n", $5.node);
@@ -1868,7 +1868,7 @@ yyreduce:
 
 /* Line 1806 of yacc.c  */
 #line 198 "analisadorSintatico.y"
-    { (yyval).node = AST_newStringFromToken((yyvsp[(1) - (1)]).cValue, (yyvsp[(1) - (1)]).line); }
+    { (yyval).node = AST_newStringFromToken((yyvsp[(1) - (1)]).cValue, (yyvsp[(1) - (1)]).line, AST_ID); }
     break;
 
   case 39:
@@ -1883,7 +1883,7 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 201 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_CALL, (yyvsp[(1) - (4)]).line);
-						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line));
+						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line, AST_ID));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (4)]).node); 
 						fprintf(stderr, "chamada   %d\n", (yyval).node);}
     break;
@@ -2122,7 +2122,7 @@ yyreduce:
 
 /* Line 1806 of yacc.c  */
 #line 283 "analisadorSintatico.y"
-    { (yyval).node = AST_newStringFromToken((yyvsp[(1) - (1)]).cValue, (yyvsp[(1) - (1)]).line); }
+    { (yyval).node = AST_newStringFromToken((yyvsp[(1) - (1)]).cValue, (yyvsp[(1) - (1)]).line, AST_ID); }
     break;
 
   case 72:
@@ -2153,7 +2153,7 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 290 "analisadorSintatico.y"
     { (yyval).node = AST_new(AST_CALL, (yyvsp[(1) - (4)]).line);
-						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line));
+						  AST_addChild((yyval).node, AST_newStringFromToken((yyvsp[(1) - (4)]).cValue, (yyvsp[(1) - (4)]).line, AST_ID));
 						  AST_addChild((yyval).node, (yyvsp[(3) - (4)]).node); }
     break;
 

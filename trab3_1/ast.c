@@ -115,7 +115,7 @@ AST* AST_newNumFromToken( int value)
 	return node ;	
 }
 
-AST* AST_newStringFromToken( char* value, int line)
+AST* AST_newStringFromToken( char* value, int line, int type)
 {
 	AST* node = (AST*) malloc(sizeof(AST)) ;
 	//fprintf(stderr, "entrou6\n");
@@ -125,7 +125,7 @@ AST* AST_newStringFromToken( char* value, int line)
 	node->nextSibling = NULL ;
 	node->prevSibling = NULL ;
 	node->line = line ;
-	node->type = 0 ;
+	node->type = type ;
 	node->intVal = 0 ;
 	node->stringVal = value ;
 	//fprintf(stderr, "saiu6\n");
