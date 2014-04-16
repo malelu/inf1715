@@ -6,7 +6,7 @@ AST* AST_new (int node_type, int line)
 {
 	
 	AST* node = (AST*) malloc(sizeof(AST)) ;
-	printf("oi");
+	fprintf(stderr, "entrou\n");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
@@ -16,59 +16,81 @@ AST* AST_new (int node_type, int line)
 	node->type = node_type ;
 	node->intVal = 0 ;
 	node->stringVal = NULL ;
+	fprintf(stderr, "saiu\n");
+	fprintf(stderr, "%d\n", node->line);
+	fprintf(stderr, "%d\n", node->type);
 
 	return node ;
 }
 
 void AST_addChild(AST* parent_node, AST* node)
 {
-	printf("oi");
-	if(parent_node->firstChild == NULL)
+	fprintf(stderr, "entrou2\n");
+	if(node != NULL)
 	{
-		parent_node->firstChild = node ;
-		parent_node->lastChild = node ;
-		
-	}
-	else
-	{
-		parent_node->lastChild->nextSibling = node ;
-		node->prevSibling = parent_node->lastChild ;
-		parent_node->lastChild = node ;
+		if(parent_node->firstChild == NULL)
+		{
+			parent_node->firstChild = (AST*) malloc(sizeof(AST)) ;
+			parent_node->lastChild = (AST*) malloc(sizeof(AST)) ;	
+			parent_node->firstChild = node ;
+			parent_node->lastChild = node ;
+		}
+		else
+		{	
+			
+			parent_node->lastChild->nextSibling = (AST*) malloc(sizeof(AST)) ;
+			parent_node->lastChild->nextSibling = node ;
+			node->prevSibling = (AST*) malloc(sizeof(AST)) ;		
+			node->prevSibling = parent_node->lastChild ;
+			parent_node->lastChild = node ;
+			
+		}
+		node->parent = parent_node ;
 	}
 	
-	node->parent = parent_node ;
+	
+	fprintf(stderr, "saiu2\n");
 }
 
 void AST_addChildren (AST* parent_node, AST* last_child)
 {
-	AST* node = (AST*) malloc(sizeof(AST)) ;
-	node = last_child ;
-	printf("oi");
-	parent_node->lastChild = node ;
 
-	while (node->prevSibling != NULL)
+	if(last_child != NULL)
 	{
+		AST* node = (AST*) malloc(sizeof(AST)) ;
+		node = last_child ;
+		fprintf(stderr, "entrou3\n");
+		parent_node->lastChild = node ;
+
+		while (node->prevSibling != NULL)
+		{
+			node->parent = parent_node ;
+		}
+
 		node->parent = parent_node ;
+		parent_node->firstChild = node ;
+		fprintf(stderr, "saiu3\n");
 	}
-
-	node->parent = parent_node ;
-	parent_node->firstChild = node ;
-
 }
 
 AST* AST_prependSibling(AST* right_node, AST* left_node)
 {
-	printf("oi");
-	right_node->prevSibling = left_node ;
-	left_node->nextSibling = right_node ;
-
+	fprintf(stderr, "entrou4\n");
+	if(right_node != NULL)
+	{
+		right_node->prevSibling = (AST*) malloc(sizeof(AST)) ;
+		left_node->nextSibling = (AST*) malloc(sizeof(AST)) ;
+		right_node->prevSibling = left_node ;
+		left_node->nextSibling = right_node ;
+	}
+	fprintf(stderr, "saiu4\n");
 	return right_node ;
 }
 
 AST* AST_newNumFromToken( int value)
 {
 	AST* node = (AST*) malloc(sizeof(AST)) ;
-	printf("oi");
+	fprintf(stderr, "entrou5\n");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
@@ -78,14 +100,14 @@ AST* AST_newNumFromToken( int value)
 	node->type = 0 ;
 	node->intVal = value ;
 	node->stringVal = NULL ;
-
+	fprintf(stderr, "saiu5\n");
 	return node ;	
 }
 
 AST* AST_newStringFromToken( char* value)
 {
 	AST* node = (AST*) malloc(sizeof(AST)) ;
-	printf("oi");
+	fprintf(stderr, "entrou6\n");
 	node->firstChild = NULL ;
 	node->lastChild = NULL ;
 	node->parent = NULL ;
@@ -95,7 +117,7 @@ AST* AST_newStringFromToken( char* value)
 	node->type = 0 ;
 	node->intVal = 0 ;
 	node->stringVal = value ;
-
+	fprintf(stderr, "saiu6\n");
 	return node ;
 }
 

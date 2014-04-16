@@ -25,7 +25,9 @@ void yyerror (const char * s)
 int main (void)
 {
 	//yydebug = 1;
+	fprintf(stderr, "error!\n");
 	yyparse();
+	fprintf(stderr, "Nao ha erros de sintaxe\n");
 	printf ("Nao ha erros de sintaxe\n");	
-	prettyPrinter(programa) ;
+	//prettyPrinter(programa) ;
 }
