@@ -1,0 +1,117 @@
+*****************************************
+Aluna: Marina Leao Lucena
+Professor: Hisham Muhammad
+Matéria: Compiladores
+Trabalho: AST
+*****************************************
+
+*****************************************
+Diretórios e arquivos:
+
+	- Diretório testes
+		-teste1.mg
+		-teste2.mg
+		-teste3.mg
+		-teste4.mg
+		-teste5.mg
+		-teste6.mg
+		-teste7.mg
+		-teste8.mg
+	- main.c
+	- analisadorLexico.l
+	- analisadorSintatico.y
+	- ast.c
+	- ast.h
+	- token.h
+	- makefile
+	- leiame.txt
+
+*****************************************
+Para executar o programa, siga os seguintes passos:
+
+	- Abra o terminal
+	- Navegue ao diretório do trabalho pelo terminal
+	- Escreva no terminal o comando "make" e pressione enter para compilar o programa e criar o executável
+	- Escreva no terminal o comando ./programa <testes/teste*.mg >saida.txt		* sendo um número do teste
+	- Confira a saída no arquivo saida.txt
+
+*****************************************
+Relatório do trabalho:
+
+No trabalho foi implementado uma Árvore de Sintaxe Abstrata para a linguagem mini-0.
+Em conjunto com o Analisador SIntático do trabalho anterior, a árvore é montada, por bottom up a cada passo da gramática.
+Os nós são:
+
+	AST_PROGRAM : pode ter inúmeros filhos; um para cada função ou global do programa.
+	AST_GLOBAL : tem 2 filhos
+		 filho 1 : nó contendo o valor do ID
+		 filho 2 : nó representando o tipo do ID
+	AST_FUN : pode ter inúmeros filhos;
+		  Possui 0 ou mais filhos relacionados a parâmetro
+		  Possui 0 ou 1 filho relacionado ao tipo
+		  Possui 0 ou 1 filho BLOCK
+	AST_BLOCK : Possui 0 ou mais filhos relacionados às entradas
+	AST_PARAM : tem 2 filhos
+		 filho 1 : nó contendo o valor do ID
+		 filho 2 : nó representando o tipo do ID
+	AST_INT : não tem nós filhos
+	AST_CHAR : não tem nós filhos
+	AST_BOOL : não tem nós filhos
+	AST_STRING : não tem nós filhos
+	AST_IF : tem 3 filhos
+		 Possui 1 filho referente à expressão
+		 Possui 0 ou 1 filho BLOCK
+		 Possui 0 ou 1 filho BLOCK_ELSE
+	AST_BLOCK_ELSE : Possui 0 ou mais filhos relacionados às entradas em else
+	AST_ELSEIF : tem 3 filhos
+		 Possui 1 filho referente à expressão
+		 Possui 0 ou 1 filho BLOCK
+		 Possui 0 ou 1 filho BLOCK_ELSE
+	AST_ELSE : tem 1 filho
+		 Possui 0 ou 1 filho BLOCK
+	AST_WHILE : tem 2 filhos
+		 Possui 1 filho referente à expressão
+		 Possui 0 ou 1 filho BLOCK
+	AST_ATRIB : tem 2 filhos
+		 Possui 1 filho referente à variável
+		 Possui 1 filho referente à expressão
+	AST_CALL : tem 2 filhos
+		 Possui 1 filho que contém o valor do ID
+		 Possui 0 ou mais filhos que contém expressões
+	AST_RET : Possui 1 filho referente à expressão
+	AST_OR : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_AND : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_LESS : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_GREATER : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_EQUAL : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_LESS_EQUAL : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_GREATER_EQUAL : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_NOT_EQUAL : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_PLUS : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_MINUS : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_TIMES : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_DIVIDED : tem 2 filhos
+		 Ambos os filhos se referem à expressão
+	AST_NOT : tem 1 filho relacionado à expressão
+	AST_NEG : tem 1 filho relacionado à expressão
+	AST_TRUE : não tem nós filhos
+	AST_FALSE : não tem nós filhos
+	AST_NEW : tem 2 filhos
+		Possui 1 filho que contém expressões
+		Possui 1 filho relacionado ao tipo
+
+
+
+
+
