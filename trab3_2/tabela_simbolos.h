@@ -18,10 +18,19 @@ struct Symbol_ {
    int line;
 };
 
+typedef struct NodeTable_ NodeTable;
+
+struct NodeTable_ {
+   	node* nextNode;
+   	node* prevNode;
+   	Symbol symbol ;
+};
+
 typedef struct SymbolTable_ SymbolTable;
 
 struct SymbolTable_ {
-
+	NodeTable* firstNode;
+   	NodeTable* lastNode;
 };
 
 SymbolTable* SymbolTable_new();
