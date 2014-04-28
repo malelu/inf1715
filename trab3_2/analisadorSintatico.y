@@ -2,6 +2,7 @@
 %{
 #include "ast.h"
 #include "token.h"
+#include "simbolos.h"
 
 AST* programa ;
 
@@ -40,7 +41,10 @@ programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
 						  if($2.node != NULL)
 						  	AST_addChildren(programa, $2.node); 
 						  else
-							AST_addChildren(programa, $1.node); }
+							AST_addChildren(programa, $1.node); 
+
+						  Symbols_annotate(programa) ;
+						}
 
 	| nl decl lista_decl			{ programa = AST_new(AST_PROGRAM, 1);
 						  AST_prependSibling($3.node, $2.node);

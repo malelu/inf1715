@@ -2,7 +2,13 @@
 all: programa
 
 programa: analisadorSintatico.o analisadorLexico.o ast.o main.c
-	gcc -o programa analisadorSintatico.o analisadorLexico.o ast.o main.c -ll -ly
+	gcc -Wall -o programa analisadorSintatico.o analisadorLexico.o ast.o tabela_simbolos.o simbolos.o main.c -ll -ly
+
+simbolos.o : simbolos.c
+	gcc -c simbolos.c
+
+tabela_simbolos.o : tabela_simbolos.c
+	gcc -c tabela_simbolos.c
 
 ast.o : ast.c
 	gcc -c ast.c
