@@ -33,6 +33,8 @@ struct SymbolTable_ {
    	NodeTable* lastNode;
 };
 
+Symbol* Symbol_new(char* name, SymbolType type, int line) ;
+NodeTable* NodeTable_new(Symbol* sym) ;
 SymbolTable* SymbolTable_new();
 void SymbolTable_delete(SymbolTable* st);
 void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line);
