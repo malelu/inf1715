@@ -156,8 +156,15 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
       		}
    	}
 
-	//colocar para todos os simbolos
-   	SymbolTable_add(st, name, SYM_INT, declvar->line);
+	if (declvar->firstChild->nextSibling->type == AST_INT)
+   		SymbolTable_add(st, name, SYM_INT, declvar->line);
+
+	else if (declvar->firstChild->nextSibling->type == AST_BOOL)
+		SymbolTable_add(st, name, SYM_BOOL, declvar->line);
+
+	else
+		SymbolTable_add(st, name, SYM_CHAR, declvar->line);
+
    	return true;
 }
 
