@@ -11,41 +11,62 @@ static bool fail(const char* msg, const char* name, AST* node)
    	return false;
 }
 
-
-static bool Symbols_visitAdd(SymbolTable* st, AST* call)
-{
-	
-}
-
-
-int Symbols_visitExpression(SymbolTable* st, AST* ast_node) 
+int Symbols_visitExpression(SymbolTable* st, AST* exp) 
 {
 
 	int child1, child2 ;
-	if (ast_node->type == AST_NUMINT)
+	if (exp->type == AST_NUMINT)
 	{
 		return AST_NUMINT ;
 	}
-	else if (ast_node->type == AST_ID)
+	else if (exp->type == AST_ID)
 	{
 		return AST_ID ;
 	}
-	else if (ast_node->type == AST_BOOL)
+	else if (exp->type == AST_BOOL)
 	{
 		return AST_BOOL ;
 	}
 
-	else if (ast_node->type == AST_PLUS || ast_node->type == AST_MINUS || ast_node->type == AST_TIMES || ast_node->type == AST_DIVIDED)
+	else if (exp->type == AST_PLUS || exp->type == AST_MINUS || exp->type == AST_TIMES || exp->type == AST_DIVIDED)
 	{
-		child1 = Symbols_visitExpression(st, ast_node->firstChild) ;
-		child2 = Symbols_visitExpression(st, ast_node->lastChild) ;
+		child1 = Symbols_visitExpression(st, exp->firstChild) ;
+		child2 = Symbols_visitExpression(st, exp->lastChild) ;
 
 		if((child1 == AST_NUMINT || child1 == AST_CHAR) && (child2 == AST_NUMINT || child2 = AST_CHAR)
 			return AST_NUMINT ;
 
 		else
-			return fail("invalid expression!", "?????????", call);
+			return fail("invalid expression!", "?????????", exp);
 	}
+
+	else if (exp->type == AST_GREATER || exp->type == AST_LESS || exp->type == AST_GREATER_EQUAL 
+		 || exp->type == AST_LESS_EQUAL || exp->type == AST_EQUAL || exp->type == AST_NOT_EQUAL)
+	{
+		child1 = Symbols_visitExpression(st, exp->firstChild) ;
+		child2 = Symbols_visitExpression(st, exp->lastChild) ;
+
+		if((child1 == AST_NUMINT || child1 == AST_CHAR) && (child2 == AST_NUMINT || child2 = AST_CHAR)
+			return AST_BOOL ;
+
+		else
+			return fail("invalid comparison expression!", "?????????", exp);
+	}
+
+	else if (exp->type == AST_AND || exp->type == AST_OR)
+	{
+		child1 = Symbols_visitExpression(st, exp->firstChild) ;
+		child2 = Symbols_visitExpression(st, exp->lastChild) ;
+
+		if(child1 == AST_BOOL && child2 == AST_BOOL)
+			return AST_BOOL ;
+
+		else
+			return fail("invalid and/or expression!", "?????????", exp);
+	}
+
+	else
+		return fail("invalid expression!", "?????????", exp);
 }
 
 
@@ -70,95 +91,13 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 }
 
 
-static bool Symbols_visitAssignInt(AST* assign, char* name, Symbol* existing)
-{
-	/* int recebe int */
-	if (assign->lastChild->type == 320)
-	{
-		if(assign->lastChild->intVal >= -2147483648 && assign->lastChild->intVal <= -2147483647)
-		{
-			assert(existing->type == SYM_INT);
-			return true;
-		}
-		else
-			return fail("assigned integer out of range", name, assign);
-	}
-		
-	/* int recebe bool */
-	else if (assign->lastChild->type == 287 || assign->lastChild->type == 288)
-	{
-		return fail("assigned bool to an int variable!", name, assign);
-	}
-	/* int recebe char ou string VEEEEEEEEEEEEER*/
-	else if (assign->lastChild->type == 309)
-	{
-		assert(existing->type == SYM_INT);
-			return true;
-	}
-
-	else
-	{
-		return fail("assigned non valid value to an int variable!", name, assign);
-	}
-}
-
-
-static bool Symbols_visitAssignBool(AST* assign, char* name, Symbol* existing)
-{
-	/* bool recebe bool */
-	if (assign->lastChild->type == 287 || assign->lastChild->type == 288)
-	{
-		assert(existing->type == SYM_BOOL);
-		return true;
-	}
-	/* bool recebe int */
-	else if (assign->lastChild->type == 320)
-		return fail("assigned int to a bool variable!", name, assign);
-
-	/* bool recebe char ou string */
-	else if (assign->lastChild->type == 309)
-		return fail("assigned char to a bool variable!", name, assign);
-
-	else
-		return fail("assigned non valid value to a bool variable!", name, assign);
-}
-
-
-
-/* TRATAR O NUMERO DE CARACTERES!!! */
-static bool Symbols_visitAssignChar(AST* assign, char* name, Symbol* existing)
-{
-	/* char recebe char */
-	if (assign->lastChild->type == 309)
-	{
-		assert(existing->type == SYM_CHAR);
-		return true;
-	}
-
-	/* char recebe int */
-	else if (assign->lastChild->type == 320)
-
-		if (assign->lastChild->intVal >= -127 && assign->lastChild->intVal <= 128)
-		{
-			assert(existing->type == SYM_CHAR);
-			return true;
-		}
-		else
-			return fail("assigned int to a char variable! Undefined", name, assign);
-
-	/* char recebe bool */
-	else if (assign->lastChild->type == 287 || assign->lastChild->type == 288)
-		return fail("assigned bool to a char variable!", name, assign);
-
-	else
-		return fail("assigned non valid value to a char variable!", name, assign);
-}
-
-
 static bool Symbols_visitAssign(SymbolTable* st, AST* assign) 
 {
 	const char* name = assign->firstChild->stringVal;
    	Symbol* existing = SymbolTable_get(st, name);
+	int assign_type ;
+
+	assign_type = Symbols_visitExpression(SymbolTable* st, AST* exp)
 
    	if (existing) 
 	{
@@ -166,13 +105,46 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
          		return fail("is a function!", name, assign);
 
 		else if (existing->type == SYM_INT)
-			return Symbols_visitAssignInt(assign, name, existing) ;
+		{
+			if (assign_type == AST_NUMINT or assign_type = AST_CHAR)
+			{
+				assert(existing->type == SYM_INT);
+				return true;
+			}
+			else
+				return fail("assigned invalid value to an int variable!", name, assign);
+		}
+
 		
 		else if (existing->type == SYM_BOOL)
-			return Symbols_visitAssignBool(assign, name, existing) ;
+		{
+			if (assign_type == AST_BOOL)
+			{
+				assert(existing->type == SYM_BOOL);
+				return true;
+			}
+			else
+				return fail("assigned invalid value to a bool variable!", name, assign);
+		}
+
 		
 		else if (existing->type == SYM_CHAR)
-			return Symbols_visitAssignChar(assign, name, existing) ;		
+		{
+			if (assign_type == AST_CHAR)
+			{
+				assert(existing->type == SYM_CHAR);
+				return true;
+			}
+			else if (assign_type == AST_NUMINT)
+			{
+				/*PEGAR O ULTIMO BITE!!!!!!!!!*/
+				assert(existing->type == SYM_CHAR);
+				return true;
+			}
+			else
+				return fail("assigned invalid value to char variable!", name, assign);
+		}
+		/* FAZER ELSE IF DO ARRAY DE CHAR! */		
 		
    	}
    	return fail("undeclared variable!", name, assign);
