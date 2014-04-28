@@ -1,5 +1,6 @@
 #include "simbolos.h"
 #include "tabela_simbolos.h"
+#include "ast.h"
 #include <stdio.h>
 
 
@@ -29,24 +30,86 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 
 static bool Symbols_visitAssignInt(AST* assign, char* name, Symbol* existing)
 {
-	/* atribuicao de int recebe int */
+	/* int recebe int */
 	if (assign->lastChild->type == 320)
 	{
-		assert(existing->type == SYM_INT);
-		return true;
+		if(assign->lastChild->intValue >= -2147483648 && (assign->lastChild->intValue <= -2147483647)
+		{
+			assert(existing->type == SYM_INT);
+			return true;
+		}
+		else
+			return fail("assigned integer out of range", name, assign);
 	}
 		
-	/* atribuicao de int recebe bool */
+	/* int recebe bool */
 	else if (assign->lastChild->type == 287 || assign->lastChild->type == 288)
 	{
 		return fail("assigned bool to an int variable!", name, assign);
 	}
-	/* atribuicao de int recebe char ou string VEEEEEEEEEEEEER*/
+	/* int recebe char ou string VEEEEEEEEEEEEER*/
 	else if (assign->lastChild->type == 309)
 	{
 		assert(existing->type == SYM_INT);
 			return true;
 	}
+
+	else
+	{
+		return fail("assigned non valid value to an int variable!", name, assign);
+	}
+}
+
+
+static bool Symbols_visitAssignBool(AST* assign, char* name, Symbol* existing)
+{
+	/* bool recebe bool */
+	if (assign->lastChild->type == 287 || assign->lastChild->type == 288)
+	{
+		assert(existing->type == SYM_BOOL);
+		return true;
+	}
+	/* bool recebe int */
+	else if (assign->lastChild->type == 320)
+		return fail("assigned int to a bool variable!", name, assign);
+
+	/* bool recebe char ou string */
+	else if (assign->lastChild->type == 309)
+		return fail("assigned char to a bool variable!", name, assign);
+
+	else
+		return fail("assigned non valid value to a bool variable!", name, assign);
+}
+
+
+
+/* TRATAR O NUMERO DE CARACTERES!!! */
+static bool Symbols_visitAssignChar(AST* assign, char* name, Symbol* existing)
+{
+	/* char recebe char */
+	if (assign->lastChild->type == 309)
+	{
+		assert(existing->type == SYM_CHAR);
+		return true;
+	}
+
+	/* char recebe int */
+	else if (assign->lastChild->type == 320)
+
+		if (assign->lastChild->intVal >= -127 && assign->lastChild->intVal <= 128)
+		{
+			assert(existing->type == SYM_CHAR);
+			return true;
+		}
+		else
+			return fail("assigned int to a char variable! Undefined", name, assign);
+
+	/* char recebe bool */
+	else if (assign->lastChild->type == 287 || assign->lastChild->type == 288)
+		return fail("assigned bool to a char variable!", name, assign);
+
+	else
+		return fail("assigned non valid value to a char variable!", name, assign);
 }
 
 
@@ -54,40 +117,21 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 {
 	const char* name = assign->firstChild->stringVal;
    	Symbol* existing = SymbolTable_get(st, name);
+
    	if (existing) 
 	{
       		if (existing->type == SYM_FUN) 
-		{
          		return fail("is a function!", name, assign);
-      		}
 
-		if (existing->type == SYM_INT)
-		{
+		else if (existing->type == SYM_INT)
 			return Symbols_visitAssignInt(assign, name, existing) ;
-		}
-		/* atribuicao de int recebe int */
-		if (existing->type == SYM_INT && assign->lastChild->type == 320)
-		{
-			assert(existing->type == SYM_INT);
-			return true;
-		}
-			
-		/* atribuicao de int recebe bool */
-		else if (existing->type == SYM_INT && assign->lastChild->type == 287 || 
-			  existing->type == SYM_INT && assign->lastChild->type == 288)
-		{
-			return fail("assigned bool to an int variable!", name, assign);
-		}
-		/* atribuicao de int recebe char ou string */
-		else if (existing->type == SYM_INT && assign->lastChild->type == 309)
-		{
-			assert(existing->type == SYM_INT);
-			return true;
-		}
-
-
-	      	assert(existing->type == SYM_INT);
-	      	return true;
+		
+		else if (existing->type == SYM_BOOL)
+			return Symbols_visitAssignBool(assign, name, existing) ;
+		
+		else if (existing->type == SYM_CHAR)
+			return Symbols_visitAssignChar(assign, name, existing) ;		
+		
    	}
    	return fail("undeclared variable!", name, assign);
 }
