@@ -2,6 +2,7 @@
 #define SYMBOLTABLE_H
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef enum {
    SYM_INT,
@@ -21,9 +22,10 @@ struct Symbol_ {
 typedef struct NodeTable_ NodeTable;
 
 struct NodeTable_ {
-   	node* nextNode;
-   	node* prevNode;
+   	NodeTable* nextNode;
+   	NodeTable* prevNode;
    	Symbol symbol ;
+	int level ;
 };
 
 typedef struct SymbolTable_ SymbolTable;

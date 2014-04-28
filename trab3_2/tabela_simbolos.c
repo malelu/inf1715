@@ -18,7 +18,7 @@ NodeTable* NodeTable_new(Symbol* sym)
 	node->nextNode = NULL;
    	node->prevNode = NULL;
    	node->symbol = (Symbol*) malloc(sizeof(Symbol)) ;
-	node->Symbol = sym ;
+	node->symbol = sym ;
 
 	return node ;
 }
@@ -37,10 +37,11 @@ SymbolTable* SymbolTable_new()
 void SymbolTable_delete(SymbolTable* st)
 {
 
-	Node* node = st->firstNode ;
+	NodeTable* node = st->firstNode ;
+	NodeTable* next ;
 	while(node != NULL)
 	{
-		Node next = node->nextNode ;
+		next = node->nextNode ;
 		free(node) ;
 		node = next ;
 	}

@@ -1,5 +1,5 @@
-#include "simbolos.h"
 #include "tabela_simbolos.h"
+#include "simbolos.h"
 #include "ast.h"
 #include <stdio.h>
 
@@ -9,6 +9,48 @@ static bool fail(const char* msg, const char* name, AST* node)
 {
    	fprintf(stderr, "%s - %s at line %d", msg, name, node->line);
    	return false;
+}
+
+
+static bool Symbols_visitAdd(SymbolTable* st, AST* call)
+{
+	
+}
+
+
+int Symbols_visitExpression(SymbolTable* st, AST* ast_node) 
+{
+
+	int child1, child2 ;
+	if (ast_node->type == AST_NUMINT)
+	{
+		return AST_NUMINT ;
+	}
+	else if (ast_node->type == AST_ID)
+	{
+		return AST_ID ;
+	}
+	else if (ast_node->type == AST_BOOL)
+	{
+		return AST_BOOL ;
+	}
+
+	else if (ast_node->type == AST_PLUS || ast_node->type == AST_MINUS || ast_node->type == AST_TIMES || ast_node->type == AST_DIVIDED)
+	{
+		child1 = Symbols_visitExpression(st, ast_node->firstChild) ;
+		child2 = Symbols_visitExpression(st, ast_node->lastChild) ;
+
+		if((child1 == AST_NUMINT || child1 == AST_CHAR) && (child2 == AST_NUMINT || child2 = AST_CHAR)
+			return AST_NUMINT ;
+
+		else
+			return fail("invalid expression!", "?????????", call);
+	}
+}
+
+
+static bool Symbols_visitIf(SymbolTable* st, AST* _if) 
+{
 }
 
 static bool Symbols_visitCall(SymbolTable* st, AST* call) 
@@ -33,7 +75,7 @@ static bool Symbols_visitAssignInt(AST* assign, char* name, Symbol* existing)
 	/* int recebe int */
 	if (assign->lastChild->type == 320)
 	{
-		if(assign->lastChild->intValue >= -2147483648 && (assign->lastChild->intValue <= -2147483647)
+		if(assign->lastChild->intVal >= -2147483648 && assign->lastChild->intVal <= -2147483647)
 		{
 			assert(existing->type == SYM_INT);
 			return true;
