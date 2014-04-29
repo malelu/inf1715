@@ -59,7 +59,6 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		{
 			return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, existing->size);
 		}
-		/* ELSE IF PARA TRATAR ARRAY DE CHAR */
 		else
 		{
 			fprintf(stderr, "undeclared variable! - %s at line %d", name, exp->line);
@@ -76,7 +75,7 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		{
 			if(child1[1] == child2[1] == 0)
 			{
-				return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_INT, child1[1]);
+				return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, child1[1]);
 			}
 			else
 			{
@@ -97,10 +96,17 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		child1 = Symbols_visitExpression(st, exp->firstChild) ;
 		child2 = Symbols_visitExpression(st, exp->lastChild) ;
 
-		if(((child1 == AST_NUMINT) || (child1 == AST_CHAR)) && ((child2 == AST_NUMINT) || (child2 = AST_CHAR)))
+		if(((child1[0] == AST_NUMINT) || (child1[0] == AST_CHAR)) && ((child2[0] == AST_NUMINT) || (child2[0] = AST_CHAR)))
 		{
-			exp->symbol_type = SYM_BOOL ;
-			return AST_BOOL ;
+			if(child1[1] == child2[1] == 0)
+			{
+				return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, 0);
+			}
+			else
+			{
+				fprintf(stderr, "invalid comparison expression! Invalid type sizes! - %s at line %d", "comparison", exp->line);
+				return -1 ;
+			}
 		}
 		else
 		{
@@ -114,10 +120,17 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		child1 = Symbols_visitExpression(st, exp->firstChild) ;
 		child2 = Symbols_visitExpression(st, exp->lastChild) ;
 
-		if(child1 == AST_BOOL && child2 == AST_BOOL)
+		if(child1[0] == AST_BOOL && child2[0] == AST_BOOL)
 		{
-			exp->symbol_type = SYM_BOOL ;
-			return AST_BOOL ;
+			if(child1[1] == child2[1] == 0)
+			{
+				return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, 0);
+			}
+			else
+			{
+				fprintf(stderr, "invalid and/or expression! Invalid type sizes! - %s at line %d", "and/or", exp->line);
+				return -1 ;
+			}
 		}
 
 		else
@@ -131,10 +144,9 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	{
 		child1 = Symbols_visitExpression(st, exp->firstChild) ;
 
-		if(child1 == AST_BOOL)
+		if(child1[0] == AST_BOOL && child1[1] == 0)
 		{
-			exp->symbol_type = SYM_BOOL ;
-			return AST_BOOL ;
+			return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, 0);
 		}
 
 		else
@@ -148,10 +160,9 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	{
 		child1 = Symbols_visitExpression(st, exp->firstChild) ;
 
-		if(child1 == AST_NUMINT || child1 == AST_CHAR)
+		if(((child1[0] == AST_NUMINT) && (child1[1] == 0)) || ((child1[0] == AST_CHAR) && (child1[1] == 0)))
 		{
-			exp->symbol_type = SYM_INT ;
-			return AST_NUMINT ;
+			return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, 0);
 		}
 
 		else
