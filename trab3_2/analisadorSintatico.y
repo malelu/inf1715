@@ -42,8 +42,6 @@ programa: decl lista_decl 			{ programa = AST_new(AST_PROGRAM, 1);
 						  	AST_addChildren(programa, $2.node); 
 						  else
 							AST_addChildren(programa, $1.node); 
-
-						  Symbols_annotate(programa) ;
 						}
 
 	| nl decl lista_decl			{ programa = AST_new(AST_PROGRAM, 1);

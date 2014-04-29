@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef enum {
    SYM_INT,
@@ -14,7 +15,7 @@ typedef enum {
 typedef struct Symbol_ Symbol;
 
 struct Symbol_ {
-   char* name;
+   const char* name;
    SymbolType type;
    int line;
 };
@@ -24,7 +25,7 @@ typedef struct NodeTable_ NodeTable;
 struct NodeTable_ {
    	NodeTable* nextNode;
    	NodeTable* prevNode;
-   	Symbol symbol ;
+   	Symbol* symbol ;
 	int level ;
 };
 
@@ -35,7 +36,7 @@ struct SymbolTable_ {
    	NodeTable* lastNode;
 };
 
-Symbol* Symbol_new(char* name, SymbolType type, int line) ;
+Symbol* Symbol_new(const char* name, SymbolType type, int line) ;
 NodeTable* NodeTable_new(Symbol* sym) ;
 SymbolTable* SymbolTable_new();
 void SymbolTable_delete(SymbolTable* st);

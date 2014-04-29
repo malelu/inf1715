@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+#include "simbolos.h"
 
 extern int lineCount ;
 extern int yydebug;
@@ -22,7 +23,7 @@ void prettyPrinter(AST* node)
 {	
 
 	addTab (numTab) ;
-	printAST (node->type) ;
+	AST_printAST (node->type) ;
 
 	if(node->stringVal != NULL)
 		fprintf(stdout, " [%s]", node->stringVal);
@@ -60,6 +61,7 @@ int main (void)
 	//yydebug = 1;
 	yyparse();
 	prettyPrinter(programa) ;
+	error = Symbols_annotate(programa) ;
 	if (error == 0)
 		return 0 ;
 	else

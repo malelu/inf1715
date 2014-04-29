@@ -1,11 +1,10 @@
 #include "tabela_simbolos.h"
 
 
-Symbol* Symbol_new(char* name, SymbolType type, int line)
+Symbol* Symbol_new(const char* name, SymbolType type, int line)
 {
    	Symbol* sym = (Symbol*) malloc(sizeof(Symbol)) ;
 	sym->name = name ;
-	sym->type = (SymbolType*) malloc(sizeof(SymbolType)) ;
 	sym->type = type ;
 	sym->line = line ;
 
@@ -53,7 +52,7 @@ void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int lin
 {
 
 	Symbol* sym = Symbol_new(name, type, line) ;
-	NodeTable* new_node = NodeTable_new(&sym) ;
+	NodeTable* new_node = NodeTable_new(sym) ;
 	NodeTable* old_last_node = NULL;
 	
 	if(st->firstNode == NULL)
@@ -91,6 +90,6 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name)
 		node = node->nextNode ;
 	}
 
-	return node->Symbol ;
+	return node->symbol ;
 	
 }

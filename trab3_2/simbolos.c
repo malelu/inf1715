@@ -2,6 +2,7 @@
 #include "simbolos.h"
 #include "ast.h"
 #include <stdio.h>
+#include <assert.h>
 
 
 
@@ -11,7 +12,7 @@ static bool fail(const char* msg, const char* name, AST* node)
    	return false;
 }
 
-int Symbols_visitExpression(SymbolTable* st, AST* exp) 
+static int Symbols_visitExpression(SymbolTable* st, AST* exp) 
 {
 
 	int child1, child2 ;
@@ -37,12 +38,12 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 			return AST_NUMINT ;
 		else if (existing->type == SYM_BOOL)
 			return AST_BOOL ;
-		else if (existin->type == SYM_CHAR )
+		else if (existing->type == SYM_CHAR )
 			return AST_CHAR ;
 		/* ELSE IF PARA TRATAR ARRAY DE CHAR */
 		else
 		{
-			fprintf(stderr, "undeclared variable! - %s at line %d", name, exp);
+			fprintf(stderr, "undeclared variable! - %s at line %d", name, exp->line);
 			return -1 ;
 		}
 	}
@@ -52,12 +53,12 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 		child1 = Symbols_visitExpression(st, exp->firstChild) ;
 		child2 = Symbols_visitExpression(st, exp->lastChild) ;
 
-		if((child1 == AST_NUMINT || child1 == AST_CHAR) && (child2 == AST_NUMINT || child2 = AST_CHAR)
+		if(((child1 == AST_NUMINT) || (child1 == AST_CHAR)) && ((child2 == AST_NUMINT) || (child2 = AST_CHAR)))
 			return AST_NUMINT ;
 
 		else
 		{
-			fprintf(stderr, "invalid expression! - %s at line %d", "+ - * /", exp);
+			fprintf(stderr, "invalid expression! - %s at line %d", "+ - * /", exp->line);
 			return -1 ;
 		}
 	}
@@ -68,12 +69,12 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 		child1 = Symbols_visitExpression(st, exp->firstChild) ;
 		child2 = Symbols_visitExpression(st, exp->lastChild) ;
 
-		if((child1 == AST_NUMINT || child1 == AST_CHAR) && (child2 == AST_NUMINT || child2 = AST_CHAR)
+		if(((child1 == AST_NUMINT) || (child1 == AST_CHAR)) && ((child2 == AST_NUMINT) || (child2 = AST_CHAR)))
 			return AST_BOOL ;
 
 		else
 		{
-			fprintf(stderr, "invalid comparison expression! - %s at line %d", "comparison", exp);
+			fprintf(stderr, "invalid comparison expression! - %s at line %d", "comparison", exp->line);
 			return -1 ;
 		}
 	}
@@ -88,7 +89,7 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 		else
 		{
-			fprintf(stderr, "invalid and/or expression! - %s at line %d", "and/or", exp);
+			fprintf(stderr, "invalid and/or expression! - %s at line %d", "and/or", exp->line);
 			return -1 ;
 		}
 	}
@@ -102,7 +103,7 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 		else
 		{
-			fprintf(stderr, "invalid \"not\" expression! - %s at line %d", "not", exp);
+			fprintf(stderr, "invalid \"not\" expression! - %s at line %d", "not", exp->line);
 			return -1 ;
 		}
 	}
@@ -116,12 +117,12 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 		else
 		{
-			fprintf(stderr, "invalid - expression! - %s at line %d", "neg", exp);
+			fprintf(stderr, "invalid - expression! - %s at line %d", "neg", exp->line);
 			return -1 ;
 		}
 	}
 
-	fprintf(stderr, "invalid expression! - %s at line %d", "exp", exp);
+	fprintf(stderr, "invalid expression! - %s at line %d", "exp", exp->line);
 	return -1 ;
 }
 
@@ -184,16 +185,6 @@ static bool Symbols_visitNew(SymbolTable* st, AST* _new)
 	return true ;
 }
 
-static bool Symbols_visitParameter(SymbolTable* st, AST* parameter) 
-{
-	return Symbols_visitDeclVar(st, parameter);
-}
-
-static bool Symbols_visitGlobal(SymbolTable* st, AST* global) 
-{
-	return Symbols_visitDeclVar(st, global);
-}
-
 static bool Symbols_visitCall(SymbolTable* st, AST* call) 
 {
 	const char* name = call->firstChild->stringVal;
@@ -217,7 +208,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
    	Symbol* existing = SymbolTable_get(st, name);
 	int assign_type ;
 
-	assign_type = Symbols_visitExpression(SymbolTable* st, AST* exp)
+	assign_type = Symbols_visitExpression(st, assign);
 
    	if (existing) 
 	{
@@ -226,7 +217,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 
 		else if (existing->type == SYM_INT)
 		{
-			if (assign_type == AST_NUMINT or assign_type = AST_CHAR)
+			if ((assign_type == AST_NUMINT) || (assign_type == AST_CHAR))
 			{
 				assert(existing->type == SYM_INT);
 				return true;
@@ -284,7 +275,7 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
       		} 
 		else 
 		{
-	        	fail("Internal compiler error!", "!?!?", declvar);
+	        	return fail("Internal compiler error!", "!?!?", declvar);
       		}
    	}
 
@@ -300,9 +291,20 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
    	return true;
 }
 
+static bool Symbols_visitParameter(SymbolTable* st, AST* parameter) 
+{
+	return Symbols_visitDeclVar(st, parameter);
+}
+
+static bool Symbols_visitGlobal(SymbolTable* st, AST* global) 
+{
+	return Symbols_visitDeclVar(st, global);
+}
+
 static bool Symbols_visitFunction(SymbolTable* st, AST* function) 
 {
 	const char* name = function->stringVal;
+	AST* child = function->firstChild;
 
 	Symbol* existing = SymbolTable_get(st, name);
 	if (existing) 
@@ -311,15 +313,16 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 	}
 
 	SymbolTable_add(st, name, SYM_FUN, function->line);
-	SymbolTable_beginScope(st);
+	//SymbolTable_beginScope(st);
 
-	for(AST* child = function->firstChild; child; child = child->nextSibling) 
+	while (child != NULL)
+	//for(AST* child = function->firstChild; child; child = child->nextSibling) 
 	{
 		bool ok;
         	if (child->type == AST_DECLVAR) 
 	        	ok = Symbols_visitDeclVar(st, child);
 	      	
-		else if (child->type == AST_ASSIGN) 
+		else if (child->type == AST_ATRIB) 
 	        	ok = Symbols_visitAssign(st, child);
 	      	
 		else if (child->type == AST_CALL) 
@@ -351,22 +354,28 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
       		
       		if (!ok) 
 	        	return false;
+
+		 child = child->nextSibling ;
 	        
    	}
-	SymbolTable_endScope(st);
+	//SymbolTable_endScope(st);
 	return true;
 }
 
 bool Symbols_annotate(AST* program) 
 {
 	SymbolTable* st = SymbolTable_new();
-	for(AST* child = program->firstChild; child; child = child->nextSibling) 
+	AST* child = program->firstChild;
+	
+	while(child != NULL)
+	//for(AST* child = program->firstChild; child; child = child->nextSibling) 
 	{
         	bool ok = Symbols_visitFunction(st, child);
         	if (!ok) 
 		{
         		return false;
       		}
+		child = child->nextSibling ;
    	}
    return true;
 }

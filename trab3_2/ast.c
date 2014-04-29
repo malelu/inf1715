@@ -120,7 +120,7 @@ AST* AST_newStringFromToken( char* value, int line, int type)
 	return node ;
 }
 
-void printAST (int type)
+void AST_printAST (int type)
 {
 	if (type == 283)
 		 fprintf(stdout, "AST_CHAR");
