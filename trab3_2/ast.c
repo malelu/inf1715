@@ -16,6 +16,7 @@ AST* AST_new (int node_type, int line)
 	node->intVal = 0 ;
 	node->stringVal = NULL ;
 	node->symbol_type == NULL ;
+	node->size = 0 ;
 
 	return node ;
 }

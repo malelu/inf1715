@@ -9,9 +9,7 @@ typedef enum {
    SYM_INT,
    SYM_CHAR,
    SYM_BOOL,
-   SYM_FUN,
-   SYM_ARRAY_CHAR,
-   SYM_ARRAY_INT
+   SYM_FUN
 } SymbolType;
 
 typedef struct Symbol_ Symbol;
@@ -20,9 +18,10 @@ struct Symbol_ {
    const char* name;
    SymbolType type;
    int line;
+   int size;
 
-   int* SymbolType fun_param ;
-   int SymbolType fun_ret ;
+   int* fun_param ;
+   int fun_ret ;
 };
 
 typedef struct NodeTable_ NodeTable;
@@ -41,11 +40,11 @@ struct SymbolTable_ {
    	NodeTable* lastNode;
 };
 
-Symbol* Symbol_new(const char* name, SymbolType type, int line, int num_param, int* fun_param, int fun_ret) ;
+Symbol* Symbol_new(const char* name, SymbolType type, int line, int size, int num_param, int* fun_param, int fun_ret) ;
 NodeTable* NodeTable_new(Symbol* sym) ;
 SymbolTable* SymbolTable_new();
 void SymbolTable_delete(SymbolTable* st);
-void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int num_param, int* fun_param, int fun_ret);
+void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int size, int num_param, int* fun_param, int fun_ret);
 Symbol* SymbolTable_get(SymbolTable* st, const char* name);
 
 #endif

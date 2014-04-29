@@ -111,7 +111,9 @@ entradas: TK_ID ':' tipo nl entradas		{ $$.node = AST_new(AST_DECLVAR, $1.line);
 	| /* vazio */				{ $$.node = NULL; }
 	;
 tipo    : tipobase 				{ $$.node = $1.node; }
-	| '[' ']' tipo				{ $$.node = $3.node; }
+	| '[' ']' tipo				{ $$.node = $3.node;
+						  $$.node->size = $$.node->size+1;
+						}
 	;
 tipobase: TK_INT 				{ $$.node = AST_new(AST_INT, $1.line) ; }
 	| TK_CHAR 				{ $$.node = AST_new(AST_CHAR, $1.line) ; }

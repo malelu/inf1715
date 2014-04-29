@@ -21,10 +21,18 @@ void addTab (int numTab)
 
 void prettyPrinter(AST* node)
 {	
+	int i ;
 
 	addTab (numTab) ;
 	AST_printAST (node->type) ;
-
+	
+	if(node->size != 0)
+	{
+		for(i=0; i<node->size; i++)
+		{
+			fprintf(stdout, " []");
+		}
+	}
 	if(node->stringVal != NULL)
 		fprintf(stdout, " [%s]", node->stringVal);
 	if(node->type == AST_NUMINT)

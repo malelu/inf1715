@@ -7,6 +7,7 @@ typedef struct AST_ AST;
 
 struct AST_ {
    int type;
+   int size;
    int line;
    int intVal;
    char* stringVal;

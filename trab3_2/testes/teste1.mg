@@ -1,5 +1,5 @@
 fun main () : int
-	a : int
+	a : [][][] int 
 	b : string
 	b = "Marina"
 end
