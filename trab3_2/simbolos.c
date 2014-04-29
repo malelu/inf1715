@@ -23,7 +23,7 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 	{
 		return AST_ID ;
 	}
-	else if (exp->type == AST_BOOL)
+	else if (exp->type == AST_TRUE || exp->type == AST_FALSE)
 	{
 		return AST_BOOL ;
 	}
@@ -63,6 +63,28 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 		else
 			return fail("invalid and/or expression!", "?????????", exp);
+	}
+
+	else if (exp->type == AST_NOT)
+	{
+		child1 = Symbols_visitExpression(st, exp->firstChild) ;
+
+		if(child1 == AST_BOOL)
+			return AST_BOOL ;
+
+		else
+			return fail("invalid not expression!", "?????????", exp);
+	}
+
+	else if (exp->type == AST_NEG)
+	{
+		child1 = Symbols_visitExpression(st, exp->firstChild) ;
+
+		if(child1 == AST_NUMINT || child1 == AST_CHAR)
+			return AST_NUMINT ;
+
+		else
+			return fail("invalid - expression!", "?????????", exp);
 	}
 
 	else
@@ -114,7 +136,6 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 			else
 				return fail("assigned invalid value to an int variable!", name, assign);
 		}
-
 		
 		else if (existing->type == SYM_BOOL)
 		{
@@ -126,8 +147,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 			else
 				return fail("assigned invalid value to a bool variable!", name, assign);
 		}
-
-		
+	
 		else if (existing->type == SYM_CHAR)
 		{
 			if (assign_type == AST_CHAR)
