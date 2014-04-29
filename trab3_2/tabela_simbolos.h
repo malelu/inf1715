@@ -9,7 +9,9 @@ typedef enum {
    SYM_INT,
    SYM_CHAR,
    SYM_BOOL,
-   SYM_FUN
+   SYM_FUN,
+   SYM_ARRAY_CHAR,
+   SYM_ARRAY_INT
 } SymbolType;
 
 typedef struct Symbol_ Symbol;

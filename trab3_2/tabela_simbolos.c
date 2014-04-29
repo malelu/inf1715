@@ -76,20 +76,26 @@ void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int lin
 
 Symbol* SymbolTable_get(SymbolTable* st, const char* name)
 {
-
 	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
 	node = st->firstNode ;
 
-	while(strcmp(node->symbol->name, name) != 0)
+fprintf(stderr, "etab\n") ;
+fprintf(stderr, "%d\n", node) ;
+	if (node != NULL)
 	{
-		if(node->nextNode == NULL)
+		while(strcmp(node->symbol->name, name) != 0)
 		{
-			fprintf(stderr, "no symbol match this name") ;
-			return NULL ;
-		}			
-		node = node->nextNode ;
+			if(node->nextNode == NULL)
+			{
+				fprintf(stderr, "no symbol match this name") ;
+				return NULL ;
+			}			
+			node = node->nextNode ;
+		}
+
+		return node->symbol ;
 	}
 
-	return node->symbol ;
+	return NULL ;
 	
 }

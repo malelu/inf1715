@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "tabela_simbolos.h" 
+
 typedef struct AST_ AST;
 
 struct AST_ {
@@ -14,6 +16,8 @@ struct AST_ {
    AST* parent;
    AST* nextSibling;
    AST* prevSibling;
+
+   SymbolType symbol_type;
 };
 
 enum ast { AST_CHAR = 283,

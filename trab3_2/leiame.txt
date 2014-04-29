@@ -32,7 +32,7 @@ Para executar o programa, siga os seguintes passos:
 	- Abra o terminal
 	- Navegue ao diretório do trabalho pelo terminal
 	- Escreva no terminal o comando "make" e pressione enter para compilar o programa e criar o executável
-	- Escreva no terminal o comando ./programa <testes/teste*.mg >saida.txt		* sendo um número do teste
+	- Escreva no terminal o comando ./programa <testes/teste*.mg		* sendo um número do teste
 	- Confira a saída no arquivo saida.txt
 
 *****************************************
