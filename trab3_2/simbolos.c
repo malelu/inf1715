@@ -15,17 +15,33 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 {
 
 	int child1, child2 ;
+	const char* name = exp->stringVal;
+
 	if (exp->type == AST_NUMINT)
 	{
 		return AST_NUMINT ;
 	}
-	else if (exp->type == AST_ID)
+	else if (exp->type == AST_LITERAL_STRING)
 	{
-		return AST_ID ;
+		return AST_LITERAL_STRING ;
 	}
 	else if (exp->type == AST_TRUE || exp->type == AST_FALSE)
 	{
 		return AST_BOOL ;
+	}
+	else if (exp->type == AST_ID)
+	{
+		Symbol* existing = SymbolTable_get(st, name);
+
+		if (existing->type == SYM_INT)
+			return AST_NUMINT ;
+		else if (existing->type == SYM_BOOL)
+			return AST_BOOL ;
+		else if (existin->type == SYM_CHAR )
+			return AST_CHAR ;
+		/* ELSE IF PARA TRATAR ARRAY DE CHAR */
+		else
+			return fail("undeclared variable!", name, exp);
 	}
 
 	else if (exp->type == AST_PLUS || exp->type == AST_MINUS || exp->type == AST_TIMES || exp->type == AST_DIVIDED)
@@ -94,6 +110,10 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 static bool Symbols_visitIf(SymbolTable* st, AST* _if) 
 {
+
+	int exp_type ;
+
+	exp_type  = 
 }
 
 static bool Symbols_visitCall(SymbolTable* st, AST* call) 
