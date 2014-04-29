@@ -20,6 +20,9 @@ struct Symbol_ {
    const char* name;
    SymbolType type;
    int line;
+
+   int* SymbolType fun_param ;
+   int SymbolType fun_ret ;
 };
 
 typedef struct NodeTable_ NodeTable;
@@ -38,11 +41,11 @@ struct SymbolTable_ {
    	NodeTable* lastNode;
 };
 
-Symbol* Symbol_new(const char* name, SymbolType type, int line) ;
+Symbol* Symbol_new(const char* name, SymbolType type, int line, int num_param, int* fun_param, int fun_ret) ;
 NodeTable* NodeTable_new(Symbol* sym) ;
 SymbolTable* SymbolTable_new();
 void SymbolTable_delete(SymbolTable* st);
-void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line);
+void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int num_param, int* fun_param, int fun_ret);
 Symbol* SymbolTable_get(SymbolTable* st, const char* name);
 
 #endif

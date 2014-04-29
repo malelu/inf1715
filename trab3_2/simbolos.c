@@ -177,6 +177,14 @@ static bool Symbols_visitElseIf(SymbolTable* st, AST* else_if)
 	return true ;
 }
 
+
+static bool Symbols_visitElse(SymbolTable* st, AST* else_if) 
+{
+	int exp_type ;
+//FAZEEEEEEEEEEEEEEEEER
+	return true ;
+}
+
 static bool Symbols_visitWhile(SymbolTable* st, AST* _while) 
 {
 	int exp_type ;
@@ -238,7 +246,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
    	Symbol* existing = SymbolTable_get(st, name);
 	int assign_type ;
 
-	assign_type = Symbols_visitExpression(st, assign);
+	assign_type = Symbols_visitExpression(st, assign->lastChild);
 
    	if (existing) 
 	{
@@ -249,6 +257,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 		{
 			if ((assign_type == AST_NUMINT) || (assign_type == AST_CHAR))
 			{
+				assign->symbol_type = SYM_INT ;
 				assert(existing->type == SYM_INT);
 				return true;
 			}
@@ -260,6 +269,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 		{
 			if (assign_type == AST_BOOL)
 			{
+				assign->symbol_type = SYM_BOOL ;
 				assert(existing->type == SYM_BOOL);
 				return true;
 			}
@@ -271,12 +281,14 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 		{
 			if (assign_type == AST_CHAR)
 			{
+				assign->symbol_type = SYM_CHAR ;
 				assert(existing->type == SYM_CHAR);
 				return true;
 			}
 			else if (assign_type == AST_NUMINT)
 			{
 				/*PEGAR O ULTIMO BITE!!!!!!!!!*/
+				assign->symbol_type = SYM_CHAR ;
 				assert(existing->type == SYM_CHAR);
 				return true;
 			}
@@ -310,13 +322,22 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
    	}
 
 	if (declvar->firstChild->nextSibling->type == AST_INT)
-   		SymbolTable_add(st, name, SYM_INT, declvar->line);
+	{
+		declvar->symbol_type = SYM_INT ;
+   		SymbolTable_add(st, name, SYM_INT, declvar->line, 0, 0, 0);
+	}
 
 	else if (declvar->firstChild->nextSibling->type == AST_BOOL)
-		SymbolTable_add(st, name, SYM_BOOL, declvar->line);
+	{
+		declvar->symbol_type = SYM_BOOL ;
+		SymbolTable_add(st, name, SYM_BOOL, declvar->line, 0, 0, 0);
+	}
 
-	else
-		SymbolTable_add(st, name, SYM_CHAR, declvar->line);
+	else if (declvar->firstChild->nextSibling->type == AST_CHAR)
+	{
+		declvar->symbol_type = SYM_CHAR ;
+		SymbolTable_add(st, name, SYM_CHAR, declvar->line, 0, 0, 0);
+	}
 
    	return true;
 }
@@ -359,6 +380,10 @@ static bool Symbols_visitBlock(SymbolTable* st, AST* block)
 		{
 	        	ok = Symbols_visitDeclVar(st, child);
 	 	} 
+		else if (child->type == AST_ELSE)
+		{
+			ok = Symbols_visitElse(st, child) 
+		}
 		child = child->nextSibling ;
 	}
 
