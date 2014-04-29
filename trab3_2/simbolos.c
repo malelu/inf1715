@@ -41,7 +41,10 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 			return AST_CHAR ;
 		/* ELSE IF PARA TRATAR ARRAY DE CHAR */
 		else
-			return fail("undeclared variable!", name, exp);
+		{
+			fprintf(stderr, "undeclared variable! - %s at line %d", name, exp);
+			return -1 ;
+		}
 	}
 
 	else if (exp->type == AST_PLUS || exp->type == AST_MINUS || exp->type == AST_TIMES || exp->type == AST_DIVIDED)
@@ -53,7 +56,10 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 			return AST_NUMINT ;
 
 		else
-			return fail("invalid expression!", "?????????", exp);
+		{
+			fprintf(stderr, "invalid expression! - %s at line %d", "+ - * /", exp);
+			return -1 ;
+		}
 	}
 
 	else if (exp->type == AST_GREATER || exp->type == AST_LESS || exp->type == AST_GREATER_EQUAL 
@@ -66,7 +72,10 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 			return AST_BOOL ;
 
 		else
-			return fail("invalid comparison expression!", "?????????", exp);
+		{
+			fprintf(stderr, "invalid comparison expression! - %s at line %d", "comparison", exp);
+			return -1 ;
+		}
 	}
 
 	else if (exp->type == AST_AND || exp->type == AST_OR)
@@ -78,7 +87,10 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 			return AST_BOOL ;
 
 		else
-			return fail("invalid and/or expression!", "?????????", exp);
+		{
+			fprintf(stderr, "invalid and/or expression! - %s at line %d", "and/or", exp);
+			return -1 ;
+		}
 	}
 
 	else if (exp->type == AST_NOT)
@@ -89,7 +101,10 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 			return AST_BOOL ;
 
 		else
-			return fail("invalid not expression!", "?????????", exp);
+		{
+			fprintf(stderr, "invalid \"not\" expression! - %s at line %d", "not", exp);
+			return -1 ;
+		}
 	}
 
 	else if (exp->type == AST_NEG)
@@ -100,20 +115,83 @@ int Symbols_visitExpression(SymbolTable* st, AST* exp)
 			return AST_NUMINT ;
 
 		else
-			return fail("invalid - expression!", "?????????", exp);
+		{
+			fprintf(stderr, "invalid - expression! - %s at line %d", "neg", exp);
+			return -1 ;
+		}
 	}
 
-	else
-		return fail("invalid expression!", "?????????", exp);
+	fprintf(stderr, "invalid expression! - %s at line %d", "exp", exp);
+	return -1 ;
 }
 
 
 static bool Symbols_visitIf(SymbolTable* st, AST* _if) 
 {
-
 	int exp_type ;
 
-	exp_type  = 
+	exp_type  = Symbols_visitExpression(st, _if->firstChild) ;
+
+	if (exp_type != AST_BOOL)
+		return fail("if expression is not a boolean value!", "if", _if);
+	return true ;
+}
+
+static bool Symbols_visitElseIf(SymbolTable* st, AST* else_if) 
+{
+	int exp_type ;
+
+	exp_type  = Symbols_visitExpression(st, else_if->firstChild) ;
+
+	if (exp_type != AST_BOOL)
+		return fail("else if expression is not a boolean value!", "else if", else_if);
+	return true ;
+}
+
+static bool Symbols_visitWhile(SymbolTable* st, AST* _while) 
+{
+	int exp_type ;
+
+	exp_type  = Symbols_visitExpression(st, _while->firstChild) ;
+
+	if (exp_type != AST_BOOL)
+		return fail("while expression is not a boolean value!", "while", _while);
+	return true ;
+}
+
+static bool Symbols_visitReturn(SymbolTable* st, AST* _return) 
+{
+	int exp_type ;
+
+	if( _return->firstChild != NULL)
+	{
+		exp_type  = Symbols_visitExpression(st, _return->firstChild) ;
+
+		if (exp_type == -1)
+			return fail("invalid return expression!", "return", _return);
+		return true ;
+	}
+}
+
+static bool Symbols_visitNew(SymbolTable* st, AST* _new) 
+{
+	int exp_type ;
+
+	exp_type  = Symbols_visitExpression(st, _new->firstChild) ;
+
+	if (exp_type != AST_NUMINT || exp_type != AST_CHAR)
+		return fail("invalid \"new\" expression!", "new", _new);
+	return true ;
+}
+
+static bool Symbols_visitParameter(SymbolTable* st, AST* parameter) 
+{
+	return Symbols_visitDeclVar(st, parameter);
+}
+
+static bool Symbols_visitGlobal(SymbolTable* st, AST* global) 
+{
+	return Symbols_visitDeclVar(st, global);
 }
 
 static bool Symbols_visitCall(SymbolTable* st, AST* call) 
@@ -239,25 +317,41 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 	{
 		bool ok;
         	if (child->type == AST_DECLVAR) 
-		{
 	        	ok = Symbols_visitDeclVar(st, child);
-	      	} 
+	      	
 		else if (child->type == AST_ASSIGN) 
-		{
 	        	ok = Symbols_visitAssign(st, child);
-	      	} 
+	      	
 		else if (child->type == AST_CALL) 
-		{
 	        	ok = Symbols_visitCall(st, child);
-        	} 
+        	
+		else if (child->type == AST_IF)
+			ok = Symbols_visitIf(st, child);
+
+		else if (child->type == AST_ELSEIF)
+			ok = Symbols_visitElseIf(st, child);
+
+		else if (child->type == AST_WHILE)
+			ok = Symbols_visitWhile(st, child);
+
+		else if (child->type == AST_RET)
+			ok = Symbols_visitReturn(st, child);
+
+		else if (child->type == AST_NEW)
+			ok = Symbols_visitNew(st, child);
+
+		else if (child->type == AST_PARAM)
+			ok = Symbols_visitParameter(st, child);
+
+		else if (child->type == AST_GLOBAL)
+			ok = Symbols_visitGlobal(st, child);
+
 		else 
-		{
 	        	fail("Internal compiler error!", "!?!?", function);
-      		}
+      		
       		if (!ok) 
-		{
 	        	return false;
-	        }
+	        
    	}
 	SymbolTable_endScope(st);
 	return true;
