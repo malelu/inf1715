@@ -176,22 +176,21 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	return -1 ;
 }
 
-
-static bool Symbols_visitIf(SymbolTable* st, AST* _if) 
+static bool Symbols_visitConditional(SymbolTable* st, AST* node) 
 {
 	int* exp_type = (int*)malloc(2*sizeof(int)) ;
 
-	exp_type  = Symbols_visitExpression(st, _if->firstChild) ;
+	exp_type  = Symbols_visitExpression(st, node->firstChild) ;
 
-	AST* child = _if->firstChild->nextSibling;
+	AST* child = node->firstChild->nextSibling;
 
 	if (exp_type[0] != AST_BOOL)
-		return fail("if expression is not a boolean value!", "if", _if);
+		return fail("condition expression is not a boolean value!", "?!?!", node);
 	else if (exp_type[1] != 0)
-		return fail("if expression is a boolean array!", "if", _if);
+		return fail("condition expression is a boolean array!", "?!?!", node);
 
-	_if->symbol_type == SYM_BOOL ;
-	_if->size = exp_type[1] ;
+	node->symbol_type == SYM_BOOL ;
+	node->size = exp_type[1] ;
 
 	while(child != NULL)
 	{
@@ -207,7 +206,7 @@ static bool Symbols_visitIf(SymbolTable* st, AST* _if)
 			ok = Symbols_visitBlockElse(st, child);
 		}
 		else
-			fail("Internal compiler error! - if", "!?!?", _if);
+			ok = fail("Internal compiler error! - conditional", "!?!?", node);
 
 		child = child->nextSibling ;
 	}
@@ -218,24 +217,38 @@ static bool Symbols_visitIf(SymbolTable* st, AST* _if)
 	return true ;
 }
 
+static bool Symbols_visitIf(SymbolTable* st, AST* _if) 
+{
+	return Symbols_visitConditional(st, _if) ;
+}
+
 static bool Symbols_visitElseIf(SymbolTable* st, AST* else_if) 
 {
-	int exp_type ;
-
-	exp_type  = Symbols_visitExpression(st, else_if->firstChild) ;
-
-	if (exp_type != AST_BOOL)
-		return fail("else if expression is not a boolean value!", "else if", else_if);
-
-	else_if->symbol_type == SYM_BOOL ;
-	return true ;
+	return Symbols_visitConditional(st, else_if) ;
 }
 
 
-static bool Symbols_visitElse(SymbolTable* st, AST* else_if) 
+static bool Symbols_visitElse(SymbolTable* st, AST* _else) 
 {
-	int exp_type ;
-//FAZEEEEEEEEEEEEEEEEER
+	AST* child = _else->firstChild ;
+
+	while(child != NULL)
+	{
+		bool ok ;
+		if (child->type == AST_BLOCK)
+		{
+			fprintf(stderr, "entrou visitelse block\n") ;
+			ok = Symbols_visitBlock(st, child);
+		}
+		else
+			ok = fail("Internal compiler error! - else", "!?!?", _else);
+
+		child = child->nextSibling ;
+	}
+
+	if(!ok)
+		return false ;
+
 	return true ;
 }
 
