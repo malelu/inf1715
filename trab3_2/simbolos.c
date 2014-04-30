@@ -403,7 +403,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 {
 	const char* name = assign->firstChild->stringVal;
    	Symbol* existing = SymbolTable_get(st, name);
-	int assign_type ;
+	int* assign_type ;
 
 	assign_type = Symbols_visitExpression(st, assign->lastChild);
 
@@ -414,11 +414,16 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 
 		else if (existing->type == SYM_INT)
 		{
-			if ((assign_type == AST_NUMINT) || (assign_type == AST_CHAR))
+			if ((assign_type[0] == AST_NUMINT) || (assign_type[0] == AST_CHAR))
 			{
-				assign->symbol_type = SYM_INT ;
-				assert(existing->type == SYM_INT);
-				return true;
+				if(assign_type[1] == existing->size)
+				{
+					assign->symbol_type = SYM_INT ;
+					//assert(existing->type == SYM_INT);
+					return true;
+				}
+				else
+					return fail("assigned wrong size value to an int variable!", name, assign);
 			}
 			else
 				return fail("assigned invalid value to an int variable!", name, assign);
@@ -426,11 +431,16 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 		
 		else if (existing->type == SYM_BOOL)
 		{
-			if (assign_type == AST_BOOL)
+			if (assign_type[0] == AST_BOOL)
 			{
-				assign->symbol_type = SYM_BOOL ;
-				assert(existing->type == SYM_BOOL);
-				return true;
+				if(assign_type[1] == existing->size)
+				{
+					assign->symbol_type = SYM_BOOL ;
+				//	assert(existing->type == SYM_BOOL);
+					return true;
+				}
+				else
+					return fail("assigned wrong size value to a bool variable!", name, assign);
 			}
 			else
 				return fail("assigned invalid value to a bool variable!", name, assign);
@@ -438,23 +448,32 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 	
 		else if (existing->type == SYM_CHAR)
 		{
-			if (assign_type == AST_CHAR)
+			if (assign_type[0] == AST_CHAR)
 			{
-				assign->symbol_type = SYM_CHAR ;
-				assert(existing->type == SYM_CHAR);
-				return true;
+				if(assign_type[1] == existing->size)
+				{
+					assign->symbol_type = SYM_CHAR ;
+					//assert(existing->type == SYM_CHAR);
+					return true;
+				}
+				else
+					return fail("assigned wrong size value to char variable!", name, assign);
 			}
-			else if (assign_type == AST_NUMINT)
+			else if (assign_type[0] == AST_NUMINT)
 			{
-				/*PEGAR O ULTIMO BITE!!!!!!!!!*/
-				assign->symbol_type = SYM_CHAR ;
-				assert(existing->type == SYM_CHAR);
-				return true;
+				if(assign_type[1] == existing->size)
+				{
+					/*PEGAR O ULTIMO BITE!!!!!!!!!*/
+					assign->symbol_type = SYM_CHAR ;
+					//assert(existing->type == SYM_CHAR);
+					return true;
+				}
+				else
+					return fail("assigned wrong size value to char variable!", name, assign);
 			}
 			else
 				return fail("assigned invalid value to char variable!", name, assign);
-		}
-		/* FAZER ELSE IF DO ARRAY DE CHAR! */		
+		}		
 		
    	}
    	return fail("undeclared variable!", name, assign);
@@ -465,6 +484,7 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
 {
    	const char* name = declvar->firstChild->stringVal;
    	Symbol* existing = SymbolTable_get(st, name);
+
    	if (existing) {
       		if (existing->type == SYM_INT || existing->type == SYM_CHAR || existing->type == SYM_BOOL) 
 		{
@@ -483,20 +503,25 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
 	if (declvar->firstChild->nextSibling->type == AST_INT)
 	{
 		declvar->symbol_type = SYM_INT ;
-   		SymbolTable_add(st, name, SYM_INT, declvar->line, declvar->size, 0, 0, 0);
 	}
 
 	else if (declvar->firstChild->nextSibling->type == AST_BOOL)
 	{
 		declvar->symbol_type = SYM_BOOL ;
-		SymbolTable_add(st, name, SYM_BOOL, declvar->line, declvar->size, 0, 0, 0);
 	}
 
 	else if (declvar->firstChild->nextSibling->type == AST_CHAR)
 	{
 		declvar->symbol_type = SYM_CHAR ;
-		SymbolTable_add(st, name, SYM_CHAR, declvar->line, declvar->size, 0, 0, 0);
 	}
+	
+	else if (declvar->firstChild->nextSibling->type == AST_STRING)
+	{
+		declvar->symbol_type = SYM_CHAR ;
+	}
+
+	declvar->size = declvar->firstChild->nextSibling->size ;
+	SymbolTable_add(st, name, declvar->symbol_type, declvar->line, declvar->size, 0, 0, 0);
 
    	return true;
 }
