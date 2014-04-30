@@ -4,15 +4,33 @@
 #include <stdio.h>
 #include <assert.h>
 
-
+static bool fail(const char* msg, const char* name, AST* node);
+static int* Symbols_setExpression (int* ret_expression, AST* exp, int SymbolType, int ASTtype, int size);
+static int* Symbols_visitExpression(SymbolTable* st, AST* exp);
+static bool Symbols_visitConditional(SymbolTable* st, AST* node);
+static bool Symbols_visitIf(SymbolTable* st, AST* _if); 
+static bool Symbols_visitElseIf(SymbolTable* st, AST* else_if); 
+static bool Symbols_visitElse(SymbolTable* st, AST* _else); 
+static bool Symbols_visitWhile(SymbolTable* st, AST* _while);
+static bool Symbols_visitReturn(SymbolTable* st, AST* _return);
+static bool Symbols_visitNew(SymbolTable* st, AST* _new);
+static bool Symbols_visitCall(SymbolTable* st, AST* call);
+static bool Symbols_visitAssign(SymbolTable* st, AST* assign);
+static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar);
+static void Symbols_setParamGlob(SymbolTable* st, AST* parent, AST* child1, AST* child2, int symbol_type); 
+static bool Symbols_getParamGlob(SymbolTable* st, AST* node);
+static bool Symbols_visitParameter(SymbolTable* st, AST* parameter); 
+static bool Symbols_visitGlobal(SymbolTable* st, AST* global); 
+static bool Symbols_visitBlockElse(SymbolTable* st, AST* block_else);
+static bool Symbols_visitBlock(SymbolTable* st, AST* block);
+static bool Symbols_visitFunction(SymbolTable* st, AST* function); 
+ 
 
 static bool fail(const char* msg, const char* name, AST* node) 
 {
    	fprintf(stderr, "%s - %s at line %d\n", msg, name, node->line);
    	return false;
 }
-
-
 
 
 static int* Symbols_setExpression (int* ret_expression, AST* exp, int SymbolType, int ASTtype, int size)
@@ -43,6 +61,11 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	{
 		return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, exp->size);
 	}
+	else if (exp->type == AST_NEW)
+	{
+		//TRATAR NEW!!!!!!!!!!!
+		Symbols_visitNew(st, exp) ; 
+	}
 	else if (exp->type == AST_ID)
 	{
 		Symbol* existing = SymbolTable_get(st, name);
@@ -62,7 +85,9 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		else
 		{
 			fprintf(stderr, "undeclared variable! - %s at line %d", name, exp->line);
-			return -1 ;
+			ret_expression[0]=-1 ;
+			ret_expression[1]=-1 ;
+			return ret_expression ;
 		}
 	}
 
@@ -80,13 +105,17 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 			else
 			{
 				fprintf(stderr, "invalid expression! Invalid type sizes! - %s at line %d", "+ - * /", exp->line);
-				return -1 ;
+				ret_expression[0]=-1 ;
+				ret_expression[1]=-1 ;
+				return ret_expression ;
 			}
 		}
 		else
 		{
 			fprintf(stderr, "invalid expression! Invalid types! - %s at line %d", "+ - * /", exp->line);
-			return -1 ;
+			ret_expression[0]=-1 ;
+			ret_expression[1]=-1 ;
+			return ret_expression ;
 		}
 	}
 
@@ -105,13 +134,17 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 			else
 			{
 				fprintf(stderr, "invalid comparison expression! Invalid type sizes! - %s at line %d", "comparison", exp->line);
-				return -1 ;
+				ret_expression[0]=-1 ;
+				ret_expression[1]=-1 ;
+				return ret_expression ;
 			}
 		}
 		else
 		{
 			fprintf(stderr, "invalid comparison expression! - %s at line %d", "comparison", exp->line);
-			return -1 ;
+			ret_expression[0]=-1 ;
+			ret_expression[1]=-1 ;
+			return ret_expression ;
 		}
 	}
 
@@ -129,14 +162,18 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 			else
 			{
 				fprintf(stderr, "invalid and/or expression! Invalid type sizes! - %s at line %d", "and/or", exp->line);
-				return -1 ;
+				ret_expression[0]=-1 ;
+				ret_expression[1]=-1 ;
+				return ret_expression ;
 			}
 		}
 
 		else
 		{
 			fprintf(stderr, "invalid and/or expression! - %s at line %d", "and/or", exp->line);
-			return -1 ;
+			ret_expression[0]=-1 ;
+			ret_expression[1]=-1 ;
+			return ret_expression ;
 		}
 	}
 
@@ -152,7 +189,9 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		else
 		{
 			fprintf(stderr, "invalid \"not\" expression! - %s at line %d", "not", exp->line);
-			return -1 ;
+			ret_expression[0]=-1 ;
+			ret_expression[1]=-1 ;
+			return ret_expression ;
 		}
 	}
 
@@ -168,12 +207,16 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		else
 		{
 			fprintf(stderr, "invalid - expression! - %s at line %d", "neg", exp->line);
-			return -1 ;
+			ret_expression[0]=-1 ;
+			ret_expression[1]=-1 ;
+			return ret_expression ;
 		}
 	}
 
 	fprintf(stderr, "invalid expression! - %s at line %d", "exp", exp->line);
-	return -1 ;
+	ret_expression[0]=-1 ;
+	ret_expression[1]=-1 ;
+	return ret_expression ;
 }
 
 static bool Symbols_visitConditional(SymbolTable* st, AST* node) 
@@ -209,11 +252,12 @@ static bool Symbols_visitConditional(SymbolTable* st, AST* node)
 			ok = fail("Internal compiler error! - conditional", "!?!?", node);
 
 		child = child->nextSibling ;
+	
+		if(!ok)
+			return false ;
 	}
 
-	if(!ok)
-		return false ;
-
+	
 	return true ;
 }
 
@@ -244,10 +288,10 @@ static bool Symbols_visitElse(SymbolTable* st, AST* _else)
 			ok = fail("Internal compiler error! - else", "!?!?", _else);
 
 		child = child->nextSibling ;
-	}
 
-	if(!ok)
-		return false ;
+		if(!ok)
+			return false ;
+	}
 
 	return true ;
 }
@@ -285,10 +329,10 @@ static bool Symbols_visitWhile(SymbolTable* st, AST* _while)
 			ok = fail("Internal compiler error! - while", "!?!?", _while);
 
 		child = child->nextSibling ;
-	}
 
-	if(!ok)
-		return false ;
+		if(!ok)
+			return false ;
+	}
 
 	return true ;
 }
@@ -334,21 +378,23 @@ static bool Symbols_visitReturn(SymbolTable* st, AST* _return)
 
 static bool Symbols_visitNew(SymbolTable* st, AST* _new) 
 {
-	int exp_type ;
+	int* exp_type ;
 
 	exp_type  = Symbols_visitExpression(st, _new->firstChild) ;
 
-	if (exp_type != AST_NUMINT || exp_type != AST_CHAR)
+	if (exp_type[0] != AST_NUMINT || exp_type[0] != AST_CHAR)
 		return fail("invalid \"new\" expression!", "new", _new);
 
-	if (exp_type == AST_NUMINT)
+	if (exp_type[0] == AST_NUMINT)
 	{
 		_new->symbol_type = SYM_INT ;
 	}
-	else if (exp_type == AST_CHAR)
+	else if (exp_type[0] == AST_CHAR)
 	{
 		_new->symbol_type = SYM_CHAR ;
 	}
+
+	//OLHAR TIPO DO NEW
 	return true ;
 }
 
@@ -653,7 +699,7 @@ static bool Symbols_visitBlock(SymbolTable* st, AST* block)
 				ok = Symbols_visitAssign(st, child); 
 			}
 			else 
-		        	fail("Internal compiler error! - block", "!?!?", function);
+		        	fail("Internal compiler error! - block", "!?!?", block);
 
 		      	if (!ok) 
 		        	return false;
@@ -669,10 +715,10 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 {
 	const char* name = function->stringVal;
 	AST* child = function->firstChild;
-	int qtd_params = 0 ;
+	int qtd_params = 0, cont = 0 ;
 	int armazena_params [50] ;
 	int* lista_tipos_params ;
-	int ret_tipo[2] ; /* ret_tipo[0] = tipo de retorno ; ret_tipo[1] == tamanho do array */
+	int ret[2] ; /* ret_tipo[0] = tipo de retorno ; ret_tipo[1] == tamanho do array */
 
 
 	fprintf(stderr, "entrou1\n") ;
@@ -737,11 +783,11 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 	        
    	}
 
-	lista_tipos_params = (int*)malloc(qtd_params*sizeof(int))
+	lista_tipos_params = (int*)malloc(qtd_params*sizeof(int));
 	//VER O TAMANHO DO ARRAY DE CADA PARAMETRO
 	while (cont < qtd_params)
 	{
-		lista_tipos_params[cont] = armazena_params[cont]
+		lista_tipos_params[cont] = armazena_params[cont];
 	}
 
 	SymbolTable_add(st, name, SYM_FUN, function->line, function->size, qtd_params, lista_tipos_params, ret);
@@ -774,7 +820,7 @@ bool Symbols_annotate(AST* program)
         			return false;
       			}
 		}
-		else if (child->type == NULL)
+		else if (child->type == 0)
 		{
 			return true ;
 		}

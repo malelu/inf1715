@@ -1,7 +1,7 @@
 #include "tabela_simbolos.h"
 
 
-Symbol* Symbol_new(const char* name, SymbolType type, int line, int size, int num_param, int* fun_param, int fun_ret)
+Symbol* Symbol_new(const char* name, SymbolType type, int line, int size, int num_param, int* fun_param, int* fun_ret)
 {
    	Symbol* sym = (Symbol*) malloc(sizeof(Symbol)) ;
 	sym->name = name ;
@@ -63,7 +63,7 @@ void SymbolTable_delete(SymbolTable* st)
 	free(st) ;
 }
 
-void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int size, int num_param, int* fun_param, int fun_ret)
+void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int size, int num_param, int* fun_param, int* fun_ret)
 {
 
 	Symbol* sym = Symbol_new(name, type, line, size, num_param, fun_param, fun_ret) ;

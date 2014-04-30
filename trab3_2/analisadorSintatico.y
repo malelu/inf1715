@@ -272,16 +272,16 @@ exp_un : TK_NOT exp_un				{ $$.node = AST_new(AST_NOT, $1.line);
 	| exp_fin				{ $$.node = $1.node; }
 	;
 exp_fin : TK_NUMINT				{ $$.node = AST_newNumFromToken($1.iValue, $1.line, AST_NUMINT); 
-						  $$node->size = 0;						
+						  $$.node->size = 0;						
 						}
 	| TK_LITERAL_STRING			{ $$.node = AST_newStringFromToken($1.cValue, $1.line, AST_LITERAL_STRING); 
-						  $$node->size = 1;						
+						  $$.node->size = 1;						
 						}
 	| TK_TRUE				{ $$.node = AST_new(AST_TRUE, $1.line) ; 
-						  $$node->size = 0;
+						  $$.node->size = 0;
 						}
 	| TK_FALSE 				{ $$.node = AST_new(AST_FALSE, $1.line) ; 
-						  $$node->size = 0;						
+						  $$.node->size = 0;						
 						}
 	| TK_NEW '[' exp ']' tipo 		{ $$.node = AST_new(AST_NEW, $1.line);
 						  AST_addChild($$.node, $3.node);
