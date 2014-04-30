@@ -46,6 +46,6 @@ NodeTable* NodeTable_new(Symbol* sym) ;
 SymbolTable* SymbolTable_new();
 void SymbolTable_delete(SymbolTable* st);
 void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int size, int scope, int num_param, int* fun_param, int* fun_ret);
-Symbol* SymbolTable_get(SymbolTable* st, const char* name);
+Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope);
 
 #endif

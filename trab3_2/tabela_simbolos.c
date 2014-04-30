@@ -94,7 +94,7 @@ void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int lin
 	}
 }
 
-Symbol* SymbolTable_get(SymbolTable* st, const char* name)
+Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope)
 {
 	fprintf(stderr, "entrou get\n") ;
 	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
@@ -104,13 +104,18 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name)
 	fprintf(stderr, "%d\n", node) ;
 	if (node != NULL)
 	{
-		while(strcmp(node->symbol->name, name) != 0)
+		while((strcmp(node->symbol->name, name) != 0) && (node->symbol->scope != scope))
 		{
 			if(node->prevNode == NULL)
 			{
 				fprintf(stderr, "no symbol match this name\n") ;
 				return NULL ;
-			}			
+			}	
+
+			if((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope == -1))	//é global
+			{
+				return node->symbol ;
+			}	
 			node = node->prevNode ;
 		}
 		fprintf(stderr, "saiu get\n") ;

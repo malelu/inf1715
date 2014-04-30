@@ -77,7 +77,7 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	else if (exp->type == AST_ID)
 	{
 		fprintf(stderr, "visit exp id\n") ;
-		Symbol* existing = SymbolTable_get(st, name);
+		Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 
 		if(existing)
 		{
@@ -368,7 +368,7 @@ static bool Symbols_setReturn(SymbolTable* st, AST* _return, int symbol_type, in
 {
 	_return->symbol_type = symbol_type ;
 	_return->size = exp_result[1] ;
-	Symbol* existing = SymbolTable_get(st, "@ret");
+	Symbol* existing = SymbolTable_get(st, "@ret", symbol_table_scope);
 
 	if(existing->type != _return->symbol_type)
 		return fail("invalid return expression; should return int!", "return", _return);
@@ -437,7 +437,7 @@ static bool Symbols_visitNew(SymbolTable* st, AST* _new)
 static bool Symbols_visitCall(SymbolTable* st, AST* call) 
 {
 	const char* name = call->firstChild->stringVal;
-  	Symbol* existing = SymbolTable_get(st, name);
+  	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	AST* child =  call->firstChild->nextSibling;
 
 	const char* param_name ;
@@ -455,7 +455,7 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 			if (child->type == AST_ID)
 			{
 				param_name = child->stringVal ;
-				Symbol* existing_id = SymbolTable_get(st, param_name);
+				Symbol* existing_id = SymbolTable_get(st, param_name, symbol_table_scope);
 
 				if(existing_id)
 				{
@@ -497,7 +497,7 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 static bool Symbols_visitAssign(SymbolTable* st, AST* assign) 
 {
 	const char* name = assign->firstChild->stringVal;
-   	Symbol* existing = SymbolTable_get(st, name);
+   	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	int* assign_type ;
 
 	assign_type = Symbols_visitExpression(st, assign->lastChild);
@@ -600,7 +600,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar) 
 {
    	const char* name = declvar->firstChild->stringVal;
-   	Symbol* existing = SymbolTable_get(st, name);		
+   	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);		
 	int* ret = (int*)malloc(2*sizeof(int));
 
    	if (existing) {
@@ -732,11 +732,15 @@ static bool Symbols_visitBlockElse(SymbolTable* st, AST* block_else)
 			bool ok;
 			if (child->type == AST_ELSEIF)
 			{
+				symbol_table_scope++;
 				ok = Symbols_visitElseIf(st, child);
+				symbol_table_scope--;
 			}
 			else if (child->type == AST_ELSE)
 			{
+				symbol_table_scope++;
 				ok = Symbols_visitElse(st, child); 
+				symbol_table_scope--;
 			}
 			child = child->nextSibling ;
 		}
@@ -758,13 +762,17 @@ static bool Symbols_visitBlock(SymbolTable* st, AST* block)
         		if (child->type == AST_IF)
 			{
 				fprintf(stderr, "entrou no if do visit block\n") ;
+				symbol_table_scope++;
 				ok = Symbols_visitIf(st, child);
+				symbol_table_scope--;
 				fprintf(stderr, "saiu do if do visit block\n") ;
 			}
         		if (child->type == AST_WHILE)
 			{
 				fprintf(stderr, "while do visit block\n") ;
+				symbol_table_scope++;
 				ok = Symbols_visitWhile(st, child);
+				symbol_table_scope--;
 			}
 			else if (child->type == AST_CALL) 
 			{
@@ -812,7 +820,7 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 
 
 	fprintf(stderr, "entrou1\n") ;
-	Symbol* existing = SymbolTable_get(st, name);
+	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	fprintf(stderr, "pass1\n") ;
 	if (existing) 
 	{
@@ -902,7 +910,9 @@ bool Symbols_annotate(AST* program)
 		if (child->type == AST_FUN)
 		{
 			fprintf(stderr, "funcao\n") ;
+			symbol_table_scope++;
         		bool ok = Symbols_visitFunction(st, child);
+			symbol_table_scope--;
 
         		if (!ok) 
 			{
