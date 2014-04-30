@@ -269,7 +269,7 @@ static bool Symbols_visitWhile(SymbolTable* st, AST* _while)
 			ok = Symbols_visitBlockElse(st, child);
 		}
 		else
-			fail("Internal compiler error! - if", "!?!?", _while);
+			ok = fail("Internal compiler error! - while", "!?!?", _while);
 
 		child = child->nextSibling ;
 	}
@@ -282,16 +282,41 @@ static bool Symbols_visitWhile(SymbolTable* st, AST* _while)
 
 static bool Symbols_visitReturn(SymbolTable* st, AST* _return) 
 {
-	int exp_type ;
+	int* exp_type ;
 
 	if( _return->firstChild != NULL)
 	{
 		exp_type  = Symbols_visitExpression(st, _return->firstChild) ;
 
-		if (exp_type == -1)
+		if (exp_type[0] == -1)
 			return fail("invalid return expression!", "return", _return);
-		return true ;
+		else if (exp_type[0] == AST_NUMINT)
+		{
+			_return->symbol_type = SYM_INT ;
+			_return->size = exp_type[1] ;
+			//COMPARAR COM RETORNO DA FUNCAO
+		}
+		else if (exp_type[0] == AST_CHAR)
+		{
+			_return->symbol_type = SYM_CHAR ;
+			_return->size = exp_type[1] ;
+			//COMPARAR COM RETORNO DA FUNCAO
+		}
+		else if (exp_type[0] == AST_BOOL)
+		{
+			_return->symbol_type = SYM_BOOL ;
+			_return->size = exp_type[1] ;
+			//COMPARAR COM RETORNO DA FUNCAO
+		}
+		else if (exp_type[0] == AST_ID)
+		{
+			//COMPARAR COM RETORNO DA FUNCAO
+		}
+		else
+			return fail("Internal compiler error! - return", "!?!?", _return);	
 	}
+	
+	return true ;
 }
 
 static bool Symbols_visitNew(SymbolTable* st, AST* _new) 
@@ -318,12 +343,54 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 {
 	const char* name = call->firstChild->stringVal;
   	Symbol* existing = SymbolTable_get(st, name);
+	AST* child =  call->firstChild->nextSibling;
+
+	const char* param_name ;
+
   	if (existing) 
 	{
       		if (existing->type != SYM_FUN) 
 		{
          		return fail("is not a function!", name, call);
       		}
+
+		while (child != NULL)
+		{
+			Symbols_visitExpression(st, child) ;
+			if (child->type == AST_ID)
+			{
+				param_name = child->stringVal ;
+				Symbol* existing_id = SymbolTable_get(st, param_name);
+
+				if(existing_id)
+				{
+					if (existing_id->type == SYM_FUN) 
+         					return fail("is a function!", name, call);
+					else
+					{
+						//COMPARAR COM OS PARAMETROS DA FUNCAO
+					}	
+				}
+			}
+			else if (child->type == AST_NUMINT)
+			{
+				//COMPARAR COM OS PARAMETROS DA FUNCAO
+			}
+			else if (child->type == AST_CHAR)
+			{
+				//COMPARAR COM OS PARAMETROS DA FUNCAO
+			}
+			else if (child->type == AST_BOOL)
+			{
+				//COMPARAR COM OS PARAMETROS DA FUNCAO
+			}
+			else
+			{
+				return fail("Internal compiler error! - call", "!?!?", call);
+			}
+			child = child->nextSibling;
+		}
+
 		call->symbol_type = SYM_FUN ;
       		assert(existing->type == SYM_FUN);
       		return true;
