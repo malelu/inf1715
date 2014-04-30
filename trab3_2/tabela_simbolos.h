@@ -21,7 +21,7 @@ struct Symbol_ {
    int size;
 
    int* fun_param ;
-   int fun_ret ;
+   int fun_ret[2] ;
 };
 
 typedef struct NodeTable_ NodeTable;

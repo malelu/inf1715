@@ -7,7 +7,8 @@ Symbol* Symbol_new(const char* name, SymbolType type, int line, int size, int nu
 	sym->name = name ;
 	sym->type = type ;
 	sym->line = line ;
-	sym->fun_ret = fun_ret ;
+	sym->fun_ret[0] = fun_ret[0] ;
+	sym->fun_ret[1] = fun_ret[1] ;
 	sym->size = size ;
 
 	if (num_param >0 )

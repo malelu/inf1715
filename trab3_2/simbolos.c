@@ -33,15 +33,15 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 	if (exp->type == AST_NUMINT)
 	{
-		return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, 0);
+		return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, exp->size);
 	}
 	else if (exp->type == AST_LITERAL_STRING)
 	{
-		return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, 1);
+		return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, exp->size);
 	}
 	else if (exp->type == AST_TRUE || exp->type == AST_FALSE)
 	{
-		return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, 0);
+		return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, exp->size);
 	}
 	else if (exp->type == AST_ID)
 	{
@@ -378,14 +378,79 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
    	return true;
 }
 
+static void Symbols_visitParameter(SymbolTable* st, AST* parameter, AST* child1, AST* child2, int symbol_type) 
+{
+	const char* name = child1->stringVal;
+
+	parameter->symbol_type = symbol_type ;
+	parameter->size = child2->size ;
+	child1->symbol_type = symbol_type ;
+	child1->size = child2->size ;
+	child2->symbol_type = symbol_type ;
+	SymbolTable_add(st, name, symbol_type, parameter->line, child2->size, 0, 0, 0);
+}
+
+
 static bool Symbols_visitParameter(SymbolTable* st, AST* parameter) 
 {
-	return Symbols_visitDeclVar(st, parameter);
+	if(parameter != NULL)
+	{
+		AST* child1 = parameter->firstChild ;
+		AST* child2 = parameter->lastChild ;
+
+		if(child2->type == AST_INT)
+		{
+			Symbols_visitParameter(st, parameter, child1, child2, SYM_INT);
+		}
+		else if (child2-> type == AST_CHAR)
+		{
+			Symbols_visitParameter(st, parameter, child1, child2, SYM_CHAR);
+		}
+		else if (child2-> type == AST_BOOL)
+		{
+			Symbols_visitParameter(st, parameter, child1, child2, SYM_BOOL);
+		}
+		else if (child2-> type == AST_STRING)
+		{
+			Symbols_visitParameter(st, parameter, child1, child2, SYM_CHAR);
+		}	
+		else
+		{
+			return fail("Internal compiler error - parameter!", "!?!?", parameter);
+		}
+
+		return true ;
+
+
+	exp->symbol_type = SymbolType ;
+	exp->size = size ;
+	}
 }
 
 static bool Symbols_visitGlobal(SymbolTable* st, AST* global) 
 {
 	return Symbols_visitDeclVar(st, global);
+}
+
+static bool Symbols_visitBlockElse(SymbolTable* st, AST* block)
+{
+	AST* child = block->firstChild;
+
+	while (child != NULL)
+	{
+		bool ok;
+		if (child->type == AST_ELSEIF)
+		{
+			ok = Symbols_visitElseIf(st, child);
+		}
+		else if (child->type == AST_ELSE)
+		{
+			ok = Symbols_visitElse(st, child); 
+		}
+		child = child->nextSibling ;
+	}
+
+	return true;
 }
 
 
@@ -400,13 +465,13 @@ static bool Symbols_visitBlock(SymbolTable* st, AST* block)
 		{
 			ok = Symbols_visitIf(st, child);
 		}
+        	if (child->type == AST_WHILE)
+		{
+			ok = Symbols_visitWhile(st, child);
+		}
 		else if (child->type == AST_CALL) 
 		{
 	        	ok = Symbols_visitCall(st, child);
-		}
-		else if (child->type == AST_ELSEIF)
-		{
-			ok = Symbols_visitElseIf(st, child);
 		}
 		else if (child->type == AST_RET)
 		{
@@ -416,10 +481,15 @@ static bool Symbols_visitBlock(SymbolTable* st, AST* block)
 		{
 	        	ok = Symbols_visitDeclVar(st, child);
 	 	} 
-		else if (child->type == AST_ELSE)
+		else if (child->type == AST_ATRIB)
 		{
-			ok = Symbols_visitElse(st, child); 
+			ok = Symbols_visitAssign(st, child); 
 		}
+		else 
+	        	fail("Internal compiler error! - block", "!?!?", function);
+
+	      	if (!ok) 
+	        	return false;
 		child = child->nextSibling ;
 	}
 
@@ -431,81 +501,64 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 {
 	const char* name = function->stringVal;
 	AST* child = function->firstChild;
-fprintf(stderr, "entrou1\n") ;
+	int qtd_params = 0 ;
+	int armazena_params [50] ;
+	int* lista_tipos_params ;
+	int ret_tipo[2] ; /* ret_tipo[0] = tipo de retorno ; ret_tipo[1] == tamanho do array */
+
+
+	fprintf(stderr, "entrou1\n") ;
 	Symbol* existing = SymbolTable_get(st, name);
-fprintf(stderr, "pass1\n") ;
+	fprintf(stderr, "pass1\n") ;
 	if (existing) 
 	{
       	   	return fail("redeclared function!\n", name, function);
 	}
-fprintf(stderr, "passou1\n") ;
-	//MUDAR OS ULTIMOS TRES PARAMETROS!!!!!!!!!!!!!
-	SymbolTable_add(st, name, SYM_FUN, function->line, function->size, 0, 0, 0);
+	fprintf(stderr, "passou1\n") ;
+
 	//SymbolTable_beginScope(st);
 
 	while (child != NULL)
 	//for(AST* child = function->firstChild; child; child = child->nextSibling) 
 	{
-		bool ok;
-        	if (child->type == AST_DECLVAR) 
-	{
-fprintf(stderr, "entrou1\n") ;
-	        	ok = Symbols_visitDeclVar(st, child);
-	 }     	
-		else if (child->type == AST_ATRIB) 
-{
-fprintf(stderr, "entrou1\n") ;
-	        	ok = Symbols_visitAssign(st, child);
-}	      	
-		else if (child->type == AST_CALL) 
-{
-fprintf(stderr, "entrou1\n") ;
-	        	ok = Symbols_visitCall(st, child);
-}        	
-		else if (child->type == AST_IF)
-{
-fprintf(stderr, "entrou1\n") ;
-			ok = Symbols_visitIf(st, child);
-}
-		else if (child->type == AST_ELSEIF)
-{
-fprintf(stderr, "entrou1\n") ;
-			ok = Symbols_visitElseIf(st, child);
-}
-		else if (child->type == AST_WHILE)
-{
-fprintf(stderr, "entrou1\n") ;
-			ok = Symbols_visitWhile(st, child);
-}
-		else if (child->type == AST_RET)
-{
-fprintf(stderr, "entrou1\n") ;
-			ok = Symbols_visitReturn(st, child);
-}
-		else if (child->type == AST_NEW)
-{
-fprintf(stderr, "entrou1\n") ;
-			ok = Symbols_visitNew(st, child);
-}
-
-		else if (child->type == AST_PARAM)
-{
-fprintf(stderr, "entrou1\n") ;
+		bool ok;   	
+      
+		if (child->type == AST_PARAM)
+		{
+			fprintf(stderr, "entrou1\n") ;
 			ok = Symbols_visitParameter(st, child);
-}
-
-		else if (child->type == AST_GLOBAL)
-{
-fprintf(stderr, "entrou1\n") ;
-			ok = Symbols_visitGlobal(st, child);
-}
-
-		else if (child->type == AST_BLOCK || child->type == AST_BLOCK_ELSE)
-{
-fprintf(stderr, "entrou1\n") ;
+			armazena_params[qtd_params] = child->lastChild->type ; 
+			qtd_params++ ;
+		}
+		else if (child->type == AST_BLOCK)
+		{
+			fprintf(stderr, "entrou1\n") ;
 			ok = Symbols_visitBlock(st, child);
-}
-
+		}
+		else if (child->type == AST_INT)
+		{
+			fprintf(stderr, "entrou1\n") ;
+			ret[0] = SYM_INT ;
+			ret[1] = child->size ;
+			SymbolTable_add(st, "@ret", SYM_INT, child->line, child->size, 0, 0, 0);
+			ok = true ;
+		}
+		else if (child->type == AST_CHAR || child->type == AST_STRING)
+		{
+			fprintf(stderr, "entrou1\n") ;
+			ret[0] = SYM_CHAR ;
+			ret[1] = child->size ;
+			SymbolTable_add(st, "@ret", SYM_CHAR, child->line, child->size, 0, 0, 0);
+			ok = true ;
+		}
+		else if (child->type == AST_BOOL)
+		{
+			fprintf(stderr, "entrou1\n") ;
+			ret[0] = SYM_BOOL ;
+			ret[1] = child->size ;
+			SymbolTable_add(st, "@ret", SYM_BOOL, child->line, child->size, 0, 0, 0);
+			ok = true ;
+		}
 		else 
 	        	fail("Internal compiler error!", "!?!?", function);
       		
@@ -515,6 +568,15 @@ fprintf(stderr, "entrou1\n") ;
 		 child = child->nextSibling ;
 	        
    	}
+
+	lista_tipos_params = (int*)malloc(qtd_params*sizeof(int))
+	//VER O TAMANHO DO ARRAY DE CADA PARAMETRO
+	while (cont < qtd_params)
+	{
+		lista_tipos_params[cont] = armazena_params[cont]
+	}
+
+	SymbolTable_add(st, name, SYM_FUN, function->line, function->size, qtd_params, lista_tipos_params, ret);
 	//SymbolTable_endScope(st);
 	return true;
 }
@@ -527,11 +589,31 @@ bool Symbols_annotate(AST* program)
 	while(child != NULL)
 	//for(AST* child = program->firstChild; child; child = child->nextSibling) 
 	{
-        	bool ok = Symbols_visitFunction(st, child);
-        	if (!ok) 
+
+		if (child->type = AST_FUN)
 		{
-        		return false;
-      		}
+        		bool ok = Symbols_visitFunction(st, child);
+        		if (!ok) 
+			{
+        			return false;
+      			}
+		}
+		else if (child->type = AST_GLOBAL)
+		{
+        		bool ok = Symbols_visitGlobal(st, child);
+        		if (!ok) 
+			{
+        			return false;
+      			}
+		}
+		else if (child->type == NULL)
+		{
+			return true ;
+		}
+		else
+		{
+			fail("Internal compiler error!", "!?!?", child);
+		}
 		child = child->nextSibling ;
    	}
    return true;
