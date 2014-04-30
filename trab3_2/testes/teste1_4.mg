@@ -6,7 +6,5 @@ fun main () : int
 	b = "Marina"
 	c = "Marina"
 
-	return a
+	return b
 end
-
-

@@ -8,5 +8,3 @@ fun main () : int
 
 	return a
 end
-
-

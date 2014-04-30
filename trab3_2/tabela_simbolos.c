@@ -98,7 +98,7 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name)
 {
 	fprintf(stderr, "entrou get\n") ;
 	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
-	node = st->firstNode ;
+	node = st->lastNode ;
 
 	fprintf(stderr, "etab\n") ;
 	fprintf(stderr, "%d\n", node) ;
@@ -106,12 +106,12 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name)
 	{
 		while(strcmp(node->symbol->name, name) != 0)
 		{
-			if(node->nextNode == NULL)
+			if(node->prevNode == NULL)
 			{
 				fprintf(stderr, "no symbol match this name\n") ;
 				return NULL ;
 			}			
-			node = node->nextNode ;
+			node = node->prevNode ;
 		}
 		fprintf(stderr, "saiu get\n") ;
 		return node->symbol ;
