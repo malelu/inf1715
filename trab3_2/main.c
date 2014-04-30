@@ -72,10 +72,9 @@ int main (void)
 	//yydebug = 1;
 	yyparse();
 	error = Symbols_annotate(programa) ;
-	prettyPrinter(programa) ;
+	if (error == 1)
+		prettyPrinter(programa) ;
 
-
-	fprintf(stderr, "sucesso!\n");
 	if (error == 0)
 		return 0 ;
 	else

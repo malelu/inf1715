@@ -2,26 +2,31 @@
 Aluna: Marina Leao Lucena
 Professor: Hisham Muhammad
 Matéria: Compiladores
-Trabalho: AST
+Trabalho: Tabela de símbolos
 *****************************************
 
 *****************************************
 Diretórios e arquivos:
 
 	- Diretório testes
-		-teste1.mg
-		-teste2.mg
-		-teste3.mg
-		-teste4.mg
+		-teste1.mg e derivados
+		-teste2.mg e derivados
+		-teste3.mg e derivados
+		-teste4.mg e derivados
 		-teste5.mg
 		-teste6.mg
 		-teste7.mg
-		-teste8.mg
+		-teste8.mg e derivados
+		-teste9.mg
 	- main.c
 	- analisadorLexico.l
 	- analisadorSintatico.y
 	- ast.c
 	- ast.h
+	- tabela_simbolos.c
+	- tabela_simbolos.h
+	- simbolos.c
+	- simbolos.h
 	- token.h
 	- makefile
 	- leiame.txt

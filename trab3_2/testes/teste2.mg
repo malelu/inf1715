@@ -2,14 +2,30 @@ fun main () : int
 	a : int
  
 	if true
-		a : int
+		b : int
 		while true
-			a : [][]char	
+			c : [][]char	
 		loop	
 	else if false
-	        a : bool
+	        d : bool
         else
-		a : string  
+		e : string  
+	end 
+
+end
+
+fun fun2 ()
+	a : bool
+ 
+	if true
+		b : string
+		while true
+			c : char	
+		loop	
+	else if false
+	        d : []bool
+        else
+		e : int  
 	end 
 
 end
