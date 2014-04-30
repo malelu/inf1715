@@ -23,6 +23,9 @@ Symbol* Symbol_new(const char* name, SymbolType type, int line, int size, int sc
 			sym->fun_param[cont][1] = fun_param[cont][1] ;
 			cont++;
 		}
+
+		sym->fun_param[cont][0] = -1 ; //indica que acabou
+		sym->fun_param[cont][1] = -1 ;
 	}
 
 	

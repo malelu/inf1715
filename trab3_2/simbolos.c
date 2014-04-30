@@ -551,6 +551,11 @@ fprintf(stderr, "===parameter type %d\n", existing_id->type) ;
 
 		call->symbol_type = SYM_FUN ;
       		assert(existing->type == SYM_FUN);
+
+
+		if (existing->fun_param[cont_param][1] != -1)
+			return fail("missing parameters!", name, call);
+
       		return true;
    	}
    	return fail("undeclared function!", name, call);
