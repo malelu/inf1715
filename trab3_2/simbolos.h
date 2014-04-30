@@ -6,5 +6,6 @@
 #include <stdbool.h>
 
 bool Symbols_annotate(AST* program);
+void Symbols_printSYM(int type) ;
 
 #endif

@@ -38,6 +38,8 @@ void prettyPrinter(AST* node)
 	if(node->type == AST_NUMINT)
 		fprintf(stdout, " [%d]", node->intVal);
 
+	Symbols_printSYM (node->symbol_type) ;
+
 	if(node->firstChild == NULL)
 		fprintf(stdout, " @%d\n", node->line);
 	else if(node->firstChild != NULL)
@@ -48,6 +50,7 @@ void prettyPrinter(AST* node)
 		addTab (numTab) ;
 		fprintf(stdout, " }\n");
 	}
+	
 
 	if(node->nextSibling != NULL)
 		prettyPrinter(node->nextSibling) ;
@@ -68,8 +71,10 @@ int main (void)
 {
 	//yydebug = 1;
 	yyparse();
-	prettyPrinter(programa) ;
 	error = Symbols_annotate(programa) ;
+	prettyPrinter(programa) ;
+
+	fprintf(stderr, "sucesso!\n");
 	if (error == 0)
 		return 0 ;
 	else

@@ -115,10 +115,18 @@ tipo    : tipobase 				{ $$.node = $1.node; }
 						  $$.node->size = $$.node->size+1;
 						}
 	;
-tipobase: TK_INT 				{ $$.node = AST_new(AST_INT, $1.line) ; }
-	| TK_CHAR 				{ $$.node = AST_new(AST_CHAR, $1.line) ; }
-	| TK_BOOL 				{ $$.node = AST_new(AST_BOOL, $1.line) ; }
-	| TK_STRING				{ $$.node = AST_new(AST_STRING, $1.line) ; }
+tipobase: TK_INT 				{ $$.node = AST_new(AST_INT, $1.line) ; 
+						  $$.node->symbol_type = SYM_INT;
+						}
+	| TK_CHAR 				{ $$.node = AST_new(AST_CHAR, $1.line) ; 
+						  $$.node->symbol_type = SYM_CHAR;
+						}
+	| TK_BOOL 				{ $$.node = AST_new(AST_BOOL, $1.line) ; 
+						  $$.node->symbol_type = SYM_BOOL;
+						}
+	| TK_STRING				{ $$.node = AST_new(AST_STRING, $1.line) ; 
+						  $$.node->symbol_type = SYM_CHAR;				
+						}
 	;
 lista_comando : /* vazio */ 			{ $$.node = NULL; }
 	| comando nl lista_comando		{ $$.node = AST_prependSibling($3.node, $1.node); }
