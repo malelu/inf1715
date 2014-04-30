@@ -179,14 +179,42 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 static bool Symbols_visitIf(SymbolTable* st, AST* _if) 
 {
-	int exp_type ;
+	int* exp_type = (int*)malloc(2*sizeof(int)) ;
 
 	exp_type  = Symbols_visitExpression(st, _if->firstChild) ;
 
-	if (exp_type != AST_BOOL)
+	AST* child = _if->firstChild->nextSibling;
+
+	if (exp_type[0] != AST_BOOL)
 		return fail("if expression is not a boolean value!", "if", _if);
+	else if (exp_type[1] != 0)
+		return fail("if expression is a boolean array!", "if", _if);
 
 	_if->symbol_type == SYM_BOOL ;
+	_if->size = exp_type[1] ;
+
+	while(child != NULL)
+	{
+		bool ok ;
+		if (child->type == AST_BLOCK)
+		{
+			fprintf(stderr, "entrou visitIf block\n") ;
+			ok = Symbols_visitBlock(st, child);
+		}
+		else if (child->type == AST_BLOCK_ELSE)
+		{
+			fprintf(stderr, "entrou visitIf block\n") ;
+			ok = Symbols_visitBlockElse(st, child);
+		}
+		else
+			fail("Internal compiler error! - if", "!?!?", _if);
+
+		child = child->nextSibling ;
+	}
+
+	if(!ok)
+		return false ;
+
 	return true ;
 }
 
@@ -213,14 +241,42 @@ static bool Symbols_visitElse(SymbolTable* st, AST* else_if)
 
 static bool Symbols_visitWhile(SymbolTable* st, AST* _while) 
 {
-	int exp_type ;
+	int* exp_type = (int*)malloc(2*sizeof(int)) ;
 
 	exp_type  = Symbols_visitExpression(st, _while->firstChild) ;
 
-	if (exp_type != AST_BOOL)
+	AST* child = _while->firstChild->nextSibling;
+
+	if (exp_type[0] != AST_BOOL)
 		return fail("while expression is not a boolean value!", "while", _while);
+	else if (exp_type[1] != 0)
+		return fail("while expression is a boolean array!", "while", _while);
 
 	_while->symbol_type == SYM_BOOL ;
+	_while->size = exp_type[1] ;
+
+	while(child != NULL)
+	{
+		bool ok ;
+		if (child->type == AST_BLOCK)
+		{
+			fprintf(stderr, "entrou visitwhile block\n") ;
+			ok = Symbols_visitBlock(st, child);
+		}
+		else if (child->type == AST_BLOCK_ELSE)
+		{
+			fprintf(stderr, "entrou visitwhile blockelse\n") ;
+			ok = Symbols_visitBlockElse(st, child);
+		}
+		else
+			fail("Internal compiler error! - if", "!?!?", _while);
+
+		child = child->nextSibling ;
+	}
+
+	if(!ok)
+		return false ;
+
 	return true ;
 }
 
@@ -378,76 +434,80 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
    	return true;
 }
 
-static void Symbols_visitParameter(SymbolTable* st, AST* parameter, AST* child1, AST* child2, int symbol_type) 
+static void Symbols_setParamGlob(SymbolTable* st, AST* parent, AST* child1, AST* child2, int symbol_type) 
 {
 	const char* name = child1->stringVal;
 
-	parameter->symbol_type = symbol_type ;
-	parameter->size = child2->size ;
+	parent->symbol_type = symbol_type ;
+	parent->size = child2->size ;
 	child1->symbol_type = symbol_type ;
 	child1->size = child2->size ;
 	child2->symbol_type = symbol_type ;
-	SymbolTable_add(st, name, symbol_type, parameter->line, child2->size, 0, 0, 0);
+	SymbolTable_add(st, name, symbol_type, parent->line, child2->size, 0, 0, 0);
 }
 
-
-static bool Symbols_visitParameter(SymbolTable* st, AST* parameter) 
+static bool Symbols_getParamGlob(SymbolTable* st, AST* node) 
 {
-	if(parameter != NULL)
+	if(node != NULL)
 	{
-		AST* child1 = parameter->firstChild ;
-		AST* child2 = parameter->lastChild ;
+		AST* child1 = node->firstChild ;
+		AST* child2 = node->lastChild ;
 
 		if(child2->type == AST_INT)
 		{
-			Symbols_visitParameter(st, parameter, child1, child2, SYM_INT);
+			Symbols_setParamGlob(st, node, child1, child2, SYM_INT);
 		}
 		else if (child2-> type == AST_CHAR)
 		{
-			Symbols_visitParameter(st, parameter, child1, child2, SYM_CHAR);
+			Symbols_setParamGlob(st, node, child1, child2, SYM_CHAR);
 		}
 		else if (child2-> type == AST_BOOL)
 		{
-			Symbols_visitParameter(st, parameter, child1, child2, SYM_BOOL);
+			Symbols_setParamGlob(st, node, child1, child2, SYM_BOOL);
 		}
 		else if (child2-> type == AST_STRING)
 		{
-			Symbols_visitParameter(st, parameter, child1, child2, SYM_CHAR);
+			Symbols_setParamGlob(st, node, child1, child2, SYM_CHAR);
 		}	
 		else
 		{
-			return fail("Internal compiler error - parameter!", "!?!?", parameter);
+			return fail("Internal compiler error - parameter!", "!?!?", node);
 		}
-
-		return true ;
-
-
-	exp->symbol_type = SymbolType ;
-	exp->size = size ;
 	}
+	
+	return true ;
+}
+
+static bool Symbols_visitParameter(SymbolTable* st, AST* parameter) 
+{
+
+	return Symbols_getParamGlob(st, parameter) ; 
 }
 
 static bool Symbols_visitGlobal(SymbolTable* st, AST* global) 
 {
-	return Symbols_visitDeclVar(st, global);
+	return Symbols_getParamGlob(st, global) ;
 }
 
-static bool Symbols_visitBlockElse(SymbolTable* st, AST* block)
+static bool Symbols_visitBlockElse(SymbolTable* st, AST* block_else)
 {
-	AST* child = block->firstChild;
-
-	while (child != NULL)
+	if(block_else != NULL)
 	{
-		bool ok;
-		if (child->type == AST_ELSEIF)
+		AST* child = block_else->firstChild;
+
+		while (child != NULL)
 		{
-			ok = Symbols_visitElseIf(st, child);
+			bool ok;
+			if (child->type == AST_ELSEIF)
+			{
+				ok = Symbols_visitElseIf(st, child);
+			}
+			else if (child->type == AST_ELSE)
+			{
+				ok = Symbols_visitElse(st, child); 
+			}
+			child = child->nextSibling ;
 		}
-		else if (child->type == AST_ELSE)
-		{
-			ok = Symbols_visitElse(st, child); 
-		}
-		child = child->nextSibling ;
 	}
 
 	return true;
@@ -456,41 +516,44 @@ static bool Symbols_visitBlockElse(SymbolTable* st, AST* block)
 
 static bool Symbols_visitBlock(SymbolTable* st, AST* block)
 {
-	AST* child = block->firstChild;
-
-	while (child != NULL)
+	if(block != NULL)
 	{
-		bool ok;
-        	if (child->type == AST_IF)
-		{
-			ok = Symbols_visitIf(st, child);
-		}
-        	if (child->type == AST_WHILE)
-		{
-			ok = Symbols_visitWhile(st, child);
-		}
-		else if (child->type == AST_CALL) 
-		{
-	        	ok = Symbols_visitCall(st, child);
-		}
-		else if (child->type == AST_RET)
-		{
-			ok = Symbols_visitReturn(st, child);
-		}
-        	else if (child->type == AST_DECLVAR) 
-		{
-	        	ok = Symbols_visitDeclVar(st, child);
-	 	} 
-		else if (child->type == AST_ATRIB)
-		{
-			ok = Symbols_visitAssign(st, child); 
-		}
-		else 
-	        	fail("Internal compiler error! - block", "!?!?", function);
+		AST* child = block->firstChild;
 
-	      	if (!ok) 
-	        	return false;
-		child = child->nextSibling ;
+		while (child != NULL)
+		{
+			bool ok;
+        		if (child->type == AST_IF)
+			{
+				ok = Symbols_visitIf(st, child);
+			}
+        		if (child->type == AST_WHILE)
+			{
+				ok = Symbols_visitWhile(st, child);
+			}
+			else if (child->type == AST_CALL) 
+			{
+		        	ok = Symbols_visitCall(st, child);
+			}
+			else if (child->type == AST_RET)
+			{
+				ok = Symbols_visitReturn(st, child);
+			}
+        		else if (child->type == AST_DECLVAR) 
+			{
+		        	ok = Symbols_visitDeclVar(st, child);
+		 	} 
+			else if (child->type == AST_ATRIB)
+			{
+				ok = Symbols_visitAssign(st, child); 
+			}
+			else 
+		        	fail("Internal compiler error! - block", "!?!?", function);
+
+		      	if (!ok) 
+		        	return false;
+			child = child->nextSibling ;
+		}
 	}
 
 	return true;	
