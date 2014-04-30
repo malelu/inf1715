@@ -288,11 +288,13 @@ static bool Symbols_visitConditional(SymbolTable* st, AST* node)
 
 static bool Symbols_visitIf(SymbolTable* st, AST* _if) 
 {
+	fprintf(stderr, "SCOPE NO IF: %d\n", symbol_table_scope) ;
 	return Symbols_visitConditional(st, _if) ;
 }
 
 static bool Symbols_visitElseIf(SymbolTable* st, AST* else_if) 
 {
+	fprintf(stderr, "SCOPE NO ELSE IF: %d\n", symbol_table_scope) ;
 	return Symbols_visitConditional(st, else_if) ;
 }
 
@@ -300,6 +302,8 @@ static bool Symbols_visitElseIf(SymbolTable* st, AST* else_if)
 static bool Symbols_visitElse(SymbolTable* st, AST* _else) 
 {
 	AST* child = _else->firstChild ;
+
+	fprintf(stderr, "SCOPE NO ELSE: %d\n", symbol_table_scope) ;
 
 	while(child != NULL)
 	{
@@ -328,6 +332,8 @@ static bool Symbols_visitWhile(SymbolTable* st, AST* _while)
 	exp_type  = Symbols_visitExpression(st, _while->firstChild) ;
 
 	AST* child = _while->firstChild->nextSibling;
+
+	fprintf(stderr, "SCOPE NO WHILE: %d\n", symbol_table_scope) ;
 
 	if (exp_type[0] != AST_BOOL)
 		return fail("while expression is not a boolean value!\n", "while", _while);
@@ -439,8 +445,12 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 	const char* name = call->firstChild->stringVal;
   	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	AST* child =  call->firstChild->nextSibling;
+	int cont_param = 0;
 
 	const char* param_name ;
+
+fprintf(stderr, "===nome da funcao %s\n", existing->name) ;
+fprintf(stderr, "===primeiro parametro da funcao %d\n", existing->fun_param[0][0]) ;
 
   	if (existing) 
 	{
@@ -459,25 +469,78 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 
 				if(existing_id)
 				{
+fprintf(stderr, "===name %s\n", param_name) ;
+fprintf(stderr, "===parameter name %s\n", existing_id->name) ;
+fprintf(stderr, "===parameter type %d\n", existing_id->type) ;
+
 					if (existing_id->type == SYM_FUN) 
          					return fail("is a function!", name, call);
 					else
 					{
-						//COMPARAR COM OS PARAMETROS DA FUNCAO
+						if (existing_id->type == SYM_INT)
+						{
+							fprintf(stderr, "fun_param[cont_param][0] type %d\n", existing->fun_param[cont_param][0]) ;
+							if (existing->fun_param[cont_param][0] == AST_INT && 
+							existing->fun_param[cont_param][1] == existing_id->size)
+							{
+								cont_param++ ;
+							}
+							else
+								return fail("invalid parameter!1", param_name, child);
+						}
+						else if (existing_id->type == SYM_CHAR)
+						{
+							if (existing->fun_param[cont_param][0] == AST_CHAR && 
+							existing->fun_param[cont_param][1] == existing_id->size)
+							{
+								cont_param++ ;
+							}
+							else
+								return fail("invalid parameter!2", param_name, child);
+						}
+						else if (existing_id->type == SYM_BOOL)
+						{
+							if (existing->fun_param[cont_param][0] == AST_BOOL && 
+							existing->fun_param[cont_param][1] == existing_id->size)
+							{
+								cont_param++ ;
+							}
+							else
+								return fail("invalid parameter!3", param_name, child);
+						}
+						else
+							return fail("invalid parameter!4", param_name, child);
 					}	
 				}
+				else
+					return fail("undeclared id as parameter!", param_name, child);
 			}
 			else if (child->type == AST_NUMINT)
 			{
-				//COMPARAR COM OS PARAMETROS DA FUNCAO
+				if (existing->fun_param[cont_param][0] == child->type && existing->fun_param[cont_param][1] == child->size)
+				{
+					cont_param++ ;
+				}
+				else
+					return fail("parameter has invalid type!", name, call);
 			}
 			else if (child->type == AST_CHAR)
 			{
-				//COMPARAR COM OS PARAMETROS DA FUNCAO
+				if (existing->fun_param[cont_param][0] == child->type && existing->fun_param[cont_param][1] == child->size)
+				{
+					cont_param++ ;
+				}
+				else
+					return fail("parameter has invalid type!", name, call);
 			}
 			else if (child->type == AST_BOOL)
 			{
-				//COMPARAR COM OS PARAMETROS DA FUNCAO
+				if (existing->fun_param[cont_param][0] == child->type && existing->fun_param[cont_param][1] == child->size)
+				{
+					cont_param++ ;
+				}
+				else
+					return fail("parameter has invalid type!", name, call);
 			}
 			else
 			{
@@ -604,6 +667,7 @@ static bool Symbols_visitDeclVar(SymbolTable* st, AST* declvar)
 	int* ret = (int*)malloc(2*sizeof(int));
 
    	if (existing) {
+		fprintf(stderr, "DEU QUE EXISTE: %d\n", symbol_table_scope) ;
       		if (existing->type == SYM_INT || existing->type == SYM_CHAR || existing->type == SYM_BOOL) 
 		{
          		return fail("redeclared variable!", name, declvar);
@@ -767,7 +831,7 @@ static bool Symbols_visitBlock(SymbolTable* st, AST* block)
 				symbol_table_scope--;
 				fprintf(stderr, "saiu do if do visit block\n") ;
 			}
-        		if (child->type == AST_WHILE)
+        		else if (child->type == AST_WHILE)
 			{
 				fprintf(stderr, "while do visit block\n") ;
 				symbol_table_scope++;
@@ -813,12 +877,11 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 {
 	const char* name = function->stringVal;
 	AST* child = function->firstChild;
-	int qtd_params = 0, cont = 0 ;
-	int armazena_params [50] ;
-	int* lista_tipos_params ;
+	int qtd_params = 0, cont = 0;
+	int armazena_params [50][2] ;
 	int ret[2] ; /* ret_tipo[0] = tipo de retorno ; ret_tipo[1] == tamanho do array */
 
-
+	fprintf(stderr, "SCOPE NA FUNCAO: %d\n", symbol_table_scope) ;
 	fprintf(stderr, "entrou1\n") ;
 	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	fprintf(stderr, "pass1\n") ;
@@ -838,7 +901,11 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 		{
 			fprintf(stderr, "param\n") ;
 			ok = Symbols_visitParameter(st, child);
-			armazena_params[qtd_params] = child->lastChild->type ; 
+			armazena_params[qtd_params][0] = child->lastChild->type ; 
+			armazena_params[qtd_params][1] = child->lastChild->size ;
+
+			fprintf(stderr, "TIPO DE PARAMETRO ARMAZENADO %d\n", armazena_params[qtd_params][0]) ;
+			fprintf(stderr, "ARRAY DE PARAMETRO ARMAZENADO %d\n", armazena_params[qtd_params][1]) ;
 			qtd_params++ ;
 		}
 		else if (child->type == AST_BLOCK)
@@ -882,15 +949,7 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 	        
    	}
 
-	lista_tipos_params = (int*)malloc(qtd_params*sizeof(int));
-	//VER O TAMANHO DO ARRAY DE CADA PARAMETRO
-	while (cont < qtd_params)
-	{
-		lista_tipos_params[cont] = armazena_params[cont];
-		cont++;
-	}
-
-	SymbolTable_add(st, name, SYM_FUN, function->line, function->size,  symbol_table_scope, qtd_params, lista_tipos_params, ret);
+	SymbolTable_add(st, name, SYM_FUN, function->line, function->size, symbol_table_scope, qtd_params, armazena_params, ret);
 	//SymbolTable_endScope(st);
 	fprintf(stderr, "saiu fun\n") ;
 	return true;
@@ -904,6 +963,8 @@ bool Symbols_annotate(AST* program)
 
 	symbol_table_scope = -1;
 
+	fprintf(stderr, "SCOPE NO PROGRAMA: %d\n", symbol_table_scope) ;
+
 	while(child != NULL)
 	//for(AST* child = program->firstChild; child; child = child->nextSibling) 
 	{
@@ -916,8 +977,12 @@ bool Symbols_annotate(AST* program)
 
         		if (!ok) 
 			{
+				fprintf(stderr, "imprime tabela\n") ;
+				SymbolTable_print(st);
         			return false;
       			}
+			fprintf(stderr, "imprime tabela\n") ;
+			SymbolTable_print(st);
 		}
 		else if (child->type == AST_GLOBAL)
 		{
@@ -939,7 +1004,7 @@ bool Symbols_annotate(AST* program)
 		child = child->nextSibling ;
    	}
 
-
+	SymbolTable_print(st);
    return true;
 }
 

@@ -207,7 +207,7 @@ lista_exp  : /* vazio */ 			{ $$.node = NULL; }
 	| exp sublista_exp			{ $$.node = AST_prependSibling($2.node, $1.node); }
 	;
 sublista_exp : /* vazio */ 			{ $$.node = NULL; }
-	| ',' exp sublista_exp
+	| ',' exp sublista_exp			{ $$.node = AST_prependSibling($3.node, $2.node); }
 	; 
 cmdreturn : TK_RET exp 				{ $$.node = AST_new(AST_RET, $1.line);
 						  AST_addChild($$.node, $2.node); }

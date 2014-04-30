@@ -74,6 +74,7 @@ int main (void)
 	error = Symbols_annotate(programa) ;
 	prettyPrinter(programa) ;
 
+
 	fprintf(stderr, "sucesso!\n");
 	if (error == 0)
 		return 0 ;

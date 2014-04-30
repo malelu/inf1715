@@ -1913,6 +1913,13 @@ yyreduce:
     { (yyval).node = NULL; }
     break;
 
+  case 44:
+
+/* Line 1806 of yacc.c  */
+#line 210 "analisadorSintatico.y"
+    { (yyval).node = AST_prependSibling((yyvsp[(3) - (3)]).node, (yyvsp[(2) - (3)]).node); }
+    break;
+
   case 45:
 
 /* Line 1806 of yacc.c  */
@@ -2186,7 +2193,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 2190 "y.tab.c"
+#line 2197 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
