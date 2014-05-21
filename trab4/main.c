@@ -74,7 +74,10 @@ int main (void)
 
 	error = Symbols_annotate(programa) ;
 	if (error == 1)
+	{
 		prettyPrinter(programa) ;
+		//IR_dump(programa) ;
+	}
 
 	if (error == 0)
 		return 0 ;
