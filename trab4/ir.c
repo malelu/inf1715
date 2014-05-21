@@ -126,6 +126,55 @@ static char* IR_genExp(IR* ir, AST* exp) //FAZER OS OUTROS CASOS
          		printf(" %s = %s < %s\n", temp, e1, e2);
          		return temp;
       		}
+		case AST_GREATER: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s > %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_GREATER_EQUAL: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s >= %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_LESS_EQUAL: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s <= %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_EQUAL: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s = %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_NOT_EQUAL: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s < %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_AND: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s and %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_OR: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s or %s\n", temp, e1, e2);
+         		return temp;
+      		}
 		case AST_TRUE: {
          		return "true";
       		}
@@ -198,11 +247,10 @@ static void IR_genIfEntry(IR* ir, AST* entry)
 
 static void IR_genElseIf(IR* ir, AST* elseif)
 {
-   	//IR_startFunction(ir, function->stringVal);
-	printf("while\n");
-	printf("go to L1\n");
-	AST* child = NULL ;
-   	for(child = elseif->firstChild; child; child = child->nextSibling) 
+	char* temp = IR_genExp(ir, elseif->firstChild);
+	printf(" else if %s go to L1\n", temp);
+	AST* child = elseif->firstChild ;
+   	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
       		IR_genIfEntry(ir, child);
    	}
@@ -211,9 +259,8 @@ static void IR_genElseIf(IR* ir, AST* elseif)
 
 static void IR_genIf(IR* ir, AST* _if)
 {
-   	//IR_startFunction(ir, function->stringVal);
 	char* temp = IR_genExp(ir, _if->firstChild);
-	printf("if false %s go to L1\n", temp);
+	printf(" if false %s go to L1\n", temp);
 	AST* child = _if->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
@@ -244,11 +291,10 @@ static void IR_genWhileEntry(IR* ir, AST* entry)
 
 static void IR_genWhile(IR* ir, AST* _while)
 {
-   	//IR_startFunction(ir, function->stringVal);
-	printf("while\n");
-	printf("go to L1\n");
-	AST* child = NULL ;
-   	for(child = _while->firstChild; child; child = child->nextSibling) 
+	char* temp = IR_genExp(ir, _while->firstChild);
+	printf("while %s\n", temp);
+	AST* child = _while->firstChild ;
+   	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
       		IR_genWhileEntry(ir, child);
    	}
