@@ -776,7 +776,6 @@ static bool Symbols_getParamGlob(SymbolTable* st, AST* node)
 
 static bool Symbols_visitParameter(SymbolTable* st, AST* parameter) 
 {
-
 	return Symbols_getParamGlob(st, parameter) ; 
 }
 

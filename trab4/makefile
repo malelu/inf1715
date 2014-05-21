@@ -1,8 +1,11 @@
 ############### Makefile ########################
 all: programa
 
-programa: analisadorSintatico.o analisadorLexico.o ast.o tabela_simbolos.o simbolos.o main.c
-	gcc -Wall -o programa analisadorSintatico.o analisadorLexico.o ast.o tabela_simbolos.o simbolos.o main.c -ll -ly
+programa: analisadorSintatico.o analisadorLexico.o ast.o tabela_simbolos.o simbolos.o ir.o main.c
+	gcc -Wall -o programa analisadorSintatico.o analisadorLexico.o ast.o tabela_simbolos.o simbolos.o ir.o main.c -ll -ly
+
+ir.o : ir.c
+	gcc -c ir.c
 
 simbolos.o : simbolos.c
 	gcc -c simbolos.c

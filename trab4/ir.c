@@ -17,13 +17,17 @@ char* IR_newTemp(IR* ir) {
    return temp;
 }
 
-void IR_genDeclVar(IR* ir, AST* entry) {
-   printf(" %s = 0\n", entry->firstChild->stringVal);
+void IR_genDeclVar(IR* ir, AST* entry) 
+{
+	printf(" %s = 0\n", entry->firstChild->stringVal);
 }
 
-void IR_genCall(IR* ir, AST* entry) {
-   printf(" call %s\n", entry->firstChild->stringVal);
+void IR_genCall(IR* ir, AST* entry) 
+{
+	printf(" call %s\n", entry->firstChild->stringVal);
 }
+
+//NEW
 
 char* IR_genExp(IR* ir, AST* exp) {
    switch (exp->type) {
