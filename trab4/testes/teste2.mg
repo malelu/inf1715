@@ -1,7 +1,7 @@
 fun main () : int
 	a : int
  
-	if true
+	if 1<4
 		b : int
 		while true
 			c : [][]char	

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "ast.h"
 #include "simbolos.h"
+#include "ir.h"
 
 extern int lineCount ;
 extern int yydebug;
@@ -76,6 +77,7 @@ int main (void)
 	if (error == 1)
 	{
 		prettyPrinter(programa) ;
+		IR_gen(programa) ;
 		//IR_dump(programa) ;
 	}
 
