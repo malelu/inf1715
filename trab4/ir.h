@@ -9,12 +9,16 @@ struct IR_ {
    int temps;
 };
 
-typedef struct NodeTable_ NodeTable;
+/*typedef struct NodeTable_ NodeTable;
 
 struct NodeTable_ {
    	NodeTable* nextNode;
    	NodeTable* prevNode;
-   	Symbol* symbol ;
+   	label ;
+	operate ;
+	op1 ;
+	op2 ;
+	op3 ;
 };
 
 typedef struct IrTable_ IrTable;
@@ -22,7 +26,7 @@ typedef struct IrTable_ IrTable;
 struct IrTable_ {
 	NodeTable* firstNode;
    	NodeTable* lastNode;
-};
+};*/
 
 IR* IR_gen(AST* program);
 

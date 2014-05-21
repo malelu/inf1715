@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include "ir.h"
-#include "micro-0.tab.h"
+//#include "micro-0.tab.h"
 
 void IR_startFunction(IR* ir, const char* name) 
 {
@@ -29,26 +29,27 @@ void IR_genCall(IR* ir, AST* entry)
 
 //NEW
 
-char* IR_genExp(IR* ir, AST* exp) {
-   switch (exp->type) {
-      case AST_ADD: {
-         char* temp = IR_newTemp(ir);
-         char* e1 = IR_genExp(ir, exp->firstChild);
-         char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
-         printf(" %s = %s + %s\n", temp, e1, e2);
-         return temp;
-      }
-      case LITNUM: {
-         char* num = malloc(20);
-         snprintf(num, 20, "%d", exp->intVal);
-         return num;
-      }
-      case ID:
-         return strdup(exp->stringVal);
-      default:
-         assert(0);
-         return NULL;
-   }
+char* IR_genExp(IR* ir, AST* exp) 
+{
+	switch (exp->type) {
+      		case AST_PLUS: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s + %s\n", temp, e1, e2);
+         		return temp;
+      		}
+      		case AST_NUMINT: {
+         		char* num = malloc(20);
+         		snprintf(num, 20, "%d", exp->intVal);
+         		return num;
+      		}
+      		case AST_ID:
+         		return strdup(exp->stringVal);
+      		default:
+         		assert(0);
+         		return NULL;
+   	}
 }
 
 void IR_genAssign(IR* ir, AST* assign) 
@@ -59,6 +60,94 @@ void IR_genAssign(IR* ir, AST* assign)
    	free(rval);
 }
 
+void IR_genElseEntry(IR* ir, AST* entry) 
+{
+	switch (entry->type) 
+	{
+	      	case AST_BLOCK:
+        	 	IR_genBlock(ir, entry);
+         		return;
+      		default:
+         		assert(0);
+         		return;
+	}
+}
+
+void IR_genElse(IR* ir, AST* _else)
+{
+   	//IR_startFunction(ir, function->stringVal);
+	printf("else\n");
+	AST* child = NULL ;
+   	for(child = _else->firstChild; child; child = child->nextSibling) 
+	{
+      		IR_genElseEntry(ir, child);
+   	}
+}
+
+void IR_genIfEntry(IR* ir, AST* entry) 
+{
+	switch (entry->type) 
+	{
+	      	case AST_BLOCK:
+        	 	IR_genBlock(ir, entry);
+         		return;
+	      	case AST_BLOCK_ELSE:
+        	 	IR_genBlockElse(ir, entry);
+         		return;
+	      	case AST_LOOP:
+        	 	//IR_genElse(ir, entry);
+         		return;
+      		default:
+         		assert(0);
+         		return;
+	}
+}
+
+void IR_genIf(IR* ir, AST* _if)
+{
+   	//IR_startFunction(ir, function->stringVal);
+	printf("while\n");
+	printf("go to L1\n");
+	AST* child = NULL ;
+   	for(child = _while->firstChild; child; child = child->nextSibling) 
+	{
+      		IR_genWhileEntry(ir, child);
+   	}
+	printf("L1\n");
+}
+
+
+void IR_genWhileEntry(IR* ir, AST* entry) 
+{
+	switch (entry->type) 
+	{
+	      	case AST_BLOCK:
+        	 	IR_genBlock(ir, entry);
+         		return;
+	      	case AST_BLOCK_ELSE:
+        	 	IR_genBlockElse(ir, entry);
+         		return;
+	      	case AST_LOOP:
+        	 	//IR_genElse(ir, entry);
+         		return;
+      		default:
+         		assert(0);
+         		return;
+	}
+}
+
+void IR_genWhile(IR* ir, AST* _while)
+{
+   	//IR_startFunction(ir, function->stringVal);
+	printf("while\n");
+	printf("go to L1\n");
+	AST* child = NULL ;
+   	for(child = _while->firstChild; child; child = child->nextSibling) 
+	{
+      		IR_genWhileEntry(ir, child);
+   	}
+	printf("L1\n");
+}
 
 void IR_genBlockElseEntry(IR* ir, AST* entry) 
 {
@@ -73,13 +162,15 @@ void IR_genBlockElseEntry(IR* ir, AST* entry)
       		default:
          		assert(0);
          		return;
+	}
 }
 
 void IR_genBlockElse(IR* ir, AST* block_else)
 {
    	//IR_startFunction(ir, function->stringVal);
 	//printf("block_e %s()\n", block->stringVal);
-   	for(AST* child = block->firstChild; child; child = child->nextSibling) 
+	AST* child = NULL ;
+   	for(child = block_else->firstChild; child; child = child->nextSibling) 
 	{
       		IR_genBlockElseEntry(ir, child);
    	}
@@ -110,13 +201,15 @@ void IR_genBlockEntry(IR* ir, AST* entry)
       		default:
          		assert(0);
          		return;
+	}
 }
 
 void IR_genBlock(IR* ir, AST* block)
 {
    	//IR_startFunction(ir, function->stringVal);
 	printf("block %s()\n", block->stringVal);
-   	for(AST* child = block->firstChild; child; child = child->nextSibling) 
+	AST* child = NULL ;
+   	for(child = block->firstChild; child; child = child->nextSibling) 
 	{
       		IR_genBlockEntry(ir, child);
    	}
@@ -147,6 +240,7 @@ void IR_genFunctionEntry(IR* ir, AST* entry)
       		default:
          		assert(0);
          		return;
+	}
 
    	/*switch (entry->type) 
 	{
@@ -169,7 +263,8 @@ void IR_genFunction(IR* ir, AST* function)
 {
    	IR_startFunction(ir, function->stringVal);
 	printf("fun %s()\n", function->stringVal);
-   	for(AST* child = function->firstChild; child; child = child->nextSibling) 
+	AST* child = NULL ;
+   	for(child = function->firstChild; child; child = child->nextSibling) 
 	{
       		IR_genFunctionEntry(ir, child);
    	}
@@ -183,7 +278,8 @@ IR* IR_new()
 IR* IR_gen(AST* program) 
 {
    	IR* ir = IR_new();
-   	for(AST* child = program->firstChild; child; child = child->nextSibling) 
+	AST* child = NULL ;
+   	for(child = program->firstChild; child; child = child->nextSibling) 
 	{
       		IR_genFunction(ir, child);
    	}
