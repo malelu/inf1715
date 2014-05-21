@@ -46,6 +46,14 @@ static char* IR_newTemp(IR* ir)
    	return temp;
 }
 
+static char* IR_newLabel(IR* ir) 
+{
+	char* label = malloc(20);
+	snprintf(label, 20, "L%d", ir->labels);
+   	ir->labels++;
+   	return label;
+}
+
 static void IR_genDeclVar(IR* ir, AST* entry) 
 {
 	printf(" %s = 0\n", entry->firstChild->stringVal);
@@ -218,7 +226,7 @@ static void IR_genElseEntry(IR* ir, AST* entry)
 static void IR_genElse(IR* ir, AST* _else)
 {
    	//IR_startFunction(ir, function->stringVal);
-	printf("else\n");
+	printf(" else\n");
 	AST* child = NULL ;
    	for(child = _else->firstChild; child; child = child->nextSibling) 
 	{
@@ -248,25 +256,31 @@ static void IR_genIfEntry(IR* ir, AST* entry)
 static void IR_genElseIf(IR* ir, AST* elseif)
 {
 	char* temp = IR_genExp(ir, elseif->firstChild);
-	printf(" else if %s go to L1\n", temp);
+	char* label = IR_newLabel(ir) ;
+	printf(" else if %s go to %s\n", temp, label);
 	AST* child = elseif->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
       		IR_genIfEntry(ir, child);
    	}
-	printf("L1\n");
+	printf("%s\n", label);
 }
 
 static void IR_genIf(IR* ir, AST* _if)
 {
 	char* temp = IR_genExp(ir, _if->firstChild);
-	printf(" if false %s go to L1\n", temp);
+	char* label = IR_newLabel(ir) ;
+	printf(" if false %s go to %s\n", temp, label);
 	AST* child = _if->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
+		if(child->type == AST_BLOCK_ELSE)
+		{
+			printf(" go to %s\n", temp, label);			
+		}
       		IR_genIfEntry(ir, child);
    	}
-	printf("L1\n");
+	printf("%s\n", label);
 }
 
 
@@ -292,13 +306,18 @@ static void IR_genWhileEntry(IR* ir, AST* entry)
 static void IR_genWhile(IR* ir, AST* _while)
 {
 	char* temp = IR_genExp(ir, _while->firstChild);
-	printf("while %s\n", temp);
+	char* label = IR_newLabel(ir) ;
+	char* labelLoop = IR_newLabel(ir) ;
+	printf("%s:\n", labelLoop);
+	printf(" if ! %s\n", temp);
+	printf(" go to %s\n", label);
 	AST* child = _while->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
       		IR_genWhileEntry(ir, child);
    	}
-	printf("L1\n");
+	printf(" go to %s\n", labelLoop);
+	printf("%s\n", label);
 }
 
 static void IR_genBlockElseEntry(IR* ir, AST* entry) 

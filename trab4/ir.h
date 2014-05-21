@@ -6,7 +6,8 @@
 typedef struct IR_ IR;
 
 struct IR_ {
-   int temps;
+	int temps;
+	int labels ;
 };
 
 /*typedef struct NodeTable_ NodeTable;
