@@ -88,7 +88,7 @@ static void IR_genString(IR* ir, AST* entry)
 
 //NEW
 
-static char* IR_genExp(IR* ir, AST* exp) 
+static char* IR_genExp(IR* ir, AST* exp) //FAZER OS OUTROS CASOS
 {
 	switch (exp->type) {
       		case AST_PLUS: {
@@ -97,6 +97,40 @@ static char* IR_genExp(IR* ir, AST* exp)
          		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
          		printf(" %s = %s + %s\n", temp, e1, e2);
          		return temp;
+      		}
+		case AST_MINUS: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s - %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_TIMES: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s * %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_DIVIDED: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s - %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_LESS: {
+         		char* temp = IR_newTemp(ir);
+         		char* e1 = IR_genExp(ir, exp->firstChild);
+         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		printf(" %s = %s < %s\n", temp, e1, e2);
+         		return temp;
+      		}
+		case AST_TRUE: {
+         		return "true";
+      		}
+		case AST_FALSE: {
+         		return "false";
       		}
       		case AST_NUMINT: {
          		char* num = malloc(20);
@@ -178,8 +212,8 @@ static void IR_genElseIf(IR* ir, AST* elseif)
 static void IR_genIf(IR* ir, AST* _if)
 {
    	//IR_startFunction(ir, function->stringVal);
-	printf("t1 = %s\n", IR_genExp(ir, _if->firstChild));
-	printf("if false t1 go to L1\n");
+	char* temp = IR_genExp(ir, _if->firstChild);
+	printf("if false %s go to L1\n", temp);
 	AST* child = _if->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
