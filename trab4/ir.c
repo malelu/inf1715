@@ -54,6 +54,8 @@ static NodeFunc* IR_newFunc(const char* name)
 	func->lastCte = NULL ;
 	func->nextFunc = NULL ;
 	func->funcName = name ;
+	func->params = (char**)calloc(10, char*) ;
+	func->numParams = 0 ;
 	return func ;
 }
 
@@ -111,16 +113,22 @@ static void IR_insert_operands(NodeFunc* func, const char* label, const char* op
 static void IR_genDeclVar(IrTable* tab, AST* entry) 
 {
 	printf(" %s = 0\n", entry->firstChild->stringVal);
+	//insere cte
+	IR_insert_operands(tab->lastNode, NULL, NULL, entry->firstChild->stringVal, 0, NULL) ;
 }
 
 static void IR_genCall(IrTable* tab, AST* entry) 
 {
 	printf(" call %s\n", entry->firstChild->stringVal);
+	//insere cte
+	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, NULL) ;
 }
 
 static void IR_genParam(IrTable* tab, AST* entry)
 {
 	printf(" %s,", entry->firstChild->stringVal);
+	tab->lastNode->params[tabLastNode->numParams] = entry->firstChild->stringVal ;
+	tab->lastNode->numParams++ ;
 }
 
 static void IR_genRet(IrTable* tab, AST* entry)
@@ -312,6 +320,9 @@ static void IR_genElseIf(IrTable* tab, AST* elseif)
 	char* temp = IR_genExp(tab, elseif->firstChild);
 	char* label = IR_newLabel(tab) ;
 	printf(" else if %s go to %s\n", temp, label);
+	//insere cte
+	IR_insert_operands(tab->lastNode, NULL, "else if false", temp, label, NULL) ;
+
 	AST* child = elseif->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
@@ -325,6 +336,10 @@ static void IR_genIf(IrTable* tab, AST* _if)
 	char* temp = IR_genExp(tab->ir, _if->firstChild);
 	char* label = IR_newLabel(tab) ;
 	printf(" if false %s go to %s\n", temp, label);
+
+	//insere cte
+	IR_insert_operands(tab->lastNode, NULL, "if false", temp, label, NULL) ;
+
 	AST* child = _if->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
@@ -362,16 +377,23 @@ static void IR_genWhile(IrTable* tab, AST* _while)
 	char* temp = IR_genExp(tab->ir, _while->firstChild);
 	char* label = IR_newLabel(tab) ;
 	char* labelLoop = IR_newLabel(tab) ;
-	static void IR_insert_operands(tab->lastNode, loopLabel, "if false", label, NULL) ;
+
+	//insere cte
+	IR_insert_operands(tab->lastNode, loopLabel, "if false", temp, label, NULL) ;
+
 	printf("%s:\n", labelLoop);
 	printf(" if ! %s\n", temp);
 	printf(" go to %s\n", label);
+
 	AST* child = _while->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
       		IR_genWhileEntry(tab, child);
    	}
+
 	printf(" go to %s\n", labelLoop);
+	//insere cte
+	IR_insert_operands(tab->lastNode, NULL, "go to", labelLoop, NULL, NULL) ;
 	printf("%s\n", label);
 }
 

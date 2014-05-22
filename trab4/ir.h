@@ -10,6 +10,13 @@ struct IR_ {
 	int labels ;
 };
 
+/*typedef struct Params_ Params;
+
+struct Params_ {
+	char* param;
+	Params* nextParam ;
+};*/
+
 typedef struct NodeTable_ NodeTable;
 
 struct NodeTable_ {
@@ -29,6 +36,8 @@ struct NodeFunc_ {
    	NodeTable* lastCte ;
 	NodeFunc* nextFunc ;
 	char* funcName ;
+	char** params ;
+	int numParams ; 
 };
 
 typedef struct IrTable_ IrTable;
