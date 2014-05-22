@@ -59,19 +59,52 @@ void prettyPrinter(AST* node)
 
 }
 
-void dump(IrTable* tab)
+void dump(OpTable* tab)
 {
 	int cont = 0 ;
 	NodeFunc* func = tab->firstNode ; 
+	NodeCte* cte ;
 	while(func != NULL)
 	{
-		fprintf(stdout, "%s (", func->funcName);
+		fprintf(stdout, "\t%s (", func->funcName);
 		while(func->params[cont] != NULL)
 		{
 			fprintf(stdout, "%s, ", func->params[cont]);
 			cont++ ;
 		}
-		fprintf(stdout, ")");
+		fprintf(stdout, ")\n");
+
+		cte = func->firstCte ;
+		while(cte != NULL)
+		{
+			if(cte->label != NULL && cte->operand != "none")				
+				fprintf(stdout, "%s: ", cte->label);
+
+			if(cte->operand != NULL)
+			{
+				if(strcmp(cte->operand, "if false") == 0)
+				{
+					fprintf(stdout, "\tif not %s goto %s\n", cte->op1, cte->op2);
+				}
+				else if(strcmp(cte->operand, "else if false") == 0)
+				{
+					fprintf(stdout, "\telse if not %s goto %s\n", cte->op1, cte->op2);
+				}
+				else if(strcmp(cte->operand, "declvar") == 0)
+				{
+					fprintf(stdout, "\t%s = 0\n", cte->op1);
+				}
+				else if(strcmp(cte->operand, "goto") == 0)
+				{
+					fprintf(stdout, "\tgoto %s\n", cte->op1);
+				}
+				else
+				{
+					fprintf(stdout, "\t%s = %s %s %s\n", cte->op1, cte->op2, cte->operand, cte->op3);
+				}
+			}
+			cte = cte->nextNode ;
+		}
 		func = func->nextFunc ;
 	}
 }
@@ -93,8 +126,8 @@ int main (void)
 	if (error == 1)
 	{
 		prettyPrinter(programa) ;
-		IrTable* ir = IR_gen(programa) ;
-		//dump(ir) ;
+		OpTable* tab = IR_gen(programa) ;
+		dump(tab) ;
 	}
 
 	if (error == 0)

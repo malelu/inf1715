@@ -5,40 +5,40 @@
 #include "ir.h"
 //#include "micro-0.tab.h"
 
-static void IR_startFunction(IrTable* tab, char* name) ;
+static void IR_startFunction(OpTable* tab, char* name) ;
 static NodeFunc* IR_newFunc(char* name) ;
 static NodeCte* IR_newNode(char* label, char* operand, char* op1, char* op2, char* op3) ;
 static char* IR_newTemp(IR* ir) ;
 static char* IR_newLabel(IR* ir) ;
-static IrTable* IR_newTable(IR* ir) ;
+static OpTable* IR_newTable(IR* ir) ;
 static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char* op1, char* op2, char* op3) ;
-static void IR_genDeclVar(IrTable* tab, AST* entry) ;
-static void IR_genCall(IrTable* tab, AST* entry) ;
-static void IR_genParam(IrTable* tab, AST* entry) ;
-static void IR_genRet(IrTable* tab, AST* entry) ;
-static void IR_genInt(IrTable* tab, AST* entry) ;
-static void IR_genChar(IrTable* tab, AST* entry) ;
-static void IR_genBool(IrTable* tab, AST* entry) ;
-static void IR_genString(IrTable* tab, AST* entry) ;
-static char* IR_genExp(IR* ir, AST* exp) ;
-static void IR_genAssign(IrTable* tab, AST* assign) ;
-static void IR_genElseEntry(IrTable* tab, AST* entry) ;
-static void IR_genElse(IrTable* tab, AST* _else) ;
-static void IR_genIfEntry(IrTable* tab, AST* entry) ;
-static void IR_genElseIf(IrTable* tab, AST* elseif) ;
-static void IR_genIf(IrTable* tab, AST* _if) ;
-static void IR_genWhileEntry(IrTable* tab, AST* entry) ;
-static void IR_genWhile(IrTable* tab, AST* _while) ;
-static void IR_genBlockElseEntry(IrTable* tab, AST* entry) ;
-static void IR_genBlockElse(IrTable* tab, AST* block_else) ;
-static void IR_genBlockEntry(IrTable* tab, AST* entry) ;
-static void IR_genBlock(IrTable* tab, AST* block) ;
-static void IR_genFunctionEntry(IrTable* tab, AST* entry) ;
-static void IR_genFunction(IrTable* tab, AST* function) ;
+static void IR_genDeclVar(OpTable* tab, AST* entry) ;
+static void IR_genCall(OpTable* tab, AST* entry) ;
+static void IR_genParam(OpTable* tab, AST* entry) ;
+static void IR_genRet(OpTable* tab, AST* entry) ;
+static void IR_genInt(OpTable* tab, AST* entry) ;
+static void IR_genChar(OpTable* tab, AST* entry) ;
+static void IR_genBool(OpTable* tab, AST* entry) ;
+static void IR_genString(OpTable* tab, AST* entry) ;
+static char* IR_genExp(OpTable* tab, AST* exp) ;
+static void IR_genAssign(OpTable* tab, AST* assign) ;
+static void IR_genElseEntry(OpTable* tab, AST* entry) ;
+static void IR_genElse(OpTable* tab, AST* _else) ;
+static void IR_genIfEntry(OpTable* tab, AST* entry) ;
+static void IR_genElseIf(OpTable* tab, AST* elseif) ;
+static void IR_genIf(OpTable* tab, AST* _if) ;
+static void IR_genWhileEntry(OpTable* tab, AST* entry) ;
+static void IR_genWhile(OpTable* tab, AST* _while) ;
+static void IR_genBlockElseEntry(OpTable* tab, AST* entry) ;
+static void IR_genBlockElse(OpTable* tab, AST* block_else) ;
+static void IR_genBlockEntry(OpTable* tab, AST* entry) ;
+static void IR_genBlock(OpTable* tab, AST* block) ;
+static void IR_genFunctionEntry(OpTable* tab, AST* entry) ;
+static void IR_genFunction(OpTable* tab, AST* function) ;
 static IR* IR_new() ;
 
 
-static void IR_startFunction(IrTable* tab, char* name) 
+static void IR_startFunction(OpTable* tab, char* name) 
 {
 	if(tab->firstNode == NULL)
 	{
@@ -97,9 +97,9 @@ static char* IR_newLabel(IR* ir)
    	return label;
 }
 
-static IrTable* IR_newTable(IR* ir) 
+static OpTable* IR_newTable(IR* ir) 
 {
-	IrTable* new_table = (IrTable*)malloc(sizeof(IrTable)) ;
+	OpTable* new_table = (OpTable*)malloc(sizeof(OpTable)) ;
 	new_table->firstNode = NULL ;
 	new_table->lastNode = NULL ;
 	new_table->ir = ir ; 
@@ -121,138 +121,160 @@ static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char*
 	}
 }
 
-static void IR_genDeclVar(IrTable* tab, AST* entry) 
+static void IR_genDeclVar(OpTable* tab, AST* entry) 
 {
 	printf(" %s = 0\n", entry->firstChild->stringVal);
 	//insere cte
-	IR_insert_operands(tab->lastNode, NULL, NULL, entry->firstChild->stringVal, 0, NULL) ;
+	IR_insert_operands(tab->lastNode, NULL, "declvar", entry->firstChild->stringVal, 0, NULL) ;
 }
 
-static void IR_genCall(IrTable* tab, AST* entry) 
+static void IR_genCall(OpTable* tab, AST* entry) 
 {
 	printf(" call %s\n", entry->firstChild->stringVal);
 	//insere cte
 	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, NULL) ;
 }
 
-static void IR_genParam(IrTable* tab, AST* entry)
+static void IR_genParam(OpTable* tab, AST* entry)
 {
 	printf(" %s,", entry->firstChild->stringVal);
 	tab->lastNode->params[tab->lastNode->numParams] = entry->firstChild->stringVal ;
 	tab->lastNode->numParams++ ;
 }
 
-static void IR_genRet(IrTable* tab, AST* entry)
+static void IR_genRet(OpTable* tab, AST* entry)
 {
 	printf(" ret %s\n", entry->firstChild->stringVal);
 }
 
-static void IR_genInt(IrTable* tab, AST* entry)
+static void IR_genInt(OpTable* tab, AST* entry)
 {
 	printf(" int ");
 }
 
-static void IR_genChar(IrTable* tab, AST* entry)
+static void IR_genChar(OpTable* tab, AST* entry)
 {
 	printf(" char ");
 }
 
-static void IR_genBool(IrTable* tab, AST* entry)
+static void IR_genBool(OpTable* tab, AST* entry)
 {
 	printf(" bool ");
 }
 
-static void IR_genString(IrTable* tab, AST* entry)
+static void IR_genString(OpTable* tab, AST* entry)
 {
 	printf(" string ");
 }
 
 //NEW
 
-static char* IR_genExp(IR* ir, AST* exp) //FAZER OS OUTROS CASOS
+static char* IR_genExp(OpTable* tab, AST* exp) //FAZER OS OUTROS CASOS
 {
 	switch (exp->type) {
       		case AST_PLUS: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "+", temp, e1, e2) ;
          		printf(" %s = %s + %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_MINUS: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "-", temp, e1, e2) ;
          		printf(" %s = %s - %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_TIMES: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "*", temp, e1, e2) ;
          		printf(" %s = %s * %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_DIVIDED: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "/", temp, e1, e2) ;
          		printf(" %s = %s - %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_LESS: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "<", temp, e1, e2) ;
          		printf(" %s = %s < %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_GREATER: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, ">", temp, e1, e2) ;
          		printf(" %s = %s > %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_GREATER_EQUAL: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, ">=", temp, e1, e2) ;
          		printf(" %s = %s >= %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_LESS_EQUAL: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "<=", temp, e1, e2) ;
          		printf(" %s = %s <= %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_EQUAL: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+//TRATAR!
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "=", temp, e1, e2) ;
          		printf(" %s = %s = %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_NOT_EQUAL: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+//TRATAR
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
+			//insere cte
+			IR_insert_operands(tab->lastNode, NULL, "<>", temp, e1, e2) ;
          		printf(" %s = %s < %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_AND: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
          		printf(" %s = %s and %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_OR: {
-         		char* temp = IR_newTemp(ir);
-         		char* e1 = IR_genExp(ir, exp->firstChild);
-         		char* e2 = IR_genExp(ir, exp->firstChild->nextSibling);
+         		char* temp = IR_newTemp(tab->ir);
+         		char* e1 = IR_genExp(tab, exp->firstChild);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling);
          		printf(" %s = %s or %s\n", temp, e1, e2);
          		return temp;
       		}
@@ -275,15 +297,15 @@ static char* IR_genExp(IR* ir, AST* exp) //FAZER OS OUTROS CASOS
    	}
 }
 
-static void IR_genAssign(IrTable* tab, AST* assign) 
+static void IR_genAssign(OpTable* tab, AST* assign) 
 {
    	const char* name = assign->firstChild->stringVal;
-   	char* rval = IR_genExp(tab->ir, assign->firstChild->nextSibling);
+   	char* rval = IR_genExp(tab, assign->firstChild->nextSibling);
    	printf(" %s = %s\n", name, rval);
    	free(rval);
 }
 
-static void IR_genElseEntry(IrTable* tab, AST* entry) 
+static void IR_genElseEntry(OpTable* tab, AST* entry) 
 {
 	switch (entry->type) 
 	{
@@ -296,7 +318,7 @@ static void IR_genElseEntry(IrTable* tab, AST* entry)
 	}
 }
 
-static void IR_genElse(IrTable* tab, AST* _else)
+static void IR_genElse(OpTable* tab, AST* _else)
 {
    	//IR_startFunction(ir, function->stringVal);
 	printf(" else\n");
@@ -307,7 +329,7 @@ static void IR_genElse(IrTable* tab, AST* _else)
    	}
 }
 
-static void IR_genIfEntry(IrTable* tab, AST* entry) 
+static void IR_genIfEntry(OpTable* tab, AST* entry) 
 {
 	switch (entry->type) 
 	{
@@ -326,9 +348,9 @@ static void IR_genIfEntry(IrTable* tab, AST* entry)
 	}
 }
 
-static void IR_genElseIf(IrTable* tab, AST* elseif)
+static void IR_genElseIf(OpTable* tab, AST* elseif)
 {
-	char* temp = IR_genExp(tab->ir, elseif->firstChild);
+	char* temp = IR_genExp(tab, elseif->firstChild);
 	char* label = IR_newLabel(tab->ir) ;
 	printf(" else if %s go to %s\n", temp, label);
 	//insere cte
@@ -342,9 +364,9 @@ static void IR_genElseIf(IrTable* tab, AST* elseif)
 	printf("%s\n", label);
 }
 
-static void IR_genIf(IrTable* tab, AST* _if)
+static void IR_genIf(OpTable* tab, AST* _if)
 {
-	char* temp = IR_genExp(tab->ir, _if->firstChild);
+	char* temp = IR_genExp(tab, _if->firstChild);
 	char* label = IR_newLabel(tab->ir) ;
 	printf(" if false %s go to %s\n", temp, label);
 
@@ -364,7 +386,7 @@ static void IR_genIf(IrTable* tab, AST* _if)
 }
 
 
-static void IR_genWhileEntry(IrTable* tab, AST* entry) 
+static void IR_genWhileEntry(OpTable* tab, AST* entry) 
 {
 	switch (entry->type) 
 	{
@@ -383,9 +405,9 @@ static void IR_genWhileEntry(IrTable* tab, AST* entry)
 	}
 }
 
-static void IR_genWhile(IrTable* tab, AST* _while)
+static void IR_genWhile(OpTable* tab, AST* _while)
 {
-	char* temp = IR_genExp(tab->ir, _while->firstChild);
+	char* temp = IR_genExp(tab, _while->firstChild);
 	char* label = IR_newLabel(tab->ir) ;
 	char* labelLoop = IR_newLabel(tab->ir) ;
 
@@ -404,11 +426,12 @@ static void IR_genWhile(IrTable* tab, AST* _while)
 
 	printf(" go to %s\n", labelLoop);
 	//insere cte
-	IR_insert_operands(tab->lastNode, NULL, "go to", labelLoop, NULL, NULL) ;
+	IR_insert_operands(tab->lastNode, NULL, "goto", labelLoop, NULL, NULL) ;
+	IR_insert_operands(tab->lastNode, label, "none", NULL, NULL, NULL) ;
 	printf("%s\n", label);
 }
 
-static void IR_genBlockElseEntry(IrTable* tab, AST* entry) 
+static void IR_genBlockElseEntry(OpTable* tab, AST* entry) 
 {
 	switch (entry->type) 
 	{
@@ -424,7 +447,7 @@ static void IR_genBlockElseEntry(IrTable* tab, AST* entry)
 	}
 }
 
-static void IR_genBlockElse(IrTable* tab, AST* block_else)
+static void IR_genBlockElse(OpTable* tab, AST* block_else)
 {
 	AST* child = NULL ;
    	for(child = block_else->firstChild; child; child = child->nextSibling) 
@@ -433,7 +456,7 @@ static void IR_genBlockElse(IrTable* tab, AST* block_else)
    	}
 }
 
-static void IR_genBlockEntry(IrTable* tab, AST* entry) 
+static void IR_genBlockEntry(OpTable* tab, AST* entry) 
 {
 	switch (entry->type) 
 	{
@@ -461,7 +484,7 @@ static void IR_genBlockEntry(IrTable* tab, AST* entry)
 	}
 }
 
-static void IR_genBlock(IrTable* tab, AST* block)
+static void IR_genBlock(OpTable* tab, AST* block)
 {
 	AST* child = NULL ;
    	for(child = block->firstChild; child; child = child->nextSibling) 
@@ -470,7 +493,7 @@ static void IR_genBlock(IrTable* tab, AST* block)
    	}
 }
 
-static void IR_genFunctionEntry(IrTable* tab, AST* entry) 
+static void IR_genFunctionEntry(OpTable* tab, AST* entry) 
 {
    	switch (entry->type) 
 	{
@@ -498,7 +521,7 @@ static void IR_genFunctionEntry(IrTable* tab, AST* entry)
 	}
 }
 
-static void IR_genFunction(IrTable* tab, AST* function) 
+static void IR_genFunction(OpTable* tab, AST* function) 
 {
    	IR_startFunction(tab, function->stringVal);
 	printf("fun %s( ", function->stringVal);
@@ -514,10 +537,10 @@ static IR* IR_new()
    	return (IR*) calloc(1, sizeof(IR));
 }
 
-IrTable* IR_gen(AST* program) 
+OpTable* IR_gen(AST* program) 
 {
    	IR* ir = IR_new();
-	IrTable* tab = IR_newTable(ir) ;
+	OpTable* tab = IR_newTable(ir) ;
 	AST* child = NULL ;
    	for(child = program->firstChild; child; child = child->nextSibling) 
 	{

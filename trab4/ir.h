@@ -40,14 +40,14 @@ struct NodeFunc_ {
 	int numParams ; 
 };
 
-typedef struct IrTable_ IrTable;
+typedef struct OpTable_ OpTable;
 
-struct IrTable_ {
+struct OpTable_ {
 	NodeFunc* firstNode;
 	NodeFunc* lastNode ;
 	IR* ir ;
 };
 
-IrTable* IR_gen(AST* program);
+OpTable* IR_gen(AST* program);
 
 #endif
