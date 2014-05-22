@@ -10,24 +10,33 @@ struct IR_ {
 	int labels ;
 };
 
-/*typedef struct NodeTable_ NodeTable;
+typedef struct NodeTable_ NodeTable;
 
 struct NodeTable_ {
    	NodeTable* nextNode;
    	NodeTable* prevNode;
-   	label ;
-	operate ;
-	op1 ;
-	op2 ;
-	op3 ;
+   	char* label ;
+	char* operate ;
+	char* op1 ;
+	char* op2 ;
+	char* op3 ;
+};
+
+typedef struct NodeFunc_ NodeFunc;
+
+struct NodeFunc_ {
+   	NodeTable* firstNode ;
+	NodeFunc* nextFunc ;
+	char* funcName ;
 };
 
 typedef struct IrTable_ IrTable;
 
 struct IrTable_ {
-	NodeTable* firstNode;
-   	NodeTable* lastNode;
-};*/
+	NodeFunc* firstFunc;
+	IR* ir ;
+   	//NodeTable* lastNode;
+};
 
 IR* IR_gen(AST* program);
 

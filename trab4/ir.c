@@ -33,9 +33,21 @@ static void IR_genFunction(IR* ir, AST* function) ;
 static IR* IR_new() ;
 
 
-static void IR_startFunction(IR* ir, const char* name) 
+static void IR_startFunction(IrTable* tab, const char* name) 
 {
+	if(tab->firstFunc == NULL)
+	{
+		
+	}
    // marca na estrutura IR que estamos gerando uma func nova
+}
+
+static NodeFunc* IR_newFunc(const char* name) 
+{
+	NodeFunc* func = (NodeFunc*)malloc(sizeof(NodeFunc)) ;
+	func->firstNode = NULL ;
+	func->nextFunc = NULL ;
+	func->funcName = name ;
 }
 
 static char* IR_newTemp(IR* ir) 
@@ -54,6 +66,13 @@ static char* IR_newLabel(IR* ir)
    	return label;
 }
 
+static IrTable* IR_newTable(IR* ir) 
+{
+	IrTable* new_table = (IrTable*)malloc(sizeof(IrTable)) ;
+	IrTable->firstFunc = NULL ;
+	IrTable->ir = ir ; 
+}
+
 static void IR_genDeclVar(IR* ir, AST* entry) 
 {
 	printf(" %s = 0\n", entry->firstChild->stringVal);
@@ -66,7 +85,7 @@ static void IR_genCall(IR* ir, AST* entry)
 
 static void IR_genParam(IR* ir, AST* entry)
 {
-	printf(" %s\n", entry->firstChild->stringVal);
+	printf(" %s,", entry->firstChild->stringVal);
 }
 
 static void IR_genRet(IR* ir, AST* entry)
@@ -276,7 +295,7 @@ static void IR_genIf(IR* ir, AST* _if)
 	{
 		if(child->type == AST_BLOCK_ELSE)
 		{
-			printf(" go to %s\n", temp, label);			
+			printf(" go to %s\n", label);			
 		}
       		IR_genIfEntry(ir, child);
    	}
@@ -410,28 +429,12 @@ static void IR_genFunctionEntry(IR* ir, AST* entry)
          		assert(0);
          		return;
 	}
-
-   	/*switch (entry->type) 
-	{
-	      	case AST_DECLVAR:
-        	 	IR_genDeclVar(ir, entry);
-         		return;
-      		case AST_ASSIGN:
-         		IR_genAssign(ir, entry);
-         		return;
-      		case AST_CALL:
-         		IR_genCall(ir, entry);
-         		return;
-      		default:
-         		assert(0);
-         		return;
-   	}*/
 }
 
 static void IR_genFunction(IR* ir, AST* function) 
 {
    	IR_startFunction(ir, function->stringVal);
-	printf("fun %s()\n", function->stringVal);
+	printf("fun %s( ", function->stringVal);
 	AST* child = NULL ;
    	for(child = function->firstChild; child; child = child->nextSibling) 
 	{
