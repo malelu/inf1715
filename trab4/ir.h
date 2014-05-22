@@ -25,7 +25,8 @@ struct NodeTable_ {
 typedef struct NodeFunc_ NodeFunc;
 
 struct NodeFunc_ {
-   	NodeTable* firstNode ;
+   	NodeTable* firstCte ;
+   	NodeTable* lastCte ;
 	NodeFunc* nextFunc ;
 	char* funcName ;
 };
@@ -33,9 +34,9 @@ struct NodeFunc_ {
 typedef struct IrTable_ IrTable;
 
 struct IrTable_ {
-	NodeFunc* firstFunc;
+	NodeFunc* firstNode;
+	NodeFunc* lastNode ;
 	IR* ir ;
-   	//NodeTable* lastNode;
 };
 
 IR* IR_gen(AST* program);
