@@ -19,7 +19,6 @@ void addTab (int numTab)
 	}
 }
 
-
 void prettyPrinter(AST* node)
 {	
 	int i ;
@@ -60,6 +59,23 @@ void prettyPrinter(AST* node)
 
 }
 
+void dump(IrTable* tab)
+{
+	int cont = 0 ;
+	NodeFunc* func = tab->firstNode ; 
+	while(func != NULL)
+	{
+		fprintf(stdout, "%s (", func->funcName);
+		while(func->params[cont] != NULL)
+		{
+			fprintf(stdout, "%s, ", func->params[cont]);
+			cont++ ;
+		}
+		fprintf(stdout, ")");
+		func = func->nextFunc ;
+	}
+}
+
 
 void yyerror (const char * s)
 {	
@@ -77,8 +93,8 @@ int main (void)
 	if (error == 1)
 	{
 		prettyPrinter(programa) ;
-		IR_gen(programa) ;
-		//IR_dump(programa) ;
+		IrTable* ir = IR_gen(programa) ;
+		//dump(ir) ;
 	}
 
 	if (error == 0)

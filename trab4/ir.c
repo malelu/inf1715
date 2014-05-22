@@ -5,35 +5,40 @@
 #include "ir.h"
 //#include "micro-0.tab.h"
 
-static void IR_startFunction(IR* ir, const char* name) ;
-static char* IR_newTemp(IR* ir)  ;
-static void IR_genDeclVar(IR* ir, AST* entry) ;
-static void IR_genCall(IR* ir, AST* entry) ;
-static void IR_genParam(IR* ir, AST* entry) ;
-static void IR_genRet(IR* ir, AST* entry) ;
-static void IR_genInt(IR* ir, AST* entry) ;
-static void IR_genChar(IR* ir, AST* entry) ;
-static void IR_genBool(IR* ir, AST* entry) ;
-static void IR_genString(IR* ir, AST* entry) ;
+static void IR_startFunction(IrTable* tab, char* name) ;
+static NodeFunc* IR_newFunc(char* name) ;
+static NodeCte* IR_newNode(char* label, char* operand, char* op1, char* op2, char* op3) ;
+static char* IR_newTemp(IR* ir) ;
+static char* IR_newLabel(IR* ir) ;
+static IrTable* IR_newTable(IR* ir) ;
+static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char* op1, char* op2, char* op3) ;
+static void IR_genDeclVar(IrTable* tab, AST* entry) ;
+static void IR_genCall(IrTable* tab, AST* entry) ;
+static void IR_genParam(IrTable* tab, AST* entry) ;
+static void IR_genRet(IrTable* tab, AST* entry) ;
+static void IR_genInt(IrTable* tab, AST* entry) ;
+static void IR_genChar(IrTable* tab, AST* entry) ;
+static void IR_genBool(IrTable* tab, AST* entry) ;
+static void IR_genString(IrTable* tab, AST* entry) ;
 static char* IR_genExp(IR* ir, AST* exp) ;
-static void IR_genAssign(IR* ir, AST* assign) ;
-static void IR_genElseEntry(IR* ir, AST* entry) ;
-static void IR_genElse(IR* ir, AST* _else) ;
-static void IR_genIfEntry(IR* ir, AST* entry) ;
-static void IR_genElseIf(IR* ir, AST* elseif) ;
-static void IR_genIf(IR* ir, AST* _if) ;
-static void IR_genWhileEntry(IR* ir, AST* entry) ;
-static void IR_genWhile(IR* ir, AST* _while) ;
-static void IR_genBlockElseEntry(IR* ir, AST* entry) ;
-static void IR_genBlockElse(IR* ir, AST* block_else) ;
-static void IR_genBlockEntry(IR* ir, AST* entry) ;
-static void IR_genBlock(IR* ir, AST* block) ;
-static void IR_genFunctionEntry(IR* ir, AST* entry) ;
-static void IR_genFunction(IR* ir, AST* function) ;
+static void IR_genAssign(IrTable* tab, AST* assign) ;
+static void IR_genElseEntry(IrTable* tab, AST* entry) ;
+static void IR_genElse(IrTable* tab, AST* _else) ;
+static void IR_genIfEntry(IrTable* tab, AST* entry) ;
+static void IR_genElseIf(IrTable* tab, AST* elseif) ;
+static void IR_genIf(IrTable* tab, AST* _if) ;
+static void IR_genWhileEntry(IrTable* tab, AST* entry) ;
+static void IR_genWhile(IrTable* tab, AST* _while) ;
+static void IR_genBlockElseEntry(IrTable* tab, AST* entry) ;
+static void IR_genBlockElse(IrTable* tab, AST* block_else) ;
+static void IR_genBlockEntry(IrTable* tab, AST* entry) ;
+static void IR_genBlock(IrTable* tab, AST* block) ;
+static void IR_genFunctionEntry(IrTable* tab, AST* entry) ;
+static void IR_genFunction(IrTable* tab, AST* function) ;
 static IR* IR_new() ;
 
 
-static void IR_startFunction(IrTable* tab, const char* name) 
+static void IR_startFunction(IrTable* tab, char* name) 
 {
 	if(tab->firstNode == NULL)
 	{
@@ -47,21 +52,26 @@ static void IR_startFunction(IrTable* tab, const char* name)
 	}
 }
 
-static NodeFunc* IR_newFunc(const char* name) 
+static NodeFunc* IR_newFunc(char* name) 
 {
+	int i ;
 	NodeFunc* func = (NodeFunc*)malloc(sizeof(NodeFunc)) ;
 	func->firstCte = NULL ;
 	func->lastCte = NULL ;
 	func->nextFunc = NULL ;
 	func->funcName = name ;
-	func->params = (char**)calloc(10, char*) ;
+	func->params = (char**)calloc(10, sizeof(char*)) ;
+	for(i=0; i<10; i++)
+	{
+		func->params[i] = NULL ;
+	}
 	func->numParams = 0 ;
 	return func ;
 }
 
-static NodeTable* IR_newNode(char* label, char* operand, char* op1, char* op2, char* op3) 
+static NodeCte* IR_newNode(char* label, char* operand, char* op1, char* op2, char* op3) 
 {
-	NodeTable* node = (NodeTable*)malloc(sizeof(NodeTable)) ;
+	NodeCte* node = (NodeCte*)malloc(sizeof(NodeCte)) ;
 	node->nextNode = NULL ;
 	node->prevNode = NULL ;
 	node->label = label ;
@@ -90,13 +100,14 @@ static char* IR_newLabel(IR* ir)
 static IrTable* IR_newTable(IR* ir) 
 {
 	IrTable* new_table = (IrTable*)malloc(sizeof(IrTable)) ;
-	IrTable->firstFunc = NULL ;
-	IrTable->ir = ir ; 
+	new_table->firstNode = NULL ;
+	new_table->lastNode = NULL ;
+	new_table->ir = ir ; 
 }
 
-static void IR_insert_operands(NodeFunc* func, const char* label, const char* operand, const char* op1, const char* op2, const char* op3) 
+static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char* op1, char* op2, char* op3) 
 {
-	NodeTable* node = IR_newNode(label, operand, op1, op2, op3) ; 
+	NodeCte* node = IR_newNode(label, operand, op1, op2, op3) ; 
 	if(func->firstCte == NULL)
 	{
 		func->firstCte = node ;
@@ -106,7 +117,7 @@ static void IR_insert_operands(NodeFunc* func, const char* label, const char* op
 	{
 		func->lastCte->nextNode = node ;
 		node->prevNode = func->lastCte ;
-		func->lastNode = node ;
+		func->lastCte = node ;
 	}
 }
 
@@ -127,7 +138,7 @@ static void IR_genCall(IrTable* tab, AST* entry)
 static void IR_genParam(IrTable* tab, AST* entry)
 {
 	printf(" %s,", entry->firstChild->stringVal);
-	tab->lastNode->params[tabLastNode->numParams] = entry->firstChild->stringVal ;
+	tab->lastNode->params[tab->lastNode->numParams] = entry->firstChild->stringVal ;
 	tab->lastNode->numParams++ ;
 }
 
@@ -317,8 +328,8 @@ static void IR_genIfEntry(IrTable* tab, AST* entry)
 
 static void IR_genElseIf(IrTable* tab, AST* elseif)
 {
-	char* temp = IR_genExp(tab, elseif->firstChild);
-	char* label = IR_newLabel(tab) ;
+	char* temp = IR_genExp(tab->ir, elseif->firstChild);
+	char* label = IR_newLabel(tab->ir) ;
 	printf(" else if %s go to %s\n", temp, label);
 	//insere cte
 	IR_insert_operands(tab->lastNode, NULL, "else if false", temp, label, NULL) ;
@@ -334,7 +345,7 @@ static void IR_genElseIf(IrTable* tab, AST* elseif)
 static void IR_genIf(IrTable* tab, AST* _if)
 {
 	char* temp = IR_genExp(tab->ir, _if->firstChild);
-	char* label = IR_newLabel(tab) ;
+	char* label = IR_newLabel(tab->ir) ;
 	printf(" if false %s go to %s\n", temp, label);
 
 	//insere cte
@@ -375,11 +386,11 @@ static void IR_genWhileEntry(IrTable* tab, AST* entry)
 static void IR_genWhile(IrTable* tab, AST* _while)
 {
 	char* temp = IR_genExp(tab->ir, _while->firstChild);
-	char* label = IR_newLabel(tab) ;
-	char* labelLoop = IR_newLabel(tab) ;
+	char* label = IR_newLabel(tab->ir) ;
+	char* labelLoop = IR_newLabel(tab->ir) ;
 
 	//insere cte
-	IR_insert_operands(tab->lastNode, loopLabel, "if false", temp, label, NULL) ;
+	IR_insert_operands(tab->lastNode, labelLoop, "if false", temp, label, NULL) ;
 
 	printf("%s:\n", labelLoop);
 	printf(" if ! %s\n", temp);
@@ -510,7 +521,7 @@ IrTable* IR_gen(AST* program)
 	AST* child = NULL ;
    	for(child = program->firstChild; child; child = child->nextSibling) 
 	{
-      		IR_genFunction(table, child);
+      		IR_genFunction(tab, child);
    	}
    	return tab;
 }

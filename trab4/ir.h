@@ -17,13 +17,13 @@ struct Params_ {
 	Params* nextParam ;
 };*/
 
-typedef struct NodeTable_ NodeTable;
+typedef struct NodeCte_ NodeCte;
 
-struct NodeTable_ {
-   	NodeTable* nextNode;
-   	NodeTable* prevNode;
+struct NodeCte_ {
+   	NodeCte* nextNode;
+   	NodeCte* prevNode;
    	char* label ;
-	char* operate ;
+	char* operand ;
 	char* op1 ;
 	char* op2 ;
 	char* op3 ;
@@ -32,8 +32,8 @@ struct NodeTable_ {
 typedef struct NodeFunc_ NodeFunc;
 
 struct NodeFunc_ {
-   	NodeTable* firstCte ;
-   	NodeTable* lastCte ;
+   	NodeCte* firstCte ;
+   	NodeCte* lastCte ;
 	NodeFunc* nextFunc ;
 	char* funcName ;
 	char** params ;
@@ -48,6 +48,6 @@ struct IrTable_ {
 	IR* ir ;
 };
 
-IR* IR_gen(AST* program);
+IrTable* IR_gen(AST* program);
 
 #endif
