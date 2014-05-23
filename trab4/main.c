@@ -66,50 +66,57 @@ void dump(OpTable* tab)
 	NodeCte* cte ;
 	while(func != NULL)
 	{
-		fprintf(stdout, "\t%s (", func->funcName);
-		while(func->params[cont] != NULL)
-		{
-			fprintf(stdout, "%s, ", func->params[cont]);
-			cont++ ;
-		}
-		fprintf(stdout, ")\n");
+		if (func->funcName == NULL)
+			fprintf(stdout, "\tGLOBAL %s", func->global);
 
-		cte = func->firstCte ;
-		while(cte != NULL)
+		else
 		{
-			if(cte->label != NULL)				
-				fprintf(stdout, "%s: ", cte->label);
-
-			if(cte->operand != NULL)
+			fprintf(stdout, "\t%s (", func->funcName);
+			while(func->params[cont] != NULL)
 			{
-				if(strcmp(cte->operand, "if false") == 0 || strcmp(cte->operand, "else if false") == 0)
-				{
-					fprintf(stdout, "\tIFFALSE %s GOTO %s\n", cte->op1, cte->op2);
-				}
-				/*else if(strcmp(cte->operand, "else if false") == 0)
-				{
-					fprintf(stdout, "\telse if not %s goto %s\n", cte->op1, cte->op2);
-				}*/
-				else if(strcmp(cte->operand, "declvar") == 0)
-				{
-					fprintf(stdout, "\t%s = 0\n", cte->op1);
-				}
-				else if(strcmp(cte->operand, "goto") == 0)
-				{
-					fprintf(stdout, "\tgoto %s\n", cte->op1);
-				}
-				else if ((strcmp(cte->operand, ">") == 0) || (strcmp(cte->operand, "<") == 0) || (strcmp(cte->operand, "+") == 0)
-					|| (strcmp(cte->operand, "-") == 0) || (strcmp(cte->operand, "*") == 0) || (strcmp(cte->operand, "/") == 0)
-					|| (strcmp(cte->operand, ">=") == 0) || (strcmp(cte->operand, "<=") == 0))
-				{
-					fprintf(stdout, "\t%s = %s %s %s\n", cte->op1, cte->op2, cte->operand, cte->op3);
-				}
-				else if (strcmp(cte->operand, "=") == 0) 
-				{
-					fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
-				}
+				fprintf(stdout, "%s, ", func->params[cont]);
+				cont++ ;
 			}
-			cte = cte->nextNode ;
+			fprintf(stdout, ")\n");
+
+			cte = func->firstCte ;
+			while(cte != NULL)
+			{
+				if(cte->label != NULL)				
+					fprintf(stdout, "%s: ", cte->label);
+
+				if(cte->operand != NULL)
+				{
+					if(strcmp(cte->operand, "if false") == 0 || strcmp(cte->operand, "else if false") == 0)
+					{
+						fprintf(stdout, "\tIFFALSE %s GOTO %s\n", cte->op1, cte->op2);
+					}
+					/*else if(strcmp(cte->operand, "else if false") == 0)
+					{
+						fprintf(stdout, "\telse if not %s goto %s\n", cte->op1, cte->op2);
+					}*/
+					else if(strcmp(cte->operand, "declvar") == 0)
+					{
+						fprintf(stdout, "\t%s = 0\n", cte->op1);
+					}
+					else if(strcmp(cte->operand, "goto") == 0)
+					{
+						fprintf(stdout, "\tGOTO %s\n", cte->op1);
+					}
+					else if ((strcmp(cte->operand, ">") == 0) || (strcmp(cte->operand, "<") == 0) || 
+						(strcmp(cte->operand, "+") == 0) || (strcmp(cte->operand, "-") == 0) || 
+						(strcmp(cte->operand, "*") == 0) || (strcmp(cte->operand, "/") == 0)
+						|| (strcmp(cte->operand, ">=") == 0) || (strcmp(cte->operand, "<=") == 0))
+					{
+						fprintf(stdout, "\t%s = %s %s %s\n", cte->op1, cte->op2, cte->operand, cte->op3);
+					}
+					else if (strcmp(cte->operand, "=") == 0) 
+					{
+						fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
+					}
+				}
+				cte = cte->nextNode ;
+			}
 		}
 		func = func->nextFunc ;
 		fprintf(stdout, "\n");

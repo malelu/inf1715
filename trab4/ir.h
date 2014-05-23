@@ -38,6 +38,8 @@ struct NodeFunc_ {
 	char* funcName ;
 	char** params ;
 	int numParams ; 
+
+	char* global ;
 };
 
 typedef struct OpTable_ OpTable;

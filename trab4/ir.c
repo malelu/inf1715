@@ -6,6 +6,8 @@
 //#include "micro-0.tab.h"
 
 static void IR_startFunction(OpTable* tab, char* name) ;
+static void IR_startGlobal(OpTable* tab, char* varName) ;
+static NodeFunc* IR_newGlobal(char* varName) ;
 static NodeFunc* IR_newFunc(char* name) ;
 static NodeCte* IR_newNode(char* label, char* operand, char* op1, char* op2, char* op3) ;
 static char* IR_newTemp(IR* ir) ;
@@ -35,7 +37,9 @@ static void IR_genBlockEntry(OpTable* tab, AST* entry) ;
 static void IR_genBlock(OpTable* tab, AST* block) ;
 static void IR_genFunctionEntry(OpTable* tab, AST* entry) ;
 static void IR_genFunction(OpTable* tab, AST* function) ;
+static void IR_genGlobal(OpTable* tab, AST* global) ;
 static IR* IR_new() ;
+static void IR_genEntry(OpTable* tab, AST* entry) ;
 
 
 static void IR_startFunction(OpTable* tab, char* name) 
@@ -52,6 +56,38 @@ static void IR_startFunction(OpTable* tab, char* name)
 	}
 }
 
+static void IR_startGlobal(OpTable* tab, char* varName) 
+{
+	if(tab->firstNode == NULL)
+	{
+		tab->firstNode = IR_newGlobal(varName) ;
+		tab->lastNode = tab->firstNode ; 
+	}
+   	else
+	{
+		tab->lastNode->nextFunc = IR_newGlobal(varName) ;
+		tab->lastNode = tab->lastNode->nextFunc ;
+	}
+}
+
+static NodeFunc* IR_newGlobal(char* varName) 
+{
+	int i ;
+	NodeFunc* func = (NodeFunc*)malloc(sizeof(NodeFunc)) ;
+	func->firstCte = NULL ;
+	func->lastCte = NULL ;
+	func->nextFunc = NULL ;
+	func->global = varName ;
+	func->funcName = NULL ;
+	func->params = (char**)calloc(10, sizeof(char*)) ;
+	for(i=0; i<10; i++)
+	{
+		func->params[i] = NULL ;
+	}
+	func->numParams = 0 ;
+	return func ;
+}
+
 static NodeFunc* IR_newFunc(char* name) 
 {
 	int i ;
@@ -59,6 +95,7 @@ static NodeFunc* IR_newFunc(char* name)
 	func->firstCte = NULL ;
 	func->lastCte = NULL ;
 	func->nextFunc = NULL ;
+	func->global = NULL ;
 	func->funcName = name ;
 	func->params = (char**)calloc(10, sizeof(char*)) ;
 	for(i=0; i<10; i++)
@@ -292,7 +329,6 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
 		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE))
 	{
-		printf(" RVAL!! %s %p\n", rval, rval);
    		IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 	}
 
@@ -556,6 +592,22 @@ static IR* IR_new()
    	return (IR*) calloc(1, sizeof(IR));
 }
 
+static void IR_genEntry(OpTable* tab, AST* entry) 
+{
+   	switch (entry->type) 
+	{
+	      	case AST_FUN:
+        	 	IR_genFunction(tab, entry);
+         		return;
+      		case AST_GLOBAL:
+         		IR_startGlobal(tab, entry->firstChild->stringVal);
+         		return;
+      		default:
+         		assert(0);
+         		return;
+	}
+}
+
 OpTable* IR_gen(AST* program) 
 {
    	IR* ir = IR_new();
@@ -563,7 +615,7 @@ OpTable* IR_gen(AST* program)
 	AST* child = NULL ;
    	for(child = program->firstChild; child; child = child->nextSibling) 
 	{
-      		IR_genFunction(tab, child);
+      		IR_genEntry(tab, child);
    	}
    	return tab;
 }

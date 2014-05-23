@@ -1,3 +1,6 @@
+x : int
+p : bool
+
 fun main () : int
 	a : int
 	k : char
