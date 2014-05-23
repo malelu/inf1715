@@ -2,12 +2,12 @@ fun main () : int
 	a : int
 	k : char
 	f: int
-	a = 5 + 6 - 1 * 8
+	a = 5 + 6 - 1 * 8 / 7
  	k = 6
 	f = 4 / 1
 	if 1 < 4
 		b : int
-		while true
+		while 5 < 7
 			c : [][]char	
 		loop	
 	else if false

@@ -187,28 +187,26 @@ static char* IR_insertExp(OpTable* tab, AST* exp, char* operand, char* temp)
 {
         char* e1 = IR_genExp(tab, exp->firstChild, NULL);
         char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL);
-	char* temp2 = malloc(20) ;
-	//insere cte
-	strcpy(temp2, temp) ;
-printf(" TEMP2 %s e1 %s e2 %s\n", temp2, e1, e2);
+//printf(" TEMP2 %s e1 %s e2 %s\n", temp2, e1, e2);
 
-	IR_insert_operands(tab->lastNode, NULL, operand, temp2, e1, e2) ;
+	IR_insert_operands(tab->lastNode, NULL, operand, strdup(temp), e1, e2) ;
 
 	return temp ;
 }
 
 static char* IR_genExp(OpTable* tab, AST* exp, char* var) //FAZER OS OUTROS CASOS
 {
-	char* temp ;
+	char* temp = NULL;
 	
 	if((exp->type != AST_NUMINT) && (exp->type != AST_CHAR) && (exp->type != AST_STRING) && (exp->type != AST_BOOL) &&
 	(exp->type != AST_TRUE) && (exp->type != AST_FALSE))
 	{
-		if(var == NULL && exp->type != AST_NUMINT)
+		if(var == NULL)
 		{
     			temp = IR_newTemp(tab->ir);
+printf(" TEMP: %s %p\n", temp, temp);
 		}
-		else if (exp->type != AST_NUMINT)
+		else
 		{
 			fprintf(stdout, "VAR: %s\n", var);
 			temp = malloc(20) ;
@@ -294,14 +292,14 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
 		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE))
 	{
-		printf(" RVAL!! %s\n", rval);
+		printf(" RVAL!! %s %p\n", rval, rval);
    		IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 	}
 
 	//insere cte
 	//IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
    	printf(" ----%s = %s\n", name, rval);
-   	free(rval);
+   	//free(rval);
 }
 
 static void IR_genElseEntry(OpTable* tab, AST* entry) 
@@ -388,7 +386,7 @@ static void IR_genIf(OpTable* tab, AST* _if)
 {
 	char* temp = IR_genExp(tab, _if->firstChild, NULL);
 	char* label = IR_newLabel(tab->ir) ;
-	printf(" if false %s go to %s\n", temp, label);
+	printf(" if false %s go to %s -----%p\n", temp, label, temp);
 
 	//insere cte
 	IR_insert_operands(tab->lastNode, NULL, "if false", temp, label, NULL) ;

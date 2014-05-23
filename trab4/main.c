@@ -82,14 +82,14 @@ void dump(OpTable* tab)
 
 			if(cte->operand != NULL)
 			{
-				if(strcmp(cte->operand, "if false") == 0)
+				if(strcmp(cte->operand, "if false") == 0 || strcmp(cte->operand, "else if false") == 0)
 				{
-					fprintf(stdout, "\tif not %s goto %s\n", cte->op1, cte->op2);
+					fprintf(stdout, "\tIFFALSE %s GOTO %s\n", cte->op1, cte->op2);
 				}
-				else if(strcmp(cte->operand, "else if false") == 0)
+				/*else if(strcmp(cte->operand, "else if false") == 0)
 				{
 					fprintf(stdout, "\telse if not %s goto %s\n", cte->op1, cte->op2);
-				}
+				}*/
 				else if(strcmp(cte->operand, "declvar") == 0)
 				{
 					fprintf(stdout, "\t%s = 0\n", cte->op1);
@@ -106,7 +106,6 @@ void dump(OpTable* tab)
 				}
 				else if (strcmp(cte->operand, "=") == 0) 
 				{
-					fprintf(stdout, "\t rval %s\n", cte->op2);
 					fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 				}
 			}
