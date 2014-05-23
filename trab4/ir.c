@@ -236,7 +236,7 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var) //FAZER OS OUTROS CASO
 	char* temp = NULL;
 	
 	if((exp->type != AST_NUMINT) && (exp->type != AST_CHAR) && (exp->type != AST_STRING) && (exp->type != AST_BOOL) &&
-	(exp->type != AST_TRUE) && (exp->type != AST_FALSE))
+	(exp->type != AST_TRUE) && (exp->type != AST_FALSE) && (exp->type != AST_LITERAL_STRING))
 	{
 		if(var == NULL)
 		{
@@ -305,11 +305,15 @@ printf(" TEMP: %s %p\n", temp, temp);
          		return "false";
       		}
       		case AST_NUMINT: {
-					//fprintf(stdout, "VAR2: %s\n", temp);
          		char* num = malloc(20);
          		snprintf(num, 20, "%d", exp->intVal);
 			printf(" NUM %s\n", num);
          		return num;
+      		}
+      		case AST_LITERAL_STRING: {
+         		char* str = malloc(50);
+         		snprintf(str, 50, "\"%s\"", exp->stringVal);
+         		return str;
       		}
       		case AST_ID:
          		return strdup(exp->stringVal);
@@ -327,7 +331,8 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 
 	if((assign->firstChild->nextSibling->type == AST_NUMINT) || (assign->firstChild->nextSibling->type == AST_CHAR) ||
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
-		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE))
+		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE) ||
+		(assign->firstChild->nextSibling->type == AST_LITERAL_STRING))
 	{
    		IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 	}
@@ -579,7 +584,7 @@ static void IR_genFunctionEntry(OpTable* tab, AST* entry)
 static void IR_genFunction(OpTable* tab, AST* function) 
 {
    	IR_startFunction(tab, function->stringVal);
-	printf("fun %s( ", function->stringVal);
+	printf("fun %s( \n", function->stringVal);
 	AST* child = NULL ;
    	for(child = function->firstChild; child; child = child->nextSibling) 
 	{
