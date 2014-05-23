@@ -77,7 +77,7 @@ void dump(OpTable* tab)
 		cte = func->firstCte ;
 		while(cte != NULL)
 		{
-			if(cte->label != NULL && cte->operand != "none")				
+			if(cte->label != NULL)				
 				fprintf(stdout, "%s: ", cte->label);
 
 			if(cte->operand != NULL)
@@ -98,14 +98,22 @@ void dump(OpTable* tab)
 				{
 					fprintf(stdout, "\tgoto %s\n", cte->op1);
 				}
-				else
+				else if ((strcmp(cte->operand, ">") == 0) || (strcmp(cte->operand, "<") == 0) || (strcmp(cte->operand, "+") == 0)
+					|| (strcmp(cte->operand, "-") == 0) || (strcmp(cte->operand, "*") == 0) || (strcmp(cte->operand, "/") == 0)
+					|| (strcmp(cte->operand, ">=") == 0) || (strcmp(cte->operand, "<=") == 0))
 				{
 					fprintf(stdout, "\t%s = %s %s %s\n", cte->op1, cte->op2, cte->operand, cte->op3);
+				}
+				else if (strcmp(cte->operand, "=") == 0) 
+				{
+					fprintf(stdout, "\t rval %s\n", cte->op2);
+					fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 				}
 			}
 			cte = cte->nextNode ;
 		}
 		func = func->nextFunc ;
+		fprintf(stdout, "\n");
 	}
 }
 

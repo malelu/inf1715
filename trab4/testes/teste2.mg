@@ -1,6 +1,10 @@
 fun main () : int
 	a : int
- 
+	k : char
+	f: int
+	a = 5 + 6 - 1 * 8
+ 	k = 6
+	f = 4 / 1
 	if 1 < 4
 		b : int
 		while true
