@@ -114,6 +114,13 @@ void dump(OpTable* tab)
 					{
 						fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 					}
+					else if (strcmp(cte->operand, "ret") == 0) 
+					{
+						if(cte->op1 == NULL)
+							fprintf(stdout, "\tRET\n");
+						else
+							fprintf(stdout, "\tRET %s\n", cte->op1);
+					}
 				}
 				cte = cte->nextNode ;
 			}

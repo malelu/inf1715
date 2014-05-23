@@ -17,10 +17,10 @@ program : strings globals functions
         ;
 
 strings : string strings
-	|
+	| /* empty */
 	;
 globals : global globals
-	|
+	| /* empty */
 	;
 functions : function functions
 	|

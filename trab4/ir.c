@@ -195,7 +195,11 @@ static void IR_genParam(OpTable* tab, AST* entry)
 
 static void IR_genRet(OpTable* tab, AST* entry)
 {
-	printf(" ret %s\n", entry->firstChild->stringVal);
+	if(entry->firstChild != NULL)
+		IR_insert_operands(tab->lastNode, NULL, "ret", entry->firstChild->stringVal, NULL, NULL) ;
+	else
+		IR_insert_operands(tab->lastNode, NULL, "ret", NULL, NULL, NULL) ;
+	//printf(" ret %s\n", entry->firstChild->stringVal);
 }
 
 static void IR_genInt(OpTable* tab, AST* entry)

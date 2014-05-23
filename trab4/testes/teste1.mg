@@ -13,6 +13,7 @@ end
 
 
 fun func ()
+	return
 	
 end
 
