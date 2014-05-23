@@ -1,4 +1,4 @@
-fun main () : int
+fun main (t : int, f : string) : int
 	a : int 
 	b : string
 	c : [] char

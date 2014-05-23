@@ -275,10 +275,10 @@ printf(" TEMP: %s %p\n", temp, temp);
 			return IR_insertExp(tab, exp, ">", temp) ;
       		}
 		case AST_GREATER_EQUAL: {
-			return IR_insertExp(tab, exp, ">=", temp) ;
+			return IR_insertExp(tab, exp, "GE", temp) ;
       		}
 		case AST_LESS_EQUAL: {
-			return IR_insertExp(tab, exp, "<=", temp) ;
+			return IR_insertExp(tab, exp, "LE", temp) ;
       		}
 		case AST_EQUAL: {
 //TRATAR!
@@ -286,7 +286,7 @@ printf(" TEMP: %s %p\n", temp, temp);
       		}
 		case AST_NOT_EQUAL: {
 //TRATAR
-			return IR_insertExp(tab, exp, "<>", temp) ;
+			return IR_insertExp(tab, exp, "NE", temp) ;
       		}
 		case AST_AND: {
          		char* temp = IR_newTemp(tab->ir);
