@@ -551,27 +551,9 @@ static void IR_genIfEntry(OpTable* tab, AST* entry, char* label, char* labelFina
 	}
 }
 
-static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
+static void IR_checkNextElse(OpTable* tab, AST* elseif, char* labelFinal, char* temp, char* label)
 {
-	char* temp = NULL ;
-	char* label = IR_newLabel(tab->ir) ;
 	int blockelse = 0 ;
-
-	if (elseif->firstChild->type == AST_AND)
-	{
-		temp = IR_genExp(tab, elseif->firstChild->firstChild, NULL, NULL);
-		IR_insert_operands(tab->lastNode, NULL, "else if false", temp, label, NULL) ;
-
-		temp = IR_genExp(tab, elseif->firstChild->lastChild, NULL, NULL);
-	}
-	else
-		temp = IR_genExp(tab, elseif->firstChild, NULL, NULL);
-
-	printf(" else if %s go to %s\n", temp, label);
-	//insere cte
-
-
-
 	// checa se vem um proximo els if ou else
 	AST* childAux = elseif->firstChild ;
    	for(childAux = childAux->nextSibling; childAux; childAux = childAux->nextSibling) 
@@ -587,8 +569,29 @@ static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
 	//senao
 	else
 		IR_insert_operands(tab->lastNode, NULL, "else if false", temp, labelFinal, NULL) ;
+}
 
+static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
+{
+	char* temp = NULL ;
+	char* label = IR_newLabel(tab->ir) ;
+	int blockelse = 0 ;
 
+	if (elseif->firstChild->type == AST_AND)
+	{
+		temp = IR_genExp(tab, elseif->firstChild->firstChild, NULL, NULL);
+		IR_checkNextElse(tab, elseif, labelFinal, temp, label) ;
+		//IR_insert_operands(tab->lastNode, NULL, "else if false", temp, label, NULL) ;
+
+		temp = IR_genExp(tab, elseif->firstChild->lastChild, NULL, NULL);
+	}
+	else
+		temp = IR_genExp(tab, elseif->firstChild, NULL, NULL);
+
+	printf(" else if %s go to %s\n", temp, label);
+	
+	// checa qual label colocar no iffalse goto do else if
+	IR_checkNextElse(tab, elseif, labelFinal, temp, label) ;
 
 	AST* child = elseif->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
