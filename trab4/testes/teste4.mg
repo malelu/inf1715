@@ -1,32 +1,24 @@
-
-fun f( c: string , d: char, e: int, f: bool) : string
-
-	b : int
+fun main () : int
 	a : int
+	s : bool
 
-	b = 4
-	a = 2
+	a = 5 + 6 - 1 * 8 / 7
 
-	if true or false and f
-		return "ola"
+	if 1 < 4
+		b : int
+	
+		while 1 + 1 < 1
+			a = a+1
+		loop
 
-	else if (4 > 5) and (7 < 3)
-		return "oi"
-	else
-		return "alo"
-	end
-
-	if b+a > 2
-		return "a"
-	end
-
-	if -5+b+a > 2
-		return "a"
-	end
-
-	while not true
-		b = 5
-	loop
-
-	return new [4] char
+	else if 9 <> 4
+		a = 5
+		s = true
+        else
+		e : string
+		while true
+			a = a+1
+		loop
+		  
+	end 
 end

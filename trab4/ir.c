@@ -29,7 +29,7 @@ static void IR_genElse(OpTable* tab, AST* _else, char* labelFinal) ;
 static void IR_genIfEntry(OpTable* tab, AST* entry, char* label, char* labelFinal) ;
 static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal) ;
 static void IR_genIf(OpTable* tab, AST* _if) ;
-static void IR_genWhileEntry(OpTable* tab, AST* entry, char* labelFinal) ;
+static void IR_genWhileEntry(OpTable* tab, AST* entry) ;
 static void IR_genWhile(OpTable* tab, AST* _while) ;
 static void IR_genBlockElseEntry(OpTable* tab, AST* entry, char* labelFinal) ;
 static void IR_genBlockElse(OpTable* tab, AST* block_else, char* labelFinal) ;
@@ -315,11 +315,9 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var) //FAZER OS OUTROS CASO
 		if(var == NULL)
 		{
     			temp = IR_newTemp(tab->ir);
-printf(" TEMP: %s %p\n", temp, temp);
 		}
 		else
 		{
-			fprintf(stdout, "VAR: %s\n", var);
 			temp = malloc(20) ;
 			strcpy(temp, var);
 		}
@@ -530,7 +528,7 @@ static void IR_genIf(OpTable* tab, AST* _if)
 }
 
 
-static void IR_genWhileEntry(OpTable* tab, AST* entry, char* labelFinal) 
+static void IR_genWhileEntry(OpTable* tab, AST* entry) 
 {
 	switch (entry->type) 
 	{
@@ -538,7 +536,7 @@ static void IR_genWhileEntry(OpTable* tab, AST* entry, char* labelFinal)
         	 	IR_genBlock(tab, entry);
          		return;
 	      	case AST_BLOCK_ELSE:
-        	 	IR_genBlockElse(tab, entry, labelFinal);
+        	 	IR_genBlockElse(tab, entry, NULL);
          		return;
 	      	case AST_LOOP:
         	 	//IR_genElse(ir, entry);
@@ -555,8 +553,14 @@ static void IR_genWhile(OpTable* tab, AST* _while)
 	char* label = IR_newLabel(tab->ir) ;
 	char* labelLoop = IR_newLabel(tab->ir) ;
 
-	//insere cte
-	IR_insert_operands(tab->lastNode, labelLoop, "if false", temp, label, NULL) ;
+
+	if((tab->lastNode->lastCte->op2 != 0) && (tab->lastNode->lastCte->op2 != 1))
+	{
+		tab->lastNode->lastCte->label = labelLoop ; 
+		IR_insert_operands(tab->lastNode, NULL, "if false", temp, label, NULL) ;
+	}
+	else
+		IR_insert_operands(tab->lastNode, labelLoop, "if false", temp, label, NULL) ;
 
 	printf("%s:\n", labelLoop);
 	printf(" if ! %s\n", temp);
@@ -565,7 +569,7 @@ static void IR_genWhile(OpTable* tab, AST* _while)
 	AST* child = _while->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
-      		//IR_genWhileEntry(tab, child);
+      		IR_genWhileEntry(tab, child);
    	}
 
 	printf(" go to %s\n", labelLoop);
