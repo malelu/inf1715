@@ -5,6 +5,5 @@ fun f( c: string , d: int) : int
 		return 1
 	else if (6 < 5) and (9<>4)
 		x = x+1	
-
 	end
 end
