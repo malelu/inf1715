@@ -71,9 +71,19 @@ void dump(OpTable* tab)
 		StringCte* str = func->firstStringCte ;
 		while(str != NULL)
 		{
-			fprintf(stdout, "\t%s = %s\n", str->op1, str->op2);
+			fprintf(stdout, "\tstring %s = %s\n", str->op1, str->op2);
 			str = str->nextNode ;
 		}
+
+		func = func->nextFunc ;
+	}
+
+	/* imprime as globais */
+	func = tab->firstNode ;
+	while(func != NULL)
+	{
+		if(func->global != NULL)
+			fprintf(stdout, "\tglobal %s\n", func->global);
 
 		func = func->nextFunc ;
 	}
@@ -81,10 +91,7 @@ void dump(OpTable* tab)
 	func = tab->firstNode ;
 	while(func != NULL)
 	{
-		if (func->funcName == NULL)
-			fprintf(stdout, "\tGLOBAL %s", func->global);
-
-		else
+		if(func->funcName != NULL)
 		{
 			fprintf(stdout, "\tfun %s (", func->funcName);
 			while(func->params[cont] != NULL)
@@ -115,10 +122,6 @@ void dump(OpTable* tab)
 					else if(strcmp(cte->operand, "declvar") == 0)
 					{
 						fprintf(stdout, "\t%s = 0\n", cte->op1);
-					}
-					else if(strcmp(cte->operand, "string") == 0)
-					{
-						fprintf(stdout, "\t%s = %s\n", cte->op1, cte->op2);
 					}
 					else if(strcmp(cte->operand, "goto") == 0)
 					{

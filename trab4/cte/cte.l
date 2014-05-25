@@ -6,6 +6,8 @@ int done = 0;
 
 %}
 
+%option yylineno
+
 %%
 
 #.* {}

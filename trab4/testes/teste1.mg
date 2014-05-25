@@ -1,3 +1,4 @@
+u : bool
 fun main (t : int, f : string) : int
 	a : int 
 	b : string
@@ -11,10 +12,14 @@ fun main (t : int, f : string) : int
 	return a
 end
 
+x : int
 
 fun func ()
+	b : string
+	b = "Lucena"
 	return
 	
 end
 
+p : char
 
