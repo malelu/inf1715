@@ -22,7 +22,7 @@ static void IR_genInt(OpTable* tab, AST* entry) ;
 static void IR_genChar(OpTable* tab, AST* entry) ;
 static void IR_genBool(OpTable* tab, AST* entry) ;
 static void IR_genString(OpTable* tab, AST* entry) ;
-static char* IR_genExp(OpTable* tab, AST* exp, char* temp) ;
+static char* IR_genExp(OpTable* tab, AST* exp, char* temp, char* not) ;
 static void IR_genAssign(OpTable* tab, AST* assign) ;
 static void IR_genElseEntry(OpTable* tab, AST* entry) ;
 static void IR_genElse(OpTable* tab, AST* _else, char* labelFinal) ;
@@ -145,9 +145,18 @@ static StringCte* IR_newNodeString(char* label, char* operand, char* op1, char* 
 	node->op3 = op3 ;
 }
 */
+
+static char* IR_getTemp(IR* ir) 
+{
+	char* temp = malloc(20);
+	snprintf(temp, 20, "$t%d", ir->temps);
+   	return temp;
+}
+
 static char* IR_newTemp(IR* ir) 
 {
 	char* temp = malloc(20);
+	printf(" CRIOU TEMP %d \n", ir->temps);
 	snprintf(temp, 20, "$t%d", ir->temps);
    	ir->temps++;
    	return temp;
@@ -294,23 +303,34 @@ static void IR_genString(OpTable* tab, AST* entry)
 
 //NEW
 
-static char* IR_insertExp(OpTable* tab, AST* exp, char* operand, char* temp)
+static char* IR_insertExp(OpTable* tab, AST* exp, char* operand, char* temp, char* not)
 {
-        char* e1 = IR_genExp(tab, exp->firstChild, NULL);
-        char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL);
-//printf(" TEMP2 %s e1 %s e2 %s\n", temp2, e1, e2);
+        char* e1 = IR_genExp(tab, exp->firstChild, NULL, not);
+        char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL, not);
 
 	IR_insert_operands(tab->lastNode, NULL, operand, strdup(temp), e1, e2) ;
 
 	return temp ;
 }
 
-static char* IR_genExp(OpTable* tab, AST* exp, char* var) //FAZER OS OUTROS CASOS
+
+
+static char* IR_insertExpNot(OpTable* tab, AST* exp, char* temp)
+{
+        char* e1 = IR_genExp(tab, exp->firstChild, NULL, "not");
+	printf(" achou e1 %s\n", e1);
+
+	//IR_insert_operands(tab->lastNode, NULL, "not", strdup(temp), e1, NULL) ;
+
+	return temp ;
+}
+
+static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS OUTROS CASOS
 {
 	char* temp = NULL;
 	
 	if((exp->type != AST_NUMINT) && (exp->type != AST_CHAR) && (exp->type != AST_STRING) && (exp->type != AST_BOOL) &&
-	(exp->type != AST_TRUE) && (exp->type != AST_FALSE) && (exp->type != AST_LITERAL_STRING))
+	(exp->type != AST_TRUE) && (exp->type != AST_FALSE) && (exp->type != AST_LITERAL_STRING) && (exp->type != AST_NOT))
 	{
 		if(var == NULL)
 		{
@@ -322,56 +342,96 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var) //FAZER OS OUTROS CASO
 			strcpy(temp, var);
 		}
 	}
+	else if ((exp->type == AST_NOT) && (exp->firstChild->type != AST_TRUE) && (exp->firstChild->type != AST_TRUE))
+	{
+		if(var == NULL)
+		{
+    			temp = IR_getTemp(tab->ir);
+				printf(" TEMP CRIADO: %s\n", temp-1);
+		}
+		else
+		{
+			temp = malloc(20) ;
+			strcpy(temp, var);
+		}
+	}
 
 	switch (exp->type) {
       		case AST_PLUS: {
-			return IR_insertExp(tab, exp, "+", temp) ;
+			return IR_insertExp(tab, exp, "+", temp, not) ;
       		}
 		case AST_MINUS: {
-			return IR_insertExp(tab, exp, "-", temp) ;
+			return IR_insertExp(tab, exp, "-", temp, not) ;
       		}
 		case AST_TIMES: {
-			return IR_insertExp(tab, exp, "*", temp) ;
+			return IR_insertExp(tab, exp, "*", temp, not) ;
       		}
 		case AST_DIVIDED: {
-			return IR_insertExp(tab, exp, "/", temp) ;
+			return IR_insertExp(tab, exp, "/", temp, not) ;
       		}
 		case AST_LESS: {
-			return IR_insertExp(tab, exp, "<", temp) ;
+			if(not == NULL) 
+				return IR_insertExp(tab, exp, "<", temp, not) ;
+			else 
+				return IR_insertExp(tab, exp, "GE", temp, not) ;
       		}
 		case AST_GREATER: {
-			return IR_insertExp(tab, exp, ">", temp) ;
+			if(not == NULL) 
+				return IR_insertExp(tab, exp, ">", temp, not) ;
+			else 
+				return IR_insertExp(tab, exp, "LE", temp, not) ;
       		}
 		case AST_GREATER_EQUAL: {
-			return IR_insertExp(tab, exp, "GE", temp) ;
+			if(not == NULL) 
+				return IR_insertExp(tab, exp, "GE", temp, not) ;
+			else 
+				return IR_insertExp(tab, exp, "<", temp, not) ;
       		}
 		case AST_LESS_EQUAL: {
-			return IR_insertExp(tab, exp, "LE", temp) ;
+			if(not == NULL) 
+				return IR_insertExp(tab, exp, "LE", temp, not) ;
+			else 
+				return IR_insertExp(tab, exp, ">", temp, not) ;
       		}
 		case AST_EQUAL: {
 //TRATAR!
-			return IR_insertExp(tab, exp, "=", temp) ;
+			if(not == NULL) 
+				return IR_insertExp(tab, exp, "EQ", temp, not) ;
+			else 
+				return IR_insertExp(tab, exp, "NE", temp, not) ;
       		}
 		case AST_NOT_EQUAL: {
 //TRATAR
-			return IR_insertExp(tab, exp, "NE", temp) ;
+			if(not == NULL) 
+
+				return IR_insertExp(tab, exp, "NE", temp, not) ;
+			else 
+				return IR_insertExp(tab, exp, "EQ", temp, not) ;
       		}
 		case AST_AND: {
          		char* temp = IR_newTemp(tab->ir);
-         		char* e1 = IR_genExp(tab, exp->firstChild, NULL);
-         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL);
+         		char* e1 = IR_genExp(tab, exp->firstChild, NULL, not);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL, not);
          		printf(" %s = %s and %s\n", temp, e1, e2);
          		return temp;
       		}
 		case AST_OR: {
          		char* temp = IR_newTemp(tab->ir);
-         		char* e1 = IR_genExp(tab, exp->firstChild, NULL);
-         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL);
+         		char* e1 = IR_genExp(tab, exp->firstChild, NULL, not);
+         		char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL, not);
          		printf(" %s = %s or %s\n", temp, e1, e2);
          		return temp;
-      		}
+      		}      		
+		case AST_NOT: {
+			//printf(" NOT\n");
+			if(exp->firstChild->type == AST_TRUE)
+				return "0" ;
+			else if (exp->firstChild->type == AST_FALSE)
+				return "1" ;
+         		return IR_insertExpNot(tab, exp, temp) ;
+		}
 		case AST_TRUE: {
-         		return "1";
+         			return "1";
       		}
 		case AST_FALSE: {
          		return "0";
@@ -399,7 +459,7 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var) //FAZER OS OUTROS CASO
 static void IR_genAssign(OpTable* tab, AST* assign) 
 {
    	char* name = assign->firstChild->stringVal;
-	char* rval = IR_genExp(tab, assign->firstChild->nextSibling, name);
+	char* rval = IR_genExp(tab, assign->firstChild->nextSibling, name, NULL);
 
 	if((assign->firstChild->nextSibling->type == AST_NUMINT) || (assign->firstChild->nextSibling->type == AST_CHAR) ||
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
@@ -482,7 +542,7 @@ static void IR_genIfEntry(OpTable* tab, AST* entry, char* label, char* labelFina
 
 static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
 {
-	char* temp = IR_genExp(tab, elseif->firstChild, NULL);
+	char* temp = IR_genExp(tab, elseif->firstChild, NULL, NULL);
 	char* label = IR_newLabel(tab->ir) ;
 
 	printf(" else if %s go to %s\n", temp, label);
@@ -504,7 +564,7 @@ static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
 
 static void IR_genIf(OpTable* tab, AST* _if)
 {
-	char* temp = IR_genExp(tab, _if->firstChild, NULL);
+	char* temp = IR_genExp(tab, _if->firstChild, NULL, NULL);
 	char* label = IR_newLabel(tab->ir) ;
 	char* labelFinal = NULL;
 
@@ -549,7 +609,7 @@ static void IR_genWhileEntry(OpTable* tab, AST* entry)
 
 static void IR_genWhile(OpTable* tab, AST* _while)
 {
-	char* temp = IR_genExp(tab, _while->firstChild, NULL);
+	char* temp = IR_genExp(tab, _while->firstChild, NULL, NULL);
 	char* label = IR_newLabel(tab->ir) ;
 	char* labelLoop = IR_newLabel(tab->ir) ;
 

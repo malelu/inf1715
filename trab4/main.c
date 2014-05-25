@@ -130,7 +130,8 @@ void dump(OpTable* tab)
 					else if ((strcmp(cte->operand, ">") == 0) || (strcmp(cte->operand, "<") == 0) || 
 						(strcmp(cte->operand, "+") == 0) || (strcmp(cte->operand, "-") == 0) || 
 						(strcmp(cte->operand, "*") == 0) || (strcmp(cte->operand, "/") == 0)
-						|| (strcmp(cte->operand, "GE") == 0) || (strcmp(cte->operand, "NE") == 0))
+						|| (strcmp(cte->operand, "GE") == 0) || (strcmp(cte->operand, "NE") == 0)
+						|| (strcmp(cte->operand, "EQ") == 0))
 					{
 						fprintf(stdout, "\t%s = %s %s %s\n", cte->op1, cte->op2, cte->operand, cte->op3);
 					}
