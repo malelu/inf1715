@@ -25,14 +25,14 @@ static void IR_genString(OpTable* tab, AST* entry) ;
 static char* IR_genExp(OpTable* tab, AST* exp, char* temp) ;
 static void IR_genAssign(OpTable* tab, AST* assign) ;
 static void IR_genElseEntry(OpTable* tab, AST* entry) ;
-static void IR_genElse(OpTable* tab, AST* _else) ;
-static void IR_genIfEntry(OpTable* tab, AST* entry, char* label) ;
-static void IR_genElseIf(OpTable* tab, AST* elseif) ;
+static void IR_genElse(OpTable* tab, AST* _else, char* labelFinal) ;
+static void IR_genIfEntry(OpTable* tab, AST* entry, char* label, char* labelFinal) ;
+static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal) ;
 static void IR_genIf(OpTable* tab, AST* _if) ;
-static void IR_genWhileEntry(OpTable* tab, AST* entry) ;
+static void IR_genWhileEntry(OpTable* tab, AST* entry, char* labelFinal) ;
 static void IR_genWhile(OpTable* tab, AST* _while) ;
-static void IR_genBlockElseEntry(OpTable* tab, AST* entry) ;
-static void IR_genBlockElse(OpTable* tab, AST* block_else) ;
+static void IR_genBlockElseEntry(OpTable* tab, AST* entry, char* labelFinal) ;
+static void IR_genBlockElse(OpTable* tab, AST* block_else, char* labelFinal) ;
 static void IR_genBlockEntry(OpTable* tab, AST* entry) ;
 static void IR_genBlock(OpTable* tab, AST* block) ;
 static void IR_genFunctionEntry(OpTable* tab, AST* entry) ;
@@ -431,7 +431,7 @@ static void IR_genElseEntry(OpTable* tab, AST* entry)
 	}
 }
 
-static void IR_genElse(OpTable* tab, AST* _else)
+static void IR_genElse(OpTable* tab, AST* _else, char* labelFinal)
 {
    	//IR_startFunction(ir, function->stringVal);
 	printf(" else\n");
@@ -440,6 +440,7 @@ static void IR_genElse(OpTable* tab, AST* _else)
 	{
       		IR_genElseEntry(tab, child);
    	}
+	IR_insert_operands(tab->lastNode, labelFinal, "none", NULL, NULL, NULL) ;
 }
 
 /*static void IR_genIfEntry(OpTable* tab, AST* entry) 
@@ -461,7 +462,7 @@ static void IR_genElse(OpTable* tab, AST* _else)
 	}
 }
 */
-static void IR_genIfEntry(OpTable* tab, AST* entry, char* label) 
+static void IR_genIfEntry(OpTable* tab, AST* entry, char* label, char* labelFinal) 
 {
 	switch (entry->type) 
 	{
@@ -470,7 +471,7 @@ static void IR_genIfEntry(OpTable* tab, AST* entry, char* label)
          		return;
 	      	case AST_BLOCK_ELSE:
 			IR_insert_operands(tab->lastNode, label, "none", NULL, NULL, NULL) ;
-        	 	IR_genBlockElse(tab, entry);
+        	 	IR_genBlockElse(tab, entry, labelFinal);
          		return;
 	      	case AST_END:
         	 	//IR_genElse(ir, entry);
@@ -481,10 +482,11 @@ static void IR_genIfEntry(OpTable* tab, AST* entry, char* label)
 	}
 }
 
-static void IR_genElseIf(OpTable* tab, AST* elseif)
+static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
 {
 	char* temp = IR_genExp(tab, elseif->firstChild, NULL);
 	char* label = IR_newLabel(tab->ir) ;
+
 	printf(" else if %s go to %s\n", temp, label);
 	//insere cte
 	IR_insert_operands(tab->lastNode, NULL, "else if false", temp, label, NULL) ;
@@ -492,7 +494,11 @@ static void IR_genElseIf(OpTable* tab, AST* elseif)
 	AST* child = elseif->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
-      		IR_genIfEntry(tab, child, label);
+		if(child->type == AST_BLOCK_ELSE)
+		{
+			IR_insert_operands(tab->lastNode, NULL, "goto", labelFinal, NULL, NULL) ;
+		}
+      		IR_genIfEntry(tab, child, label, labelFinal);
    	}
 	printf("%s\n", label);
 	//IR_insert_operands(tab->lastNode, label, "none", NULL, NULL, NULL) ;
@@ -502,9 +508,10 @@ static void IR_genIf(OpTable* tab, AST* _if)
 {
 	char* temp = IR_genExp(tab, _if->firstChild, NULL);
 	char* label = IR_newLabel(tab->ir) ;
+	char* labelFinal = NULL;
+
 	printf(" if false %s go to %s -----%p\n", temp, label, temp);
 
-	//insere cte
 	IR_insert_operands(tab->lastNode, NULL, "if false", temp, label, NULL) ;
 
 	AST* child = _if->firstChild ;
@@ -512,16 +519,18 @@ static void IR_genIf(OpTable* tab, AST* _if)
 	{
 		if(child->type == AST_BLOCK_ELSE)
 		{
+			labelFinal = IR_newLabel(tab->ir) ;
+			IR_insert_operands(tab->lastNode, NULL, "goto", labelFinal, NULL, NULL) ;
 			printf(" go to %s\n", label);			
 		}
-      		IR_genIfEntry(tab, child, label);
+      		IR_genIfEntry(tab, child, label, labelFinal);
    	}
 	printf("%s\n", label);
 	IR_insert_operands(tab->lastNode, label, "none", NULL, NULL, NULL) ;
 }
 
 
-static void IR_genWhileEntry(OpTable* tab, AST* entry) 
+static void IR_genWhileEntry(OpTable* tab, AST* entry, char* labelFinal) 
 {
 	switch (entry->type) 
 	{
@@ -529,7 +538,7 @@ static void IR_genWhileEntry(OpTable* tab, AST* entry)
         	 	IR_genBlock(tab, entry);
          		return;
 	      	case AST_BLOCK_ELSE:
-        	 	IR_genBlockElse(tab, entry);
+        	 	IR_genBlockElse(tab, entry, labelFinal);
          		return;
 	      	case AST_LOOP:
         	 	//IR_genElse(ir, entry);
@@ -556,7 +565,7 @@ static void IR_genWhile(OpTable* tab, AST* _while)
 	AST* child = _while->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
-      		IR_genWhileEntry(tab, child);
+      		//IR_genWhileEntry(tab, child);
    	}
 
 	printf(" go to %s\n", labelLoop);
@@ -566,15 +575,15 @@ static void IR_genWhile(OpTable* tab, AST* _while)
 	printf("%s\n", label);
 }
 
-static void IR_genBlockElseEntry(OpTable* tab, AST* entry) 
+static void IR_genBlockElseEntry(OpTable* tab, AST* entry, char* labelFinal) 
 {
 	switch (entry->type) 
 	{
 	      	case AST_ELSEIF:
-        	 	IR_genElseIf(tab, entry);
+        	 	IR_genElseIf(tab, entry, labelFinal);
          		return;
 	      	case AST_ELSE:
-        	 	IR_genElse(tab, entry);
+        	 	IR_genElse(tab, entry, labelFinal);
          		return;
       		default:
          		assert(0);
@@ -582,12 +591,12 @@ static void IR_genBlockElseEntry(OpTable* tab, AST* entry)
 	}
 }
 
-static void IR_genBlockElse(OpTable* tab, AST* block_else)
+static void IR_genBlockElse(OpTable* tab, AST* block_else, char* labelFinal)
 {
 	AST* child = NULL ;
    	for(child = block_else->firstChild; child; child = child->nextSibling) 
 	{
-      		IR_genBlockElseEntry(tab, child);
+      		IR_genBlockElseEntry(tab, child, labelFinal);
    	}
 }
 

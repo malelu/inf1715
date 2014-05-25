@@ -1,5 +1,6 @@
 fun main () : int
 	a : int
+	s : bool
 
 	a = 5 + 6 - 1 * 8 / 7
 
@@ -7,6 +8,9 @@ fun main () : int
 		b : int
 	else if false
 	        d : bool
+	else if 9 <> 4
+		a = 5
+		s = true
         else
 		e : string  
 	end 
