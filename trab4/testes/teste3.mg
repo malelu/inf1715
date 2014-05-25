@@ -1,26 +1,13 @@
-fun f()
-   x:string
-end
+fun main () : int
+	a : int
 
-fun f()
-   x:int
-   g()
-end
+	a = 5 + 6 - 1 * 8 / 7
 
-fun f()
-   x:char
-   y:int
-   g()
-end
-
-fun f()
-   x:bool
-   y:int
-   g()
-   h()
-end
-
-fun f()
-   g()
-   h()
+	if 1 < 4
+		b : int
+	else if false
+	        d : bool
+        else
+		e : string  
+	end 
 end

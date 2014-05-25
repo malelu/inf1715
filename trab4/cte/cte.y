@@ -22,95 +22,85 @@ extern int yylineno;
 %%
 
 program : strings globals functions
-                ;
-
+	;
 strings : string strings
-|;
-
+	| /* empty */
+	;
 globals : global globals
-|;
-
+	| /* empty */
+	;
 functions : function functions
-|;
-
-nl : NL opt_nl ;
-
+	| /* empty */
+	;
+nl : NL opt_nl 
+	;
 opt_nl : NL opt_nl
-|;
-
+	| /* empty */
+	;
 string : STRING ID '=' LITSTRING nl
-
+	;
 global : GLOBAL ID nl
-
+	;
 function : FUN ID '(' args ')' nl
-commands
-;
-
+	   	commands
+	;
 args : arg more_args
-|;
-
+	| /* empty */
+	;
 more_args : ',' args
-|;
-
+	| /* empty */
+	;
 arg : ID
-;
-
+	;
 commands : label command nl commands
-| ;
-
+	| /* empty */
+	;
 label : LABEL ':' opt_nl label
-|;
-
-rval : LITNUM
-| ID
-;
-
+	| /* empty */
+	;
+rval : 	LITNUM
+	| ID
+	;
 command : ID '=' rval
-| ID '=' BYTE rval
-| ID '=' rval binop rval
-| ID '=' unop rval
-| ID '=' ID '[' rval ']'
-| ID '[' rval ']' '=' rval
-| ID '=' BYTE ID '[' rval ']'
-| ID '[' rval ']' '=' BYTE rval
-| IF rval GOTO LABEL
-| IFFALSE rval GOTO LABEL
-| GOTO LABEL
-| call
-| RET rval
-| RET
-;
-
-binop : EQ
-| NE
-| '<'
-| '>'
-| GE
-| LE
-| '+'
-| '-'
-| '*'
-| '/'
-;
-
-unop : '-'
-| NEW
-| NEW BYTE
-;
-
-call : params
-CALL ID /* Em caso de funcoes com valor retorno,
+	| ID '=' BYTE rval
+	| ID '=' rval binop rval
+	| ID '=' unop rval
+	| ID '=' ID '[' rval ']'
+	| ID '[' rval ']' '=' rval
+	| ID '=' BYTE ID '[' rval ']'
+	| ID '[' rval ']' '=' BYTE rval
+	| IF rval GOTO LABEL
+	| IFFALSE rval GOTO LABEL
+	| GOTO LABEL
+	| call
+	| RET rval
+	| RET
+	;
+binop 	: EQ
+	| NE
+	| '<'
+	| '>'
+	| GE
+	| LE
+	| '+'
+	| '-'
+	| '*'
+	| '/'
+	;
+unop	: '-'
+	| NEW
+	| NEW BYTE
+	;
+call 	: params
+	CALL ID /* Em caso de funcoes com valor retorno,
 assuma que este esta na
 variavel temporaria especial $ret */
-                ;
-
+	;
 params : param nl params
-|;
-
+	| /* empty */
+	;
 param : PARAM rval
-;
-
-
+	;
 %%
 
 int yyerror(const char* s) {

@@ -373,10 +373,10 @@ printf(" TEMP: %s %p\n", temp, temp);
          		return temp;
       		}
 		case AST_TRUE: {
-         		return "true";
+         		return "1";
       		}
 		case AST_FALSE: {
-         		return "false";
+         		return "0";
       		}
       		case AST_NUMINT: {
          		char* num = malloc(20);
