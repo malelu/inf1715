@@ -1,14 +1,8 @@
-fun f( c: string , d: int) : bool
+fun f( c: string , d: int) : int
 	x : int
-	j : char
-	if 3*4 > 8
-		x = 2
-		while 2 and 0
-			g()
-			f(4-5)
-		loop
-	else
-		j = 3
-	end
 
+	if true
+		x = 5
+		return 2
+	end
 end

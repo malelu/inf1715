@@ -115,10 +115,14 @@ void dump(OpTable* tab)
 					{
 						fprintf(stdout, "\tiffalse %s goto %s\n", cte->op1, cte->op2);
 					}
-					/*else if(strcmp(cte->operand, "else if false") == 0)
+					if(strcmp(cte->operand, "if") == 0)
 					{
-						fprintf(stdout, "\telse if not %s goto %s\n", cte->op1, cte->op2);
-					}*/
+						fprintf(stdout, "\tif %s goto %s\n", cte->op1, cte->op2);
+					}
+					//else if(strcmp(cte->operand, "none") == 0)
+					//{
+					//	fprintf(stdout, "%s: \n", cte->label);
+					//}
 					else if(strcmp(cte->operand, "declvar") == 0)
 					{
 						fprintf(stdout, "\t%s = 0\n", cte->op1);

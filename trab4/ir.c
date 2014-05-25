@@ -215,32 +215,6 @@ static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char*
 			func->lastCte->op3 = op3 ;			
 		}
 
-		/*else if (strcmp(operand, "string") == 0)
-		{
-
-			NodeCte* auxNode ;
-			node = IR_newNode(label, operand, op1, op2, op3) ; 
-
-			auxNode = func->firstCte ;
-
-			while(strcmp(auxNode->operand, "string") == 0)
-			{
-				auxNode = auxNode->nextNode ;
-			}
-			if(auxNode = func->firstCte)
-			{
-				node->nextNode = func->firstCte ;
-				func->firstCte->prevNode = node ;
-				func->firstCte = node ;
-			}
-			else
-			{
-				auxNode->prevNode->nextNode = node ;
-				node->nextNode = auxNode ;
-			}
-		}*/
-
-
 		else
 		{
 			node = IR_newNode(label, operand, op1, op2, op3) ; 
@@ -279,7 +253,7 @@ static void IR_genRet(OpTable* tab, AST* entry)
 			IR_insert_operands(tab->lastNode, NULL, "ret", entry->firstChild->stringVal, NULL, NULL) ;
 		else
 		{
-			char* strRet ;
+			char* strRet = malloc(20) ;
 			snprintf(strRet, 20, "%d", entry->firstChild->intVal);
 			IR_insert_operands(tab->lastNode, NULL, "ret", strRet, NULL, NULL) ;
 		}
@@ -484,7 +458,6 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 	//insere cte
 	//IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
    	printf(" ----%s = %s\n", name, rval);
-   	//free(rval);
 }
 
 static void IR_genElseEntry(OpTable* tab, AST* entry) 
@@ -512,25 +485,6 @@ static void IR_genElse(OpTable* tab, AST* _else, char* labelFinal)
 	IR_insert_operands(tab->lastNode, labelFinal, "none", NULL, NULL, NULL) ;
 }
 
-/*static void IR_genIfEntry(OpTable* tab, AST* entry) 
-{
-	switch (entry->type) 
-	{
-	      	case AST_BLOCK:
-        	 	IR_genBlock(tab, entry);
-         		return;
-	      	case AST_BLOCK_ELSE:
-        	 	IR_genBlockElse(tab, entry);
-         		return;
-	      	case AST_END:
-        	 	//IR_genElse(ir, entry);
-         		return;
-      		default:
-         		assert(0);
-         		return;
-	}
-}
-*/
 static void IR_genIfEntry(OpTable* tab, AST* entry, char* label, char* labelFinal) 
 {
 	switch (entry->type) 
@@ -581,7 +535,6 @@ static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
 	{
 		temp = IR_genExp(tab, elseif->firstChild->firstChild, NULL, NULL);
 		IR_checkNextElse(tab, elseif, labelFinal, temp, label) ;
-		//IR_insert_operands(tab->lastNode, NULL, "else if false", temp, label, NULL) ;
 
 		temp = IR_genExp(tab, elseif->firstChild->lastChild, NULL, NULL);
 	}
@@ -606,18 +559,45 @@ static void IR_genElseIf(OpTable* tab, AST* elseif, char* labelFinal)
 	//IR_insert_operands(tab->lastNode, label, "none", NULL, NULL, NULL) ;
 }
 
+/*static void insertAndExp (OpTable* tab, AST* exp, char* temp, char* label)
+{ 
+	printf("ENTROUUUUUU\n");
+	if (exp->firstChild->type == AST_AND)
+		insertAndExp (tab, exp->firstChild, temp, label) ;
+
+	temp = IR_genExp(tab, exp->firstChild, NULL, NULL);
+	IR_insert_operands(tab->lastNode, NULL, "if false", temp, label, NULL) ;
+
+	temp = IR_genExp(tab, exp->lastChild, NULL, NULL);
+
+}*/
+
 static void IR_genIf(OpTable* tab, AST* _if)
 {
 	char* temp = NULL ;
 	char* label = IR_newLabel(tab->ir) ;
 	char* labelFinal = NULL;
+	AST* _ifAux = _if->firstChild;
+	int blockelse = 0 ;
+	char* labelOr = NULL ;
 
-	if (_if->firstChild->type == AST_AND)
+	
+	if (_ifAux->type == AST_AND)
 	{
+		//insertAndExp (tab, _ifAux->firstChild, temp, label) ;
 		temp = IR_genExp(tab, _if->firstChild->firstChild, NULL, NULL);
 		IR_insert_operands(tab->lastNode, NULL, "if false", temp, label, NULL) ;
 
 		temp = IR_genExp(tab, _if->firstChild->lastChild, NULL, NULL);
+	}
+	else if (_ifAux->type == AST_OR)
+	{
+		temp = IR_genExp(tab, _if->firstChild->firstChild, NULL, NULL);
+		IR_insert_operands(tab->lastNode, NULL, "if", temp, label, NULL) ;
+		labelOr = malloc(20) ;
+		strcpy(labelOr, label) ;
+		temp = IR_genExp(tab, _if->firstChild->lastChild, NULL, NULL);
+		label = IR_newLabel(tab->ir) ;
 	}
 	else
 		temp = IR_genExp(tab, _if->firstChild, NULL, NULL);
@@ -626,6 +606,11 @@ static void IR_genIf(OpTable* tab, AST* _if)
 
 	IR_insert_operands(tab->lastNode, NULL, "if false", temp, label, NULL) ;
 
+	if (_ifAux->type == AST_OR)
+	{
+		IR_insert_operands(tab->lastNode, labelOr, "none", NULL, NULL, NULL) ;
+	}
+
 	AST* child = _if->firstChild ;
    	for(child = child->nextSibling; child; child = child->nextSibling) 
 	{
@@ -633,12 +618,21 @@ static void IR_genIf(OpTable* tab, AST* _if)
 		{
 			labelFinal = IR_newLabel(tab->ir) ;
 			IR_insert_operands(tab->lastNode, NULL, "goto", labelFinal, NULL, NULL) ;
+			blockelse++ ;
 			printf(" go to %s\n", label);			
 		}
       		IR_genIfEntry(tab, child, label, labelFinal);
    	}
-	printf("LABEEEEEL %s\n", label);
+	
 	IR_insert_operands(tab->lastNode, labelFinal, "none", NULL, NULL, NULL) ;
+
+	if(blockelse == 0)
+	{
+		char* label2 = malloc(20) ;
+		strcpy(label2, label) ;
+		printf("inseriu LABEEEEEL %s\n", label);
+		IR_insert_operands(tab->lastNode, label2, "none", NULL, NULL, NULL) ;
+	}
 }
 
 
