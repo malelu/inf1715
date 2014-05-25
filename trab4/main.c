@@ -139,6 +139,10 @@ void dump(OpTable* tab)
 					{
 						fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 					}
+					else if (strcmp(cte->operand, "and") == 0) 
+					{
+						fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
+					}
 					else if (strcmp(cte->operand, "ret") == 0) 
 					{
 						if(cte->op1 == NULL)
