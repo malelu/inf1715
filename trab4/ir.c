@@ -79,6 +79,7 @@ static NodeFunc* IR_newGlobal(char* varName)
 	func->nextFunc = NULL ;
 	func->global = varName ;
 	func->funcName = NULL ;
+   	func->firstStringCte = NULL;
 	func->params = (char**)calloc(10, sizeof(char*)) ;
 	for(i=0; i<10; i++)
 	{
@@ -97,6 +98,8 @@ static NodeFunc* IR_newFunc(char* name)
 	func->nextFunc = NULL ;
 	func->global = NULL ;
 	func->funcName = name ;
+   	func->firstStringCte = NULL;
+   	func->lastStringCte = NULL;
 	func->params = (char**)calloc(10, sizeof(char*)) ;
 	for(i=0; i<10; i++)
 	{
@@ -118,6 +121,30 @@ static NodeCte* IR_newNode(char* label, char* operand, char* op1, char* op2, cha
 	node->op3 = op3 ;
 }
 
+static StringCte* IR_newNodeString(char* label, char* operand, char* op1, char* op2, char* op3) 
+{
+	StringCte* node = (StringCte*)malloc(sizeof(StringCte)) ;
+	node->nextNode = NULL ;
+	node->prevNode = NULL ;
+	node->label = label ;
+	node->operand = operand ;
+	node->op1 = op1 ;
+	node->op2 = op2 ;
+	node->op3 = op3 ;
+}
+
+/*static GlobalCte* IR_newNodeGlobal(char* label, char* operand, char* op1, char* op2, char* op3) 
+{
+	GlobalCte* node = (GlobalCte*)malloc(sizeof(GlobalCte)) ;
+	node->nextNode = NULL ;
+	node->prevNode = NULL ;
+	node->label = label ;
+	node->operand = operand ;
+	node->op1 = op1 ;
+	node->op2 = op2 ;
+	node->op3 = op3 ;
+}
+*/
 static char* IR_newTemp(IR* ir) 
 {
 	char* temp = malloc(20);
@@ -142,9 +169,26 @@ static OpTable* IR_newTable(IR* ir)
 	new_table->ir = ir ; 
 }
 
+static void IR_insert_string_operands(NodeFunc* func, char* label, char* operand, char* op1, char* op2, char* op3) 
+{
+	StringCte* node = IR_newNodeString(label, operand, op1, op2, op3) ;
+
+	if(func->firstStringCte == NULL)
+	{
+		func->firstStringCte = node ;
+		func->lastStringCte = func->firstStringCte ;
+	}
+	else
+	{
+		func->lastStringCte->nextNode = node ;
+		node->prevNode = func->lastStringCte ;
+		func->lastStringCte = node ;
+
+	}
+}
+
 static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char* op1, char* op2, char* op3) 
 {
-
 	NodeCte* node ;
 	if(func->firstCte == NULL)
 	{
@@ -161,6 +205,32 @@ static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char*
 			func->lastCte->op2 = op2 ;
 			func->lastCte->op3 = op3 ;			
 		}
+
+		/*else if (strcmp(operand, "string") == 0)
+		{
+
+			NodeCte* auxNode ;
+			node = IR_newNode(label, operand, op1, op2, op3) ; 
+
+			auxNode = func->firstCte ;
+
+			while(strcmp(auxNode->operand, "string") == 0)
+			{
+				auxNode = auxNode->nextNode ;
+			}
+			if(auxNode = func->firstCte)
+			{
+				node->nextNode = func->firstCte ;
+				func->firstCte->prevNode = node ;
+				func->firstCte = node ;
+			}
+			else
+			{
+				auxNode->prevNode->nextNode = node ;
+				node->nextNode = auxNode ;
+			}
+		}*/
+
 
 		else
 		{
@@ -335,11 +405,12 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 
 	if((assign->firstChild->nextSibling->type == AST_NUMINT) || (assign->firstChild->nextSibling->type == AST_CHAR) ||
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
-		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE) ||
-		(assign->firstChild->nextSibling->type == AST_LITERAL_STRING))
+		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE))
 	{
    		IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 	}
+	else if(assign->firstChild->nextSibling->type == AST_LITERAL_STRING)
+		IR_insert_string_operands(tab->lastNode, NULL, "string", name, rval, NULL) ;
 
 	//insere cte
 	//IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;

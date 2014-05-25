@@ -23,7 +23,7 @@ globals : global globals
 	| /* empty */
 	;
 functions : function functions
-	|
+	| /* empty */
 	;
 nl : NL opt_nl 
 	;
@@ -37,7 +37,7 @@ global : GLOBAL ID nl
 function : FUN ID '(' args ')' nl
 	;
 args : arg more_args
-	|
+	| /* empty */
 	;
 more_args : ',' args
 	|
