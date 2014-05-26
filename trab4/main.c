@@ -142,7 +142,10 @@ void dump(OpTable* tab)
 					}
 					else if (strcmp(cte->operand, "=") == 0) 
 					{
-						fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
+						if(cte->op2[0] != 'n' && cte->op3 != NULL)  /* imprime atrib a char, sem o new */
+							fprintf(stdout, "\t%s %s %s %s\n", cte->op1, cte->operand, cte->op3, cte->op2);
+						else
+							fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 					}
 					else if (strcmp(cte->operand, "and") == 0) 
 					{
@@ -181,7 +184,7 @@ int main (void)
 	error = Symbols_annotate(programa) ;
 	if (error == 1)
 	{
-		//prettyPrinter(programa) ;
+		prettyPrinter(programa) ;
 		OpTable* tab = IR_gen(programa) ;
 		dump(tab) ;
 	}

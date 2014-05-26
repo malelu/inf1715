@@ -475,7 +475,11 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE) ||
 		(assign->firstChild->nextSibling->type == AST_NEG) || (assign->firstChild->nextSibling->type == AST_NEW))
 	{
-   		IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
+
+		if(assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT)
+			IR_insert_operands(tab->lastNode, NULL, "=", name, rval, "byte") ;
+		else
+   			IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 	}
 	else if(assign->firstChild->nextSibling->type == AST_LITERAL_STRING)
 		IR_insert_string_operands(tab->lastNode, NULL, "string", name, rval, NULL) ;

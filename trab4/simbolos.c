@@ -615,9 +615,9 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 		
 		else if (existing->type == SYM_BOOL)
 		{
-			if (assign_type[0] == AST_BOOL)
+			if (assign_type[0] == AST_BOOL || (assign_type[0] == AST_NEW))
 			{
-				if(assign_type[1] == existing->size)
+				if(assign_type[1] == (existing->size - assign->firstChild->size))
 				{
 					assign->symbol_type = SYM_BOOL ;
 					assign->size = assign_type[1] ;			
@@ -637,7 +637,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 		{
 			if (assign_type[0] == AST_CHAR || (assign_type[0] == AST_NEW))
 			{
-				if(assign_type[1] == existing->size)
+				if(assign_type[1] == (existing->size - assign->firstChild->size))
 				{
 					assign->symbol_type = SYM_CHAR ;
 					assign->size = assign_type[1] ;			
@@ -651,7 +651,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 			}
 			else if (assign_type[0] == AST_NUMINT)
 			{
-				if(assign_type[1] == existing->size)
+				if(assign_type[1] == (existing->size - assign->firstChild->size))
 				{
 					assign->symbol_type = SYM_CHAR ;
 					assign->size = assign_type[1] ;			

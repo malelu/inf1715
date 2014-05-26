@@ -200,6 +200,7 @@ cmdatrib: var '=' exp				{ $$.node = AST_new(AST_ATRIB, $1.line);
 	;
 var	: TK_ID 				{ $$.node = AST_newStringFromToken($1.cValue, $1.line, AST_ID); }
 	| var '[' exp ']'			{ $$.node = AST_prependSibling($3.node, $1.node); 
+							printf("EXP: %d\n", $3.iValue) ;
 						  $$.node->size = $$.node->size+1; }
 	;
 chamada : TK_ID '(' lista_exp ')'		{ $$.node = AST_new(AST_CALL, $1.line);
