@@ -1,0 +1,2 @@
+tres ands ou ors de uma vez
+label no caso de if unico sem else

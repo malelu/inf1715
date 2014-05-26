@@ -248,6 +248,7 @@ static void IR_genParam(OpTable* tab, AST* entry)
 
 static void IR_genRet(OpTable* tab, AST* entry)
 {
+	char* temp ;
 	if(entry->firstChild != NULL)
 		if(entry->firstChild->stringVal != NULL)
 			IR_insert_operands(tab->lastNode, NULL, "ret", entry->firstChild->stringVal, NULL, NULL) ;
@@ -255,7 +256,8 @@ static void IR_genRet(OpTable* tab, AST* entry)
 		{
 			char* strRet = malloc(20) ;
 			snprintf(strRet, 20, "%d", entry->firstChild->intVal);
-			IR_insert_operands(tab->lastNode, NULL, "ret", strRet, NULL, NULL) ;
+temp = IR_genExp(tab, entry->firstChild, NULL, NULL);
+			IR_insert_operands(tab->lastNode, NULL, "ret", temp, NULL, NULL) ;
 		}
 	else
 		IR_insert_operands(tab->lastNode, NULL, "ret", NULL, NULL, NULL) ;

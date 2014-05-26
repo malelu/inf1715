@@ -15,7 +15,6 @@ extern int yyerror(char* msg);
 
 program : strings globals functions
         ;
-
 strings : string strings
 	| /* empty */
 	;
@@ -84,8 +83,8 @@ unop : '-'
 	| NEW BYTE
 	;
 call : params
-CALL ID
-;
+	CALL ID
+	;
 params : param nl params
 	|
 	;

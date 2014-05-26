@@ -29,6 +29,7 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function);
 static int symbol_table_scope;
 static int returned ;
 static int has_return ;
+static bool okGlobal = true;
 
 static bool fail(const char* msg, const char* name, AST* node) 
 {
@@ -70,7 +71,7 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	else if (exp->type == AST_NEW)
 	{
 		fprintf(stderr, "visit exp new\n") ;
-		Symbols_visitNew(st, exp) ; 
+		okGlobal = Symbols_visitNew(st, exp) ; 
 		return Symbols_setExpression (ret_expression, exp, exp->symbol_type, exp->type, exp->size, exp->intVal);
 	}
 	else if (exp->type == AST_ID)
@@ -433,25 +434,25 @@ static bool Symbols_visitNew(SymbolTable* st, AST* _new)
 			return fail("invalid \"new\" expression!", "new", _new);
 	}
 
-	if(_new->lastChild->type == AST_NUMINT)
+	if(_new->firstChild->type == AST_NUMINT)
 	{
 		_new->symbol_type = SYM_INT ;
-		_new->size = _new->lastChild->size ;
+		_new->size = _new->lastChild->size+1 ;
 	}
-	else if(_new->lastChild->type == 283)
+	else if(_new->firstChild->type == AST_CHAR)
 	{
 		_new->symbol_type = SYM_CHAR ;
-		_new->size = _new->lastChild->size ;
+		_new->size = _new->lastChild->size+1 ;
 	}
-	else if(_new->lastChild->type == AST_STRING)
+	else if(_new->firstChild->type == AST_STRING)
 	{
 		_new->symbol_type = SYM_CHAR ;
 		_new->size = 1 ;
 	}
-	else if(_new->lastChild->type == AST_BOOL)
+	else if(_new->firstChild->type == AST_BOOL)
 	{
 		_new->symbol_type = SYM_BOOL ;
-		_new->size = _new->lastChild->size ;
+		_new->size = _new->lastChild->size+1 ;
 	}
 	else
 	{
@@ -583,6 +584,9 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 
 	assign_type = Symbols_visitExpression(st, assign->lastChild);
 
+	if(okGlobal == false)
+		return false ;
+
    	if (existing) 
 	{
       		if (existing->type == SYM_FUN) 
@@ -590,9 +594,9 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 
 		else if (existing->type == SYM_INT)
 		{
-			if ((assign_type[0] == AST_NUMINT) || (assign_type[0] == AST_CHAR))
+			if ((assign_type[0] == AST_NUMINT) || (assign_type[0] == AST_CHAR) || (assign_type[0] == AST_NEW))
 			{
-				if(assign_type[1] == existing->size)
+				if(assign_type[1] == (existing->size - assign->firstChild->size))
 				{
 					assign->symbol_type = SYM_INT ;
 					assign->size = assign_type[1] ;			
