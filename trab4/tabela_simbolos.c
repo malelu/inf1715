@@ -101,6 +101,46 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope)
 	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
 	node = st->lastNode ;
 
+	printf("nome procurado: %s\n", name) ;
+	
+
+ 
+	if (node != NULL)
+	{
+		while((strcmp(node->symbol->name, name) != 0) || ((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope != scope)))
+		{
+			if(node->prevNode == NULL)
+			{
+				//fprintf(stderr, "no symbol match this name\n") ;
+				return NULL ;
+			}	
+	
+			node = node->prevNode ;
+		}
+		
+		/*fprintf(stderr, "NOME DO NÓ %s\n", name) ;
+		fprintf(stderr, "NOME DO NÓ ENCONTRADO %s\n", node->symbol->name) ;
+		fprintf(stderr, "SCOPE DA TABELA %d\n", node->symbol->scope) ;
+		fprintf(stderr, "SCOPE DO NÓ %d\n", scope) ;
+		fprintf(stderr, "LINHA DO NÓ ENCONTRADO %d\n", node->symbol->line) ;
+		fprintf(stderr, "saiu get\n") ;*/
+		return node->symbol ;
+	}
+	fprintf(stderr, "SAIU get\n") ;
+	return NULL ;
+	
+}
+
+Symbol* SymbolTable_getCall(SymbolTable* st, const char* name, int scope)
+{
+	//fprintf(stderr, "entrou get\n") ;
+	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
+	node = st->lastNode ;
+
+	printf("nome procurado: %s\n", name) ;
+	
+
+ 
 	if (node != NULL)
 	{
 		while((strcmp(node->symbol->name, name) != 0))

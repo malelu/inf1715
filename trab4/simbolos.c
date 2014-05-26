@@ -466,7 +466,7 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 {
 	const char* name = call->firstChild->stringVal;
 	printf("name!!!! %s\n", name) ;
-  	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
+  	Symbol* existing = SymbolTable_getCall(st, name, symbol_table_scope);
 	AST* child =  call->firstChild->nextSibling;
 	int cont_param = 0;
 
