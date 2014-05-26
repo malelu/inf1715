@@ -144,6 +144,17 @@ void dump(OpTable* tab)
 					{
 						if(cte->op2[0] != 'n' && cte->op3 != NULL)  /* imprime atrib a char, sem o new */
 							fprintf(stdout, "\t%s %s %s %s\n", cte->op1, cte->operand, cte->op3, cte->op2);
+						else if(cte->op2[0] == 'n' && cte->op3 != NULL)  /* imprime atrib a char, com o new */
+						{
+							int cont = 4 ;
+							char* number = malloc(20) ;
+							while(cte->op2[cont] != '\0')
+							{
+								number[cont-4] = cte->op2[cont] ;
+								cont++ ;
+							}
+							fprintf(stdout, "\t%s %s new %s %s\n", cte->op1, cte->operand, cte->op3, number);
+						}
 						else
 							fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 					}
