@@ -176,10 +176,11 @@ int main (void)
 	//yydebug = 1;
 	yyparse();
 
+	prettyPrinter(programa) ;
 	error = Symbols_annotate(programa) ;
 	if (error == 1)
 	{
-		prettyPrinter(programa) ;
+		//prettyPrinter(programa) ;
 		OpTable* tab = IR_gen(programa) ;
 		dump(tab) ;
 	}

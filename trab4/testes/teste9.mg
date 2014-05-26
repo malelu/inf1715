@@ -1,8 +1,11 @@
+t : int
+
 fun main (x : int, y : char) : int
 	g : string
 	return 4
 end
 
+b: bool
 
 fun k ()
 	f : int
@@ -10,10 +13,3 @@ fun k ()
 	main(f, h)
 end
 
-
-fun h ()
-	f : int
-	h : char
-	k()
-	main(f, h)
-end

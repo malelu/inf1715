@@ -73,7 +73,8 @@ void SymbolTable_delete(SymbolTable* st)
 void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int size, int scope,
 			 int num_param, int fun_param[][2], int* fun_ret)
 {
-	//fprintf(stderr, "entrou add symbol table\n") ;
+	fprintf(stderr, "entrou add symbol table\n") ;
+	fprintf(stderr, "name: %s, type: %d\n", name, type) ;
 	Symbol* sym = Symbol_new(name, type, line, size, scope, num_param, fun_param, fun_ret) ;
 	NodeTable* new_node = NodeTable_new(sym) ;
 	NodeTable* old_last_node = NULL;
@@ -105,21 +106,25 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope)
 
 	//fprintf(stderr, "etab\n") ;
 	//fprintf(stderr, "%d\n", node) ;
+	printf("GET name: %s\n", name) ;
 	if (node != NULL)
 	{
-		while((strcmp(node->symbol->name, name) != 0) || ((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope != scope)))
+		while((strcmp(node->symbol->name, name) != 0))// || ((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope != scope)))
 		{
+			//printf("get node->symbol->name: %s\n", node->symbol->name) ;
+			//printf("get node->symbol->scope: %d\n", node->symbol->scope) ;
+			//printf("get scope: %d\n", scope) ;
 			if(node->prevNode == NULL)
 			{
 				//fprintf(stderr, "no symbol match this name\n") ;
 				return NULL ;
 			}	
 
-			if((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope == -1))	//é global
-			{
+			//if((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope == -1))	//é global
+			//{
 				//fprintf(stderr, "É GLOBAL\n") ;
-				return node->symbol ;
-			}	
+			//	return node->symbol ;
+			//}	
 			node = node->prevNode ;
 		}
 		
@@ -131,7 +136,7 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope)
 		fprintf(stderr, "saiu get\n") ;*/
 		return node->symbol ;
 	}
-	//fprintf(stderr, "saiu get\n") ;
+	fprintf(stderr, "SAIU get\n") ;
 	return NULL ;
 	
 }

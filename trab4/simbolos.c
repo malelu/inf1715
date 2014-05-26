@@ -465,6 +465,7 @@ static bool Symbols_visitNew(SymbolTable* st, AST* _new)
 static bool Symbols_visitCall(SymbolTable* st, AST* call) 
 {
 	const char* name = call->firstChild->stringVal;
+	printf("name!!!! %s\n", name) ;
   	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	AST* child =  call->firstChild->nextSibling;
 	int cont_param = 0;
@@ -940,6 +941,7 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function)
 	if (returned == 0 && ret[0] != -1)
 		fail("missing return", "!?!?", function);
 
+	printf("nome da funcao a ser inserida: %s\n", name) ;
 	SymbolTable_add(st, name, SYM_FUN, function->line, function->size, symbol_table_scope, qtd_params, armazena_params, ret);
 	return true;
 }

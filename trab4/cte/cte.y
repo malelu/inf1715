@@ -91,8 +91,8 @@ unop	: '-'
 	| NEW
 	| NEW BYTE
 	;
-call 	: params
-	CALL ID /* Em caso de funcoes com valor retorno,
+call 	: params CALL ID 
+/* Em caso de funcoes com valor retorno,
 assuma que este esta na
 variavel temporaria especial $ret */
 	;
