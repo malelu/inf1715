@@ -11,6 +11,7 @@ fun main () : []int
 	f = new [5][][] char
 
 	q = true
+	q = false
 
 	f[5] = new [2][] char
 

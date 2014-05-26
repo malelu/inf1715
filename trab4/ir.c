@@ -507,7 +507,8 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 
 		else
 		{
-			if(assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT)
+			if((assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT) ||
+				(assign->lastChild->type == AST_TRUE) || (assign->lastChild->type == AST_FALSE))
 				IR_insert_operands(tab->lastNode, NULL, "=", name, rval, "byte") ;
 			else
    				IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
