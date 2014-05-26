@@ -9,6 +9,7 @@ extern int yydebug;
 extern AST* programa ;
 extern int numTab = 0 ;
 extern int error = 0 ;
+extern FILE* yyin;
 
 void addTab (int numTab)
 {
@@ -186,7 +187,7 @@ void yyerror (const char * s)
 	error = 1;
 }
 
-int main (void)
+int main (int argc, char** argv)
 {
 	//yydebug = 1;
 	yyin = fopen(argv[1], "r");
