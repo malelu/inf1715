@@ -8,6 +8,7 @@ typedef struct IR_ IR;
 struct IR_ {
 	int temps;
 	int labels ;
+	int strings ;
 };
 
 /*typedef struct Params_ Params;

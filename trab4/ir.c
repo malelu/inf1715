@@ -119,6 +119,8 @@ static NodeCte* IR_newNode(char* label, char* operand, char* op1, char* op2, cha
 	node->op1 = op1 ;
 	node->op2 = op2 ;
 	node->op3 = op3 ;
+
+	return node ;
 }
 
 static StringCte* IR_newNodeString(char* label, char* operand, char* op1, char* op2, char* op3) 
@@ -131,6 +133,8 @@ static StringCte* IR_newNodeString(char* label, char* operand, char* op1, char* 
 	node->op1 = op1 ;
 	node->op2 = op2 ;
 	node->op3 = op3 ;
+
+	return node ;
 }
 
 /*static GlobalCte* IR_newNodeGlobal(char* label, char* operand, char* op1, char* op2, char* op3) 
@@ -159,6 +163,15 @@ static char* IR_newTemp(IR* ir)
 	printf(" CRIOU TEMP %d \n", ir->temps);
 	snprintf(temp, 20, "$t%d", ir->temps);
    	ir->temps++;
+   	return temp;
+}
+
+static char* IR_newString(IR* ir) 
+{
+	char* temp = malloc(20);
+	printf(" CRIOU TEMP %d \n", ir->strings);
+	snprintf(temp, 20, "$str%d", ir->strings);
+   	ir->strings++;
    	return temp;
 }
 
@@ -498,7 +511,11 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 		}
 	}
 	else if(assign->firstChild->nextSibling->type == AST_LITERAL_STRING)
-		IR_insert_string_operands(tab->lastNode, NULL, "string", name, rval, NULL) ;
+	{
+		char* newStr = malloc(20) ;
+		newStr = IR_newString(tab->ir) ;
+		IR_insert_string_operands(tab->lastNode, NULL, "string", newStr, rval, NULL) ;
+	}
 
 	//insere cte
 	//IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;

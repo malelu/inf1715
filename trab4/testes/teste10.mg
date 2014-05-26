@@ -14,4 +14,5 @@ fun main () : int
 	b = new [7][] bool
 
 	c[3] = 2
+
 end
