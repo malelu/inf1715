@@ -14,20 +14,17 @@ Symbol* Symbol_new(const char* name, SymbolType type, int line, int size, int sc
 	sym->size = size ;
 	sym->scope = scope;
 
-	if (num_param >0 )
-	{
-		int cont = 0 ;
-		while (cont < num_param)
-		{
-			sym->fun_param[cont][0] = fun_param[cont][0] ;
-			sym->fun_param[cont][1] = fun_param[cont][1] ;
-			cont++;
-		}
+	int cont = 0 ;
 
-		sym->fun_param[cont][0] = -1 ; //indica que acabou
-		sym->fun_param[cont][1] = -1 ;
+	while (cont < num_param)
+	{
+		sym->fun_param[cont][0] = fun_param[cont][0] ;
+		sym->fun_param[cont][1] = fun_param[cont][1] ;
+		cont++;
 	}
 
+	sym->fun_param[cont][0] = -1 ; //indica que acabou
+	sym->fun_param[cont][1] = -1 ;
 	
 	//fprintf(stderr, "saiu symbol new\n") ;
 	return sym ;
