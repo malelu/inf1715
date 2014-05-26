@@ -1,5 +1,5 @@
 tres ands ou ors de uma vez
 label no caso de if unico sem else
 chamar o retorno do ret de expressao de $ret
-fazer o negativo; tipo -5
+pode? a = 5 - -6
 globais tem que ter ids temporarias?
