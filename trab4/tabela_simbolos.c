@@ -70,8 +70,8 @@ void SymbolTable_delete(SymbolTable* st)
 void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line, int size, int scope,
 			 int num_param, int fun_param[][2], int* fun_ret)
 {
-	fprintf(stderr, "entrou add symbol table\n") ;
-	fprintf(stderr, "name: %s, type: %d\n", name, type) ;
+	//fprintf(stderr, "entrou add symbol table\n") ;
+	//fprintf(stderr, "name: %s, type: %d\n", name, type) ;
 	Symbol* sym = Symbol_new(name, type, line, size, scope, num_param, fun_param, fun_ret) ;
 	NodeTable* new_node = NodeTable_new(sym) ;
 	NodeTable* old_last_node = NULL;
@@ -101,10 +101,6 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope)
 	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
 	node = st->lastNode ;
 
-	printf("nome procurado: %s\n", name) ;
-	
-
- 
 	if (node != NULL)
 	{
 		while((strcmp(node->symbol->name, name) != 0) || ((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope != scope)))
@@ -126,7 +122,7 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope)
 		fprintf(stderr, "saiu get\n") ;*/
 		return node->symbol ;
 	}
-	fprintf(stderr, "SAIU get\n") ;
+	//fprintf(stderr, "SAIU get\n") ;
 	return NULL ;
 	
 }
@@ -136,10 +132,6 @@ Symbol* SymbolTable_getCall(SymbolTable* st, const char* name, int scope)
 	//fprintf(stderr, "entrou get\n") ;
 	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
 	node = st->lastNode ;
-
-	printf("nome procurado: %s\n", name) ;
-	
-
  
 	if (node != NULL)
 	{
@@ -162,7 +154,7 @@ Symbol* SymbolTable_getCall(SymbolTable* st, const char* name, int scope)
 		fprintf(stderr, "saiu get\n") ;*/
 		return node->symbol ;
 	}
-	fprintf(stderr, "SAIU get\n") ;
+	//fprintf(stderr, "SAIU get\n") ;
 	return NULL ;
 	
 }

@@ -492,7 +492,7 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 		(assign->firstChild->nextSibling->type == AST_NEG) || (assign->firstChild->nextSibling->type == AST_NEW))
 	{
 
-		if(assign->firstChild->nextSibling->nextSibling != NULL)   // a var eh vetor
+		if(assign->firstChild->size > 0)   // a var eh vetor
 		{
 			char* indexName = malloc(20) ;
 			int index = assign->firstChild->nextSibling->intVal ;

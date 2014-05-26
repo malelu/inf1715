@@ -199,8 +199,13 @@ cmdatrib: var '=' exp				{ $$.node = AST_new(AST_ATRIB, $1.line);
 						  AST_addChild($$.node, $3.node); 
 						}
 	;
-var	: TK_ID 				{ $$.node = AST_newStringFromToken($1.cValue, $1.line, AST_ID); }
-	| var '[' exp ']'			{ $$.node = AST_prependSibling($3.node, $1.node);  
+var	: TK_ID 				{ $$.node = AST_newStringFromToken($1.cValue, $1.line, AST_ID); 
+						printf("ID: %s\n", $$.node->stringVal) ;
+}
+	| var '[' exp ']'			{ $$.node = AST_prependSibling($3.node, $1.node); 
+						printf("VAR no node: %s\n", $$.node->stringVal) ; 
+						printf("VAL no node: %d\n", $$.node->intVal) ;
+						printf("VAR: %s\n", $1.cValue) ; 
 						  $$.node->size = $$.node->size+1; }
 	;
 chamada : TK_ID '(' lista_exp ')'		{ $$.node = AST_new(AST_CALL, $1.line);

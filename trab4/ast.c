@@ -78,10 +78,19 @@ AST* AST_prependSibling(AST* right_node, AST* left_node)
 		{
 			left_node = left_node->nextSibling ;
 		}
+		while(right_node->prevSibling != NULL)
+		{
+			right_node = right_node->prevSibling ;
+		}
 		right_node->prevSibling = (AST*) malloc(sizeof(AST)) ;
 		left_node->nextSibling = (AST*) malloc(sizeof(AST)) ;
 		right_node->prevSibling = left_node ;
 		left_node->nextSibling = right_node ;
+
+		while(left_node->prevSibling != NULL)
+		{
+			left_node = left_node->prevSibling ;
+		}
 
 		return left_node ;
 	}

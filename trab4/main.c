@@ -189,6 +189,7 @@ void yyerror (const char * s)
 int main (void)
 {
 	//yydebug = 1;
+	yyin = fopen(argv[1], "r");
 	yyparse();
 
 	prettyPrinter(programa) ;
