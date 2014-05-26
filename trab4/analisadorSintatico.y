@@ -195,12 +195,26 @@ cmdwhile: TK_WHILE exp nl
 					  	  AST_addChild($$.node, block); }
 	;
 cmdatrib: var '=' exp				{ $$.node = AST_new(AST_ATRIB, $1.line);
+						  //AST_addChild($$.node, AST_prependSibling($3.node, $1.node));
 						  AST_addChild($$.node, $1.node);
-						  AST_addChild($$.node, $3.node); }
+						printf("vaaaaaar: %s\n", $1.node->stringVal) ;
+						if($1.node->nextSibling != NULL)
+							printf("vaaaaaar pos: %d\n", $1.node->nextSibling->intVal) ;
+						printf("----ANTESvar pos op: %s\n", $$.node->firstChild->stringVal) ;
+						if($$.node->firstChild->nextSibling != NULL)
+							printf("-ANTESvar pos op pos: %d\n", $$.node->firstChild->nextSibling->intVal) ;
+						//printf("var->sibling: %d\n", $1.node->firstChild->nextSibling) ;
+						  AST_addChild($$.node, $3.node); 
+						printf("----var pos op: %s\n", $$.node->firstChild->stringVal) ;
+						if($$.node->firstChild->nextSibling != NULL)
+							printf("-var pos op pos: %d\n", $$.node->firstChild->nextSibling->intVal) ;
+						if($$.node->firstChild->nextSibling->nextSibling != NULL)
+							printf("-var pos op pos: %d\n", $$.node->firstChild->nextSibling->nextSibling->intVal) ;
+
+						}
 	;
 var	: TK_ID 				{ $$.node = AST_newStringFromToken($1.cValue, $1.line, AST_ID); }
-	| var '[' exp ']'			{ $$.node = AST_prependSibling($3.node, $1.node); 
-							printf("EXP: %d\n", $3.iValue) ;
+	| var '[' exp ']'			{ $$.node = AST_prependSibling($3.node, $1.node);  
 						  $$.node->size = $$.node->size+1; }
 	;
 chamada : TK_ID '(' lista_exp ')'		{ $$.node = AST_new(AST_CALL, $1.line);
