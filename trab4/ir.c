@@ -249,19 +249,20 @@ static void IR_genCall(OpTable* tab, AST* entry)
 {
 	AST* param = entry->firstChild->nextSibling ;
 	char listParams[150] = "";
-	char* aux = malloc (50) ;
 	char* final = malloc(150) ;
 
 	while(param != NULL)
 	{
-		snprintf(aux, 50, "param %s ", param->stringVal);
-		strcat(listParams, aux) ;
+		char* lstParams = malloc (50) ;
+		snprintf(lstParams, 50, "param %s ", param->stringVal);
+		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, NULL) ;
+		//strcat(listParams, aux) ;
 		param = param->nextSibling ;
 	}
 	//printf(" call %s\n", entry->firstChild->stringVal);
 
 	strcpy(final, listParams) ;
-	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, final, NULL) ;
+	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, NULL) ;
 }
 
 static void IR_genParam(OpTable* tab, AST* entry)

@@ -123,7 +123,11 @@ void dump(OpTable* tab)
 					}
 					else if(strcmp(cte->operand, "call") == 0)
 					{
-						fprintf(stdout, "\t%scall %s\n", cte->op2, cte->op1);
+						fprintf(stdout, "\tcall %s\n", cte->op1);
+					}
+					else if(strcmp(cte->operand, "param") == 0)
+					{
+						fprintf(stdout, "\t%s\n", cte->op1);
 					}
 					else if(strcmp(cte->operand, "declvar") == 0)
 					{
