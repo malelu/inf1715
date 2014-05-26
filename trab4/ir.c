@@ -468,7 +468,7 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
 static void IR_genAssign(OpTable* tab, AST* assign) 
 {
    	char* name = assign->firstChild->stringVal;
-	char* rval = IR_genExp(tab, assign->firstChild->nextSibling, name, NULL);
+	char* rval = IR_genExp(tab, assign->lastChild, name, NULL);
 
 	if((assign->firstChild->nextSibling->type == AST_NUMINT) || (assign->firstChild->nextSibling->type == AST_CHAR) ||
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
@@ -476,10 +476,26 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 		(assign->firstChild->nextSibling->type == AST_NEG) || (assign->firstChild->nextSibling->type == AST_NEW))
 	{
 
-		if(assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT)
-			IR_insert_operands(tab->lastNode, NULL, "=", name, rval, "byte") ;
+		if(assign->firstChild->nextSibling->nextSibling != NULL)   // a var eh vetor
+		{
+			char* indexName = malloc(20) ;
+			int index = assign->firstChild->nextSibling->intVal ;
+			snprintf(indexName, 20, "%s[%d]", name, index);
+
+			if(assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT)
+				IR_insert_operands(tab->lastNode, NULL, "=", indexName, rval, "byte") ;
+			else
+   				IR_insert_operands(tab->lastNode, NULL, "=", indexName, rval, NULL) ;
+		}
+
+
 		else
-   			IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
+		{
+			if(assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT)
+				IR_insert_operands(tab->lastNode, NULL, "=", name, rval, "byte") ;
+			else
+   				IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
+		}
 	}
 	else if(assign->firstChild->nextSibling->type == AST_LITERAL_STRING)
 		IR_insert_string_operands(tab->lastNode, NULL, "string", name, rval, NULL) ;
