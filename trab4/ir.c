@@ -336,7 +336,7 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
 	
 	if((exp->type != AST_NUMINT) && (exp->type != AST_CHAR) && (exp->type != AST_STRING) && (exp->type != AST_BOOL) &&
 	(exp->type != AST_TRUE) && (exp->type != AST_FALSE) && (exp->type != AST_LITERAL_STRING) && (exp->type != AST_NOT) &&
-	(exp->type != AST_AND) && (exp->type != AST_NEG))
+	(exp->type != AST_AND) && (exp->type != AST_NEG) && (exp->type != AST_NEW))
 	{
 		if(var == NULL)
 		{
@@ -426,6 +426,11 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
 			snprintf(negExp, 20, "-%d", exp->firstChild->intVal);
 			return negExp ;
       		}
+		case AST_NEW: {
+			char* newExp = malloc(20) ;
+			snprintf(newExp, 20, "new %d", exp->firstChild->intVal);
+			return newExp ;
+      		}
 		case AST_NOT: {
 			//printf(" NOT\n");
 			if(exp->firstChild->type == AST_TRUE)
@@ -468,7 +473,7 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 	if((assign->firstChild->nextSibling->type == AST_NUMINT) || (assign->firstChild->nextSibling->type == AST_CHAR) ||
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
 		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE) ||
-		(assign->firstChild->nextSibling->type == AST_NEG))
+		(assign->firstChild->nextSibling->type == AST_NEG) || (assign->firstChild->nextSibling->type == AST_NEW))
 	{
    		IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 	}
