@@ -567,7 +567,7 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 		call->symbol_type = SYM_FUN ;
       		assert(existing->type == SYM_FUN);
 
-
+		printf("CONT PARAM %d\n", existing->fun_param[cont_param][1]) ;
 		if (existing->fun_param[cont_param][1] != -1)
 			return fail("missing parameters!", name, call);
 

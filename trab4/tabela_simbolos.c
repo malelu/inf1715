@@ -104,27 +104,16 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name, int scope)
 	NodeTable* node = (NodeTable*) malloc(sizeof(NodeTable)) ;
 	node = st->lastNode ;
 
-	//fprintf(stderr, "etab\n") ;
-	//fprintf(stderr, "%d\n", node) ;
-	printf("GET name: %s\n", name) ;
 	if (node != NULL)
 	{
-		while((strcmp(node->symbol->name, name) != 0))// || ((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope != scope)))
+		while((strcmp(node->symbol->name, name) != 0))
 		{
-			//printf("get node->symbol->name: %s\n", node->symbol->name) ;
-			//printf("get node->symbol->scope: %d\n", node->symbol->scope) ;
-			//printf("get scope: %d\n", scope) ;
 			if(node->prevNode == NULL)
 			{
 				//fprintf(stderr, "no symbol match this name\n") ;
 				return NULL ;
 			}	
-
-			//if((strcmp(node->symbol->name, name) == 0) && (node->symbol->scope == -1))	//é global
-			//{
-				//fprintf(stderr, "É GLOBAL\n") ;
-			//	return node->symbol ;
-			//}	
+	
 			node = node->prevNode ;
 		}
 		

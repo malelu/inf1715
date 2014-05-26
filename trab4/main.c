@@ -63,6 +63,7 @@ void dump(OpTable* tab)
 {
 	int cont = 0 ;
 	NodeFunc* func = tab->firstNode ; 
+	NodeFunc* funcCall = NULL ; 
 	NodeCte* cte ;
 	
 	/* imprime as strings */
@@ -119,10 +120,10 @@ void dump(OpTable* tab)
 					{
 						fprintf(stdout, "\tif %s goto %s\n", cte->op1, cte->op2);
 					}
-					//else if(strcmp(cte->operand, "none") == 0)
-					//{
-					//	fprintf(stdout, "%s: \n", cte->label);
-					//}
+					else if(strcmp(cte->operand, "call") == 0)
+					{
+						fprintf(stdout, "\t%scall %s\n", cte->op2, cte->op1);
+					}
 					else if(strcmp(cte->operand, "declvar") == 0)
 					{
 						fprintf(stdout, "\t%s = 0\n", cte->op1);
