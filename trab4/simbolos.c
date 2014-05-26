@@ -82,15 +82,15 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		{
 			if (existing->type == SYM_INT)
 			{
-				return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, existing->size - exp->size, exp->intVal);
+				return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, exp->size, exp->intVal);
 			}
 			else if (existing->type == SYM_BOOL)
 			{
-				return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, existing->size - exp->size, exp->intVal);
+				return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, exp->size, exp->intVal);
 			}
 			else if (existing->type == SYM_CHAR )
 			{
-				return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, existing->size - exp->size, exp->intVal);
+				return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, exp->size, exp->intVal);
 			}
 		}
 
@@ -634,7 +634,13 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 					return true;
 				}
 				else
+				{
+					printf("assign size: %d\n", assign_type[1]);
+					printf("valExistingAssign: %d\n", valExistingAssign);
+					printf("existing size: %d\n", existing->size);
+					printf("firstChild size: %d\n", assign->firstChild->size);
 					return fail("assigned wrong size value to an int variable!", name, assign);
+				}
 			}
 			else
 				return fail("assigned invalid value to an int variable!", name, assign);

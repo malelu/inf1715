@@ -279,12 +279,7 @@ static void IR_genRet(OpTable* tab, AST* entry)
 			IR_insert_operands(tab->lastNode, NULL, "ret", entry->firstChild->stringVal, NULL, NULL) ;
 		else	//se retorna um numero
 		{
-			//char* strRet = malloc(20) ;
-			//snprintf(strRet, 20, "%d", entry->firstChild->intVal);
-			//char* ret = malloc(5) ;
-			//strcpy(ret, "$ret") ;
 			temp = IR_genExp(tab, entry->firstChild, NULL, NULL);
-			//IR_insert_operands(tab->lastNode, NULL, "=", temp, NULL, NULL) ;
 			IR_insert_operands(tab->lastNode, NULL, "ret", temp, NULL, NULL) ;
 		}
 	else

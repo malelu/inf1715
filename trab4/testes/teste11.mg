@@ -7,3 +7,4 @@ fun main () : []int
 
 	return c
 end
+
