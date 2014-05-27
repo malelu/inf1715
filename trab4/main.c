@@ -178,6 +178,14 @@ void dump(OpTable* tab)
 				cte = cte->nextNode ;
 			}
 		}
+		if(func->nextFunc == NULL)
+		{
+			if(func->lastCte != NULL)
+			{
+				if(strcmp(func->lastCte->operand, "ret") != 0)
+					fprintf(stdout, "\tret\n");
+			}
+		}
 		func = func->nextFunc ;
 		fprintf(stdout, "\n");
 	}

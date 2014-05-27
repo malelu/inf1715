@@ -159,8 +159,26 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	else if (exp->type == AST_GREATER || exp->type == AST_LESS || exp->type == AST_GREATER_EQUAL 
 		 || exp->type == AST_LESS_EQUAL || exp->type == AST_EQUAL || exp->type == AST_NOT_EQUAL)
 	{
-		child1 = Symbols_visitExpression(st, exp->firstChild) ;
-		child2 = Symbols_visitExpression(st, exp->lastChild) ;
+		if(exp->firstChild->type == AST_ID && exp->firstChild->size > 0)  // se for vetor, pega o proximo dps do vetor
+		{
+			int cont = 0 ;
+			AST* begNext = exp->firstChild->nextSibling ;
+			while(cont < exp->firstChild->size)
+			{
+				begNext = begNext->nextSibling ;
+				cont++ ;
+			}
+
+			//child1 = Symbols_visitExpression(st, exp->firstChild) ;
+			child1[0] = exp->firstChild->nextSibling->type ;
+			child1[1] = exp->size ;
+			child2 = Symbols_visitExpression(st, begNext) ;
+		}
+		else
+		{
+			child1 = Symbols_visitExpression(st, exp->firstChild) ;
+			child2 = Symbols_visitExpression(st, exp->lastChild) ;
+		}
 
 		if(((child1[0] == AST_NUMINT) || (child1[0] == AST_CHAR)) && ((child2[0] == AST_NUMINT) || (child2[0] == AST_CHAR)))
 		{
@@ -187,8 +205,26 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 
 	else if (exp->type == AST_AND || exp->type == AST_OR)
 	{
-		child1 = Symbols_visitExpression(st, exp->firstChild) ;
-		child2 = Symbols_visitExpression(st, exp->lastChild) ;
+		if(exp->firstChild->type == AST_ID && exp->firstChild->size > 0)  // se for vetor, pega o proximo dps do vetor
+		{
+			int cont = 0 ;
+			AST* begNext = exp->firstChild->nextSibling ;
+			while(cont < exp->firstChild->size)
+			{
+				begNext = begNext->nextSibling ;
+				cont++ ;
+			}
+
+			//child1 = Symbols_visitExpression(st, exp->firstChild) ;
+			child1[0] = exp->firstChild->nextSibling->type ;
+			child1[1] = exp->size ;
+			child2 = Symbols_visitExpression(st, begNext) ;
+		}
+		else
+		{
+			child1 = Symbols_visitExpression(st, exp->firstChild) ;
+			child2 = Symbols_visitExpression(st, exp->lastChild) ;
+		}
 
 		if(child1[0] == AST_BOOL && child2[0] == AST_BOOL)
 		{
