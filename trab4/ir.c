@@ -43,6 +43,8 @@ static IR* IR_new() ;
 static void IR_genEntry(OpTable* tab, AST* entry) ;
 
 
+char* tempVec ;
+
 static void IR_startFunction(OpTable* tab, char* name) 
 {
 	if(tab->firstNode == NULL)
@@ -323,8 +325,31 @@ static char* IR_insertAnd(OpTable* tab, AST* exp, char* operand, char* temp, cha
 
 static char* IR_insertExp(OpTable* tab, AST* exp, char* operand, char* temp, char* not)
 {
-        char* e1 = IR_genExp(tab, exp->firstChild, NULL, not);
-        char* e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL, not);
+	char* e1 = NULL ;
+	char* e2 = NULL ;
+	if(exp->firstChild->type == AST_ID && exp->firstChild->size > 0)
+	{
+		printf("aQUIIIIIIII\n") ;
+		printf("var: %s\n", exp->firstChild->stringVal) ;
+		int cont = 0 ;
+		AST * next = exp->firstChild->nextSibling ;
+		while(cont < exp->firstChild->size)
+		{
+			next = next->nextSibling ;
+			cont++ ;
+		}
+		printf("temp: %s\n", temp) ;
+		e1 = IR_genExp(tab, exp->firstChild, NULL, not);
+		if( e1 == NULL)
+			e1 = tempVec ;
+		printf("next: %d\n", next->intVal) ;
+        	e2 = IR_genExp(tab, next, NULL, not);
+	}
+	else
+	{
+        	e1 = IR_genExp(tab, exp->firstChild, NULL, not);
+        	e2 = IR_genExp(tab, exp->firstChild->nextSibling, NULL, not);
+	}
 
 	IR_insert_operands(tab->lastNode, NULL, operand, strdup(temp), e1, e2) ;
 
@@ -487,21 +512,24 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
 
 static char* insertRightAssign (OpTable* tab, AST* id)
 {
-	char* temp1 = IR_newTemp(tab->ir) ;
+	tempVec = IR_newTemp(tab->ir) ;
+	char* temp1 = malloc(20) ;
+	strcpy(temp1, tempVec) ;
 	char* temp = NULL ;
 	char* nam = malloc(20) ;
 	int cont = 0 ;
 	char * aux = malloc(20) ;
 	AST* indexes = id->nextSibling ;
-	printf("passou!!!1\n") ;
 	snprintf(nam, 20, "%s[%d]", id->stringVal, indexes->intVal);
-	printf("passou!!!2\n") ;
 	IR_insert_operands(tab->lastNode, NULL, "=", temp1, nam, NULL) ;
 	indexes = indexes->nextSibling ;
 	cont++ ;
-			printf("passou!!!\n") ;
+
+	printf("teeeeeeeemp: %s\n", temp1) ;
+
 	while(cont < id->size)
 	{
+		printf("entroooooooou\n") ;
 		//int index = assign->firstChild->nextSibling->intVal ;
 		char* aux2 = malloc(20) ;
 		temp = IR_newTemp(tab->ir) ;

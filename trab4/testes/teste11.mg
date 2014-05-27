@@ -10,7 +10,7 @@ fun main () : []int
 
 	c = f[4][9]
 
-	b[5][5] = c[1] - 6
+	b[5][5] = c[1] - 6 + 8
 
 	return c
 end
