@@ -60,7 +60,7 @@ void prettyPrinter(AST* node)
 
 }
 
-void dump(OpTable* tab)
+void dump(OpTable* tab, FILE* file)
 {
 	int cont = 0 ;
 	NodeFunc* func = tab->firstNode ; 
@@ -73,7 +73,7 @@ void dump(OpTable* tab)
 		StringCte* str = func->firstStringCte ;
 		while(str != NULL)
 		{
-			fprintf(stdout, "\tstring %s = %s\n", str->op1, str->op2);
+			fprintf(file, "\tstring %s = %s\n", str->op1, str->op2);
 			str = str->nextNode ;
 		}
 
@@ -85,7 +85,7 @@ void dump(OpTable* tab)
 	while(func != NULL)
 	{
 		if(func->global != NULL)
-			fprintf(stdout, "\tglobal %s\n", func->global);
+			fprintf(file, "\tglobal %s\n", func->global);
 
 		func = func->nextFunc ;
 	}
@@ -95,60 +95,60 @@ void dump(OpTable* tab)
 	{
 		if(func->funcName != NULL)
 		{
-			fprintf(stdout, "\tfun %s (", func->funcName);
+			fprintf(file, "\tfun %s (", func->funcName);
 			while(func->params[cont] != NULL)
 			{
-				fprintf(stdout, "%s", func->params[cont]);
+				fprintf(file, "%s", func->params[cont]);
 				if(func->params[cont+1] != NULL)
-					fprintf(stdout, ", ");
+					fprintf(file, ", ");
 				cont++ ;
 			}
-			fprintf(stdout, ")\n");
+			fprintf(file, ")\n");
 
 			cte = func->firstCte ;
 			while(cte != NULL)
 			{
 				if(cte->label != NULL)				
-					fprintf(stdout, "%s: ", cte->label);
+					fprintf(file, "%s: ", cte->label);
 
 				if(cte->operand != NULL)
 				{
 					if(strcmp(cte->operand, "if false") == 0 || strcmp(cte->operand, "else if false") == 0)
 					{
-						fprintf(stdout, "\tiffalse %s goto %s\n", cte->op1, cte->op2);
+						fprintf(file, "\tifFalse %s goto %s\n", cte->op1, cte->op2);
 					}
 					if(strcmp(cte->operand, "if") == 0)
 					{
-						fprintf(stdout, "\tif %s goto %s\n", cte->op1, cte->op2);
+						fprintf(file, "\tif %s goto %s\n", cte->op1, cte->op2);
 					}
 					else if(strcmp(cte->operand, "call") == 0)
 					{
-						fprintf(stdout, "\tcall %s\n", cte->op1);
+						fprintf(file, "\tcall %s\n", cte->op1);
 					}
 					else if(strcmp(cte->operand, "param") == 0)
 					{
-						fprintf(stdout, "\t%s\n", cte->op1);
+						fprintf(file, "\t%s\n", cte->op1);
 					}
 					else if(strcmp(cte->operand, "declvar") == 0)
 					{
-						fprintf(stdout, "\t%s = 0\n", cte->op1);
+						fprintf(file, "\t%s = 0\n", cte->op1);
 					}
 					else if(strcmp(cte->operand, "goto") == 0)
 					{
-						fprintf(stdout, "\tgoto %s\n", cte->op1);
+						fprintf(file, "\tgoto %s\n", cte->op1);
 					}
 					else if ((strcmp(cte->operand, ">") == 0) || (strcmp(cte->operand, "<") == 0) || 
 						(strcmp(cte->operand, "+") == 0) || (strcmp(cte->operand, "-") == 0) || 
 						(strcmp(cte->operand, "*") == 0) || (strcmp(cte->operand, "/") == 0)
-						|| (strcmp(cte->operand, "GE") == 0) || (strcmp(cte->operand, "NE") == 0)
-						|| (strcmp(cte->operand, "EQ") == 0))
+						|| (strcmp(cte->operand, ">=") == 0) || (strcmp(cte->operand, "!=") == 0)
+						|| (strcmp(cte->operand, "==") == 0))
 					{
-						fprintf(stdout, "\t%s = %s %s %s\n", cte->op1, cte->op2, cte->operand, cte->op3);
+						fprintf(file, "\t%s = %s %s %s\n", cte->op1, cte->op2, cte->operand, cte->op3);
 					}
 					else if (strcmp(cte->operand, "=") == 0) 
 					{
 						if(cte->op2[0] != 'n' && cte->op3 != NULL)  /* imprime atrib a char, sem o new */
-							fprintf(stdout, "\t%s %s %s %s\n", cte->op1, cte->operand, cte->op3, cte->op2);
+							fprintf(file, "\t%s %s %s %s\n", cte->op1, cte->operand, cte->op3, cte->op2);
 						else if(cte->op2[0] == 'n' && cte->op3 != NULL)  /* imprime atrib a char, com o new */
 						{
 							int cont = 4 ;
@@ -158,21 +158,21 @@ void dump(OpTable* tab)
 								number[cont-4] = cte->op2[cont] ;
 								cont++ ;
 							}
-							fprintf(stdout, "\t%s %s new %s %s\n", cte->op1, cte->operand, cte->op3, number);
+							fprintf(file, "\t%s %s new %s %s\n", cte->op1, cte->operand, cte->op3, number);
 						}
 						else
-							fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
+							fprintf(file, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 					}
 					else if (strcmp(cte->operand, "and") == 0) 
 					{
-						fprintf(stdout, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
+						fprintf(file, "\t%s %s %s\n", cte->op1, cte->operand, cte->op2);
 					}
 					else if (strcmp(cte->operand, "ret") == 0) 
 					{
 						if(cte->op1 == NULL)
-							fprintf(stdout, "\tret\n");
+							fprintf(file, "\tret\n");
 						else
-							fprintf(stdout, "\tret %s\n", cte->op1);
+							fprintf(file, "\tret %s\n", cte->op1);
 					}
 				}
 				cte = cte->nextNode ;
@@ -183,11 +183,11 @@ void dump(OpTable* tab)
 			if(func->lastCte != NULL)
 			{
 				if(strcmp(func->lastCte->operand, "ret") != 0)
-					fprintf(stdout, "\tret\n");
+					fprintf(file, "\tret\n");
 			}
 		}
 		func = func->nextFunc ;
-		fprintf(stdout, "\n");
+		fprintf(file, "\n");
 	}
 }
 
@@ -205,13 +205,19 @@ int main (int argc, char** argv)
 	yyin = fopen(argv[1], "r");
 	yyparse();
 
-	prettyPrinter(programa) ;
 	error = Symbols_annotate(programa) ;
 	if (error == 1)
 	{
+		FILE* file = fopen("saida.ir", "wt") ;
+		if( file == NULL)
+		{
+			printf("erro na criacao do arquivo!\n") ;
+			exit(1) ;
+		}
 		prettyPrinter(programa) ;
 		OpTable* tab = IR_gen(programa) ;
-		dump(tab) ;
+		dump(tab, file) ;
+		fclose(file) ;
 	}
 
 	if (error == 0)

@@ -2,22 +2,26 @@
 Aluna: Marina Leao Lucena
 Professor: Hisham Muhammad
 Matéria: Compiladores
-Trabalho: Tabela de símbolos
+Trabalho: Código de três endereços
 *****************************************
 
 *****************************************
 Diretórios e arquivos:
 
 	- Diretório testes
-		-teste1.mg e derivados
-		-teste2.mg e derivados
-		-teste3.mg e derivados
-		-teste4.mg e derivados
+		-teste1.mg
+		-teste2.mg
+		-teste3.mg
+		-teste4.mg
 		-teste5.mg
 		-teste6.mg
 		-teste7.mg
-		-teste8.mg e derivados
+		-teste8.mg
 		-teste9.mg
+		-teste10.mg
+		-teste11.mg
+		-teste12.mg
+		-teste13.mg
 	- main.c
 	- analisadorLexico.l
 	- analisadorSintatico.y
@@ -37,7 +41,7 @@ Para executar o programa, siga os seguintes passos:
 	- Abra o terminal
 	- Navegue ao diretório do trabalho pelo terminal
 	- Escreva no terminal o comando "make" e pressione enter para compilar o programa e criar o executável
-	- Escreva no terminal o comando ./programa <testes/teste*.mg		* sendo um número do teste
+	- Escreva no terminal o comando ./programa testes/teste*.mg		* sendo um número do teste
 	- Confira a saída no arquivo saida.txt
 
 *****************************************

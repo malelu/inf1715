@@ -20,7 +20,7 @@ global { return GLOBAL; }
 string { return STRING; }
 new { return NEW; }
 if { return IF; }
-ifFalse { return IFFALSE; }
+ifFalse {return IFFALSE; }
 goto { return GOTO; }
 param { return PARAM; }
 call { return CALL; }

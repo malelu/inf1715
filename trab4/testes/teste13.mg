@@ -6,8 +6,10 @@ end
 fun func () : int
 
 	x : int
+	c : [][]int
 	l : bool
 
-	x = main(l)
+	x = main(l) + 6
+
 	return 4
 end

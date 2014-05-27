@@ -181,7 +181,7 @@ static char* IR_newString(IR* ir)
 static char* IR_newLabel(IR* ir) 
 {
 	char* label = malloc(20);
-	snprintf(label, 20, "L%d", ir->labels);
+	snprintf(label, 20, ".L%d", ir->labels);
    	ir->labels++;
    	return label;
 }
@@ -416,38 +416,38 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
 			if(not == NULL) 
 				return IR_insertExp(tab, exp, "<", temp, not) ;
 			else 
-				return IR_insertExp(tab, exp, "GE", temp, not) ;
+				return IR_insertExp(tab, exp, ">=", temp, not) ;
       		}
 		case AST_GREATER: {
 			if(not == NULL) 
 				return IR_insertExp(tab, exp, ">", temp, not) ;
 			else 
-				return IR_insertExp(tab, exp, "LE", temp, not) ;
+				return IR_insertExp(tab, exp, "<=", temp, not) ;
       		}
 		case AST_GREATER_EQUAL: {
 			if(not == NULL) 
-				return IR_insertExp(tab, exp, "GE", temp, not) ;
+				return IR_insertExp(tab, exp, ">=", temp, not) ;
 			else 
 				return IR_insertExp(tab, exp, "<", temp, not) ;
       		}
 		case AST_LESS_EQUAL: {
 			if(not == NULL) 
-				return IR_insertExp(tab, exp, "LE", temp, not) ;
+				return IR_insertExp(tab, exp, "<=", temp, not) ;
 			else 
 				return IR_insertExp(tab, exp, ">", temp, not) ;
       		}
 		case AST_EQUAL: {
 			if(not == NULL) 
-				return IR_insertExp(tab, exp, "EQ", temp, not) ;
+				return IR_insertExp(tab, exp, "==", temp, not) ;
 			else 
-				return IR_insertExp(tab, exp, "NE", temp, not) ;
+				return IR_insertExp(tab, exp, "!=", temp, not) ;
       		}
 		case AST_NOT_EQUAL: {
 			if(not == NULL) 
 
-				return IR_insertExp(tab, exp, "NE", temp, not) ;
+				return IR_insertExp(tab, exp, "!=", temp, not) ;
 			else 
-				return IR_insertExp(tab, exp, "EQ", temp, not) ;
+				return IR_insertExp(tab, exp, "==", temp, not) ;
       		}
 		/*case AST_AND: {
 			return IR_insertAnd(tab, exp, "and", temp, not) ;
@@ -461,8 +461,10 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
       		}      	*/	
 		case AST_NEG: {
 			char* negExp = malloc(20) ;
+			temp = IR_newTemp(tab->ir);
 			snprintf(negExp, 20, "-%d", exp->firstChild->intVal);
-			return negExp ;
+			IR_insert_operands(tab->lastNode, NULL, "=", temp, negExp, NULL) ;
+			return temp ;
       		}
 		case AST_NEW: {
 			char* newExp = malloc(20) ;
@@ -505,7 +507,7 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
       		case AST_CALL: {
 			IR_genCall(tab, exp) ;
 			IR_insert_operands(tab->lastNode, NULL, "=", temp, "$ret", NULL) ;
-			return "$ret" ;
+			return temp ;
 		}
       		default:
 			printf("TIPOOOO: %d\n", exp->type) ;
@@ -592,7 +594,7 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 			char* aux = malloc(20) ;
 			strcpy(aux,"") ;
 
-			if(assign->firstChild->size == 1)
+			if(assign->firstChild->size == 0)
 			{
 				while(cont < assign->firstChild->size)
 				{
@@ -610,7 +612,7 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 			else
 			{
 				char* temp1 = IR_newTemp(tab->ir) ;
-				char* temp = NULL ;
+				char* temp = temp1 ;
 				char* nam = malloc(20) ;
 				snprintf(nam, 20, "%s[%d]", name, indexes->intVal);
 				IR_insert_operands(tab->lastNode, NULL, "=", temp1, nam, NULL) ;
@@ -635,10 +637,26 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 			}
 		
 
-			if(assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT)
-				IR_insert_operands(tab->lastNode, NULL, "=", indexName, rval, "byte") ;
+			if((assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT) ||
+				(assign->lastChild->type == AST_TRUE) || (assign->lastChild->type == AST_FALSE))
+			{
+				AST* auxNew  = assign->firstChild ;
+				int newSize = 0 ;
+				while(auxNew != NULL)
+				{
+					if(auxNew->type = AST_NEW)
+					{
+						newSize = auxNew->size ;
+					}
+					auxNew = auxNew->nextSibling ;					
+				}
+				if(newSize == 1)
+					IR_insert_operands(tab->lastNode, NULL, "=", name, rval, "byte") ;
+				else
+					IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
+			}
 			else
-   				IR_insert_operands(tab->lastNode, NULL, "=", indexName, rval, NULL) ;
+   				IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 		}
 
 
@@ -646,7 +664,22 @@ static void IR_genAssign(OpTable* tab, AST* assign)
 		{
 			if((assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT) ||
 				(assign->lastChild->type == AST_TRUE) || (assign->lastChild->type == AST_FALSE))
-				IR_insert_operands(tab->lastNode, NULL, "=", name, rval, "byte") ;
+			{
+				AST* auxNew  = assign->firstChild ;
+				int newSize = 0 ;
+				while(auxNew != NULL)
+				{
+					if(auxNew->type = AST_NEW)
+					{
+						newSize = auxNew->size ;
+					}
+					auxNew = auxNew->nextSibling ;					
+				}
+				if(newSize == 1)
+					IR_insert_operands(tab->lastNode, NULL, "=", name, rval, "byte") ;
+				else
+					IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
+			}
 			else
    				IR_insert_operands(tab->lastNode, NULL, "=", name, rval, NULL) ;
 		}
