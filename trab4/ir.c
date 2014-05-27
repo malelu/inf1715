@@ -23,6 +23,7 @@ static void IR_genChar(OpTable* tab, AST* entry) ;
 static void IR_genBool(OpTable* tab, AST* entry) ;
 static void IR_genString(OpTable* tab, AST* entry) ;
 static char* IR_genExp(OpTable* tab, AST* exp, char* temp, char* not) ;
+static char* insertRightAssign (OpTable* tab, AST* id) ;
 static void IR_genAssign(OpTable* tab, AST* assign) ;
 static void IR_genElseEntry(OpTable* tab, AST* entry) ;
 static void IR_genElse(OpTable* tab, AST* _else, char* labelFinal) ;
@@ -468,28 +469,37 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
          		snprintf(str, 50, "\"%s\"", exp->stringVal);
          		return str;
       		}
-      		case AST_ID:
-         		return strdup(exp->stringVal);
+      		case AST_ID: {
+			if(exp->size == 0)
+         			return strdup(exp->stringVal);
+			else
+			{
+				return insertRightAssign (tab, exp) ;
+			}
+		}
       		default:
+			printf("TIPOOOO: %d\n", exp->type) ;
          		assert(0);
          		return NULL;
    	}
 
 }
 
-static void insertRightAssign (OpTable* tab, AST* id)
+static char* insertRightAssign (OpTable* tab, AST* id)
 {
 	char* temp1 = IR_newTemp(tab->ir) ;
 	char* temp = NULL ;
 	char* nam = malloc(20) ;
 	int cont = 0 ;
 	char * aux = malloc(20) ;
-	AST* indexes = id->nextSibling->intVal ;
+	AST* indexes = id->nextSibling ;
+	printf("passou!!!1\n") ;
 	snprintf(nam, 20, "%s[%d]", id->stringVal, indexes->intVal);
+	printf("passou!!!2\n") ;
 	IR_insert_operands(tab->lastNode, NULL, "=", temp1, nam, NULL) ;
 	indexes = indexes->nextSibling ;
 	cont++ ;
-			
+			printf("passou!!!\n") ;
 	while(cont < id->size)
 	{
 		//int index = assign->firstChild->nextSibling->intVal ;
@@ -505,6 +515,7 @@ static void insertRightAssign (OpTable* tab, AST* id)
 	}
 
 	//snprintf(indexName, 20, "%s", temp);	
+	return temp ;
 }
 
 static void IR_genAssign(OpTable* tab, AST* assign) 

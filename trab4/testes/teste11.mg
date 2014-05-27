@@ -1,8 +1,6 @@
 fun main () : []int
 
 	c : []int
-	p : int
-	j : int
 	b : [][]int
 	f : [][][]char
 
@@ -10,9 +8,9 @@ fun main () : []int
 	f[4] = new [2][] char
 	f[5][1] = new [2] char
 
-	p = j + 6 - 7
-
 	c = f[4][9]
+
+	b[5][5] = c[1] - 6
 
 	return c
 end
