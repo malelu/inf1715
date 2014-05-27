@@ -40,11 +40,14 @@ static bool fail(const char* msg, const char* name, AST* node)
 
 static int* Symbols_setExpression (int* ret_expression, AST* exp, int SymbolType, int ASTtype, int size, int val)
 {
+printf("aaaadsfsdfsdfsa\n") ;
 	exp->symbol_type = SymbolType ;
 	exp->size = size ;
 	ret_expression[0] = ASTtype ;
 	ret_expression[1] = size ;
 	ret_expression[2] = val ;
+	printf("ret_exp: %d\n", ret_expression) ;
+	printf("ret_exp[0]: %d\n", ret_expression[0]) ;
 	return ret_expression ;
 }
 
@@ -286,9 +289,44 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 			exit(1);
 		}
 	}
+	else if (exp->type == AST_CALL)
+	{
+		char* name = exp->firstChild->stringVal ;
+		printf("name %s\n", name) ;
+		Symbol* func = SymbolTable_getCall(st, name, symbol_table_scope);
+		printf("func %d\n", func) ;
+	printf("aaaaaaaaaaaaaaaaa\n") ;
+	printf("fuuu %d\n", func->fun_ret[0]) ;
+		if(true)
+		{
+			int* aux = Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, 0, func->size) ;
+//static int* Symbols_setExpression (int* ret_expression, AST* exp, int SymbolType, int ASTtype, int size, int val)
+			printf("aux: %d\n", aux) ;
+			return aux ;
+		}
+/*{
+	exp->symbol_type = SymbolType ;
+	exp->size = size ;
+	ret_expression[0] = ASTtype ;
+	ret_expression[1] = size ;
+	ret_expression[2] = val ;
+	return ret_expression ;
+}
+*/
+		//if(func->fun_ret[0] == exp->first
+
+		else
+		{
+			ret_expression[0]=-1 ;
+			ret_expression[1]=-1 ;
+			fprintf(stderr, "invalid - expression! - %s at line %d\n", "neg", exp->line);
+			exit(1);
+		}
+	}
 
 	ret_expression[0]=-1 ;
 	ret_expression[1]=-1 ;
+	printf("EXPPPPPPP %d\n", exp->type) ;
 	fprintf(stderr, "invalid expression! - %s at line %d\n", "exp", exp->line);
 	exit(1);
 }
@@ -651,9 +689,10 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
    	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	int* assign_type ;
 	AST* assignVector ;
-
+printf("bbbbbbbbbbbbbbbbb\n");
 	assign_type = Symbols_visitExpression(st, assign->lastChild);
-
+printf("ccccccccc\n");
+printf("assign type: %d\n", assign_type) ;
 	assignVector = assign->firstChild->nextSibling ;
 	while(assignVector != NULL)
 	{
@@ -677,6 +716,7 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 
 		else if (existing->type == SYM_INT)
 		{
+			printf("assign type[0]: %d\n", assign_type[0]) ;
 			if ((assign_type[0] == AST_NUMINT) || (assign_type[0] == AST_CHAR) || (assign_type[0] == AST_NEW))
 			{
 				if((Symbols_Module(assign_type[1], valExistingAssign))==

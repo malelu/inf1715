@@ -502,6 +502,11 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
 				return insertRightAssign (tab, exp) ;
 			}
 		}
+      		case AST_CALL: {
+			IR_genCall(tab, exp) ;
+			IR_insert_operands(tab->lastNode, NULL, "=", temp, "$ret", NULL) ;
+			return "$ret" ;
+		}
       		default:
 			printf("TIPOOOO: %d\n", exp->type) ;
          		assert(0);
