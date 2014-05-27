@@ -477,22 +477,119 @@ static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS 
 
 }
 
+static void insertRightAssign (OpTable* tab, AST* id)
+{
+	char* temp1 = IR_newTemp(tab->ir) ;
+	char* temp = NULL ;
+	char* nam = malloc(20) ;
+	int cont = 0 ;
+	char * aux = malloc(20) ;
+	AST* indexes = id->nextSibling->intVal ;
+	snprintf(nam, 20, "%s[%d]", id->stringVal, indexes->intVal);
+	IR_insert_operands(tab->lastNode, NULL, "=", temp1, nam, NULL) ;
+	indexes = indexes->nextSibling ;
+	cont++ ;
+			
+	while(cont < id->size)
+	{
+		//int index = assign->firstChild->nextSibling->intVal ;
+		char* aux2 = malloc(20) ;
+		temp = IR_newTemp(tab->ir) ;
+		int index = indexes->intVal ;
+		snprintf(aux2, 20, "%s[%d]", temp1, index);
+		strcat(aux, aux2) ;
+		IR_insert_operands(tab->lastNode, NULL, "=", temp, aux, NULL) ;
+		indexes = indexes->nextSibling ;
+		temp1 = temp ;
+		cont++ ;
+	}
+
+	//snprintf(indexName, 20, "%s", temp);	
+}
+
 static void IR_genAssign(OpTable* tab, AST* assign) 
 {
    	char* name = assign->firstChild->stringVal;
-	char* rval = IR_genExp(tab, assign->lastChild, name, NULL);
+	bool assVector = false ;
+	char* rval = NULL ;
+	AST* idPos = NULL ;
+	AST* lookForId = assign->firstChild->nextSibling ;  /* ve se a atribuicao é de vetor */
+	while(lookForId != NULL)
+	{
+		if(lookForId->type == AST_ID)	//recebe variavel
+		{
+			idPos = lookForId ;
+			assVector++ ;
+		}
+		lookForId = lookForId->nextSibling ;
+	}
+
+	if(assVector > 0 && idPos->size > 0)
+	{
+		rval = IR_genExp(tab, idPos, name, NULL);
+	}
+	else
+	{
+		rval = IR_genExp(tab, assign->lastChild, name, NULL);
+	}
 
 	if((assign->firstChild->nextSibling->type == AST_NUMINT) || (assign->firstChild->nextSibling->type == AST_CHAR) ||
 		(assign->firstChild->nextSibling->type == AST_STRING) || (assign->firstChild->nextSibling->type == AST_BOOL) ||
 		(assign->firstChild->nextSibling->type == AST_TRUE) || (assign->firstChild->nextSibling->type == AST_FALSE) ||
-		(assign->firstChild->nextSibling->type == AST_NEG) || (assign->firstChild->nextSibling->type == AST_NEW))
+		(assign->firstChild->nextSibling->type == AST_NEG) || (assign->firstChild->nextSibling->type == AST_NEW) ||
+		(assign->firstChild->nextSibling->type == AST_ID))
 	{
 
 		if(assign->firstChild->size > 0)   // a var eh vetor
 		{
+			int cont = 0 ;
+			AST* indexes = assign->firstChild->nextSibling ;
 			char* indexName = malloc(20) ;
-			int index = assign->firstChild->nextSibling->intVal ;
-			snprintf(indexName, 20, "%s[%d]", name, index);
+			char* aux = malloc(20) ;
+			strcpy(aux,"") ;
+
+			if(assign->firstChild->size == 1)
+			{
+				while(cont < assign->firstChild->size)
+				{
+					//int index = assign->firstChild->nextSibling->intVal ;
+					char* aux2 = malloc(20) ;
+					int index = indexes->intVal ;
+					snprintf(aux2, 20, "[%d]", index);
+					strcat(aux, aux2) ;
+					printf("AUX: %s\n", aux) ;
+					indexes = indexes->nextSibling ;
+					cont++ ;
+				}	
+				snprintf(indexName, 20, "%s%s", name, aux);
+			}
+			else
+			{
+				char* temp1 = IR_newTemp(tab->ir) ;
+				char* temp = NULL ;
+				char* nam = malloc(20) ;
+				snprintf(nam, 20, "%s[%d]", name, indexes->intVal);
+				IR_insert_operands(tab->lastNode, NULL, "=", temp1, nam, NULL) ;
+				indexes = indexes->nextSibling ;
+				cont++ ;
+				
+				while(cont < assign->firstChild->size)
+				{
+					//int index = assign->firstChild->nextSibling->intVal ;
+					char* aux2 = malloc(20) ;
+					temp = IR_newTemp(tab->ir) ;
+					int index = indexes->intVal ;
+					snprintf(aux2, 20, "%s[%d]", temp1, index);
+					strcat(aux, aux2) ;
+					IR_insert_operands(tab->lastNode, NULL, "=", temp, aux, NULL) ;
+					indexes = indexes->nextSibling ;
+					temp1 = temp ;
+					cont++ ;
+				}
+
+				snprintf(indexName, 20, "%s", temp);			
+			}
+		
 
 			if(assign->symbol_type == SYM_CHAR && assign->firstChild->symbol_type == SYM_INT)
 				IR_insert_operands(tab->lastNode, NULL, "=", indexName, rval, "byte") ;
