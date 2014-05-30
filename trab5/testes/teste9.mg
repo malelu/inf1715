@@ -1,5 +1,9 @@
-fun main (x : char, y : char, u : bool) : int
+fun main (x : int, y : char, u : bool) : int
 	g : string
+	return 4
+end
+
+fun in (l : int) : int
 	return 4
 end
 
@@ -7,6 +11,6 @@ fun k () : int
 	f : int
 	h : char
 	j : bool
-	main(k(), h, false)
+	main(4+6, h, j)
 end
 

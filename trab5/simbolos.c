@@ -637,10 +637,6 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 			}
 			else if (expCall[0] == AST_CHAR)
 			{
-				printf("existing->fun_param[cont_param][0]: %d\n", existing->fun_param[cont_param][0]) ;
-				printf("child->type: %d\n", child->type) ;
-				printf("existing->fun_param[cont_param][1]: %d\n", existing->fun_param[cont_param][1]) ;
-				printf("child->size: %d\n", child->size) ;
 				if (existing->fun_param[cont_param][0] == expCall[0] && existing->fun_param[cont_param][1] == child->size)
 				{
 					cont_param++ ;
@@ -659,7 +655,6 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 			}
 			else
 			{
-				printf("child type: %d\n", child->type) ;
 				return fail("Internal compiler error! - call", "!?!?", call);
 			}
 			child = child->nextSibling;
@@ -668,7 +663,6 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 		call->symbol_type = SYM_FUN ;
       		assert(existing->type == SYM_FUN);
 
-		printf("CONT PARAM %d\n", existing->fun_param[cont_param][1]) ;
 		if (existing->fun_param[cont_param][1] != -1)
 			return fail("missing parameters!", name, call);
 
@@ -696,10 +690,9 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
    	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	int* assign_type ;
 	AST* assignVector ;
-printf("bbbbbbbbbbbbbbbbb\n");
+
 	assign_type = Symbols_visitExpression(st, assign->lastChild);
-printf("ccccccccc\n");
-printf("assign type: %d\n", assign_type) ;
+
 	assignVector = assign->firstChild->nextSibling ;
 	while(assignVector != NULL)
 	{
@@ -723,7 +716,6 @@ printf("assign type: %d\n", assign_type) ;
 
 		else if (existing->type == SYM_INT)
 		{
-			printf("assign type[0]: %d\n", assign_type[0]) ;
 			if ((assign_type[0] == AST_NUMINT) || (assign_type[0] == AST_CHAR) || (assign_type[0] == AST_NEW))
 			{
 				if((Symbols_Module(assign_type[1], valExistingAssign))==
@@ -738,10 +730,6 @@ printf("assign type: %d\n", assign_type) ;
 				}
 				else
 				{
-					printf("assign size: %d\n", assign_type[1]);
-					printf("valExistingAssign: %d\n", valExistingAssign);
-					printf("existing size: %d\n", existing->size);
-					printf("firstChild size: %d\n", assign->firstChild->size);
 					return fail("assigned wrong size value to an int variable!", name, assign);
 				}
 			}

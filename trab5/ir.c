@@ -252,9 +252,11 @@ static void IR_insertParamCall(OpTable* tab, AST* param)
 {
 	if(param != NULL)
 	{
+		char* temp ;
 		IR_insertParamCall(tab, param->nextSibling) ;
 		char* lstParams = malloc (50) ;
-		snprintf(lstParams, 50, "param %s ", param->stringVal);
+		temp = IR_genExp(tab, param, NULL, NULL) ;
+		snprintf(lstParams, 50, "param %s ", temp);
 		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, NULL) ;
 	}
 
