@@ -251,31 +251,53 @@ static void IR_organizeParamCall(OpTable* tab)
 {
 	NodeCte* firstParam = tab->lastNode->lastCte->prevNode ;
 	NodeCte* aux ;
+	int cont = 0 ;
 	while(firstParam != NULL)
 	{
 		if(strcmp(firstParam->operand, "param") == 0)
 		{
-			printf("caiu23293829!\n") ;
-			printf("firstParam->op3: %s\n", firstParam->op3) ;
 			if(firstParam->op3[0] == '0')
 			{
-				printf("caiu!\n") ;
-				break ;
+				if(cont > 0)
+					cont -- ;
+				else
+					break ;
 			}
+		}
+		else if (strcmp(firstParam->operand, "call") == 0)	// um dos parametros é chamada de funcao
+		{
+			cont++ ;
 		}
 		firstParam = firstParam->prevNode ;
 	}
-	printf("passsssssou!\n") ;
-	
+
 	printf("first param %d\n!\n", firstParam) ;
 	aux = firstParam ;
+	NodeCte* aux2 ;
 	while(aux != tab->lastNode->lastCte)
 	{
-		printf("passsssssou111111111!\n") ;
-		printf("aux %d\n!\n", aux) ;
 		if(strcmp(aux->operand, "param") != 0)	//sobe o cte para antes do primeiro param
 		{
-			printf("passsssssou3333!\n") ;
+			if(strcmp(aux->operand, "call") == 0) //se uma chamada é parametro
+			{
+				int cont = aux->op3 ;
+				while(cont > 0)
+				{
+					aux2 = aux->prevNode ;
+					NodeCte* beforeParam = firstParam->prevNode ;
+					NodeCte* beforeAux2 = aux2->prevNode ;
+					NodeCte* afterAux2 = aux ;
+
+					beforeAux2->nextNode = afterAux2 ;
+					afterAux2->prevNode = beforeAux2 ;
+
+					aux2->prevNode = beforeParam ;
+					aux2->nextNode = firstParam ;
+					beforeParam->nextNode = aux2 ;
+					firstParam->prevNode = aux2 ;
+					cont-- ;	
+				}
+			}
 			NodeCte* beforeParam = firstParam->prevNode ;
 			NodeCte* beforeAux = aux->prevNode ;
 			NodeCte* afterAux = aux->nextNode ;
@@ -288,8 +310,6 @@ static void IR_organizeParamCall(OpTable* tab)
 			beforeParam->nextNode = aux ;
 			firstParam->prevNode = aux ;			
 		}
-
-		printf("passsssssou2222222222222!\n") ;
 
 		aux = aux->nextNode ;
 	}
@@ -318,8 +338,6 @@ static void IR_insertParamCall(OpTable* tab, AST* param, int *cont)
 static void IR_genCall(OpTable* tab, AST* entry) 
 {
 	AST* param = entry->firstChild->nextSibling ;
-	//char listParams[150] = "";
-	//char* final = malloc(150) ;
 
 	int cont = 0;
 	IR_insertParamCall(tab, param, &cont) ;
@@ -327,7 +345,7 @@ static void IR_genCall(OpTable* tab, AST* entry)
 	//printf(" call %s\n", entry->firstChild->stringVal);
 
 	//strcpy(final, listParams) ;
-	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, NULL) ;
+	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, cont) ;
 
 	IR_organizeParamCall(tab) ;
 }

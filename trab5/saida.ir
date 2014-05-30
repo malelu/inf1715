@@ -12,13 +12,15 @@
 	f = 0
 	h = 0
 	j = 0
-	$t1 = 4 < 8
-	param $t1 
-	call in
-	$t0 = $ret
+	$t0 = 4 < 8
+	$t2 = 5 + 3
+	param $t2 
+	param 6 
+	call it
+	$t1 = $ret
 	param $t0 
 	param h 
-	param 4 
+	param $t1 
 	call main
 	ret
 
