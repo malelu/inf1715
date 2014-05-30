@@ -6,9 +6,9 @@
 	f = 0
 	h = 0
 	j = 0
-	param j 
+	param (null) 
 	param h 
-	param f 
+	param (null) 
 	call main
 	ret
 

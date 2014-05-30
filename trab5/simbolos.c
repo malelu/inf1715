@@ -563,6 +563,7 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
   	Symbol* existing = SymbolTable_getCall(st, name, symbol_table_scope);
 	AST* child =  call->firstChild->nextSibling;
 	int cont_param = 0;
+	int* expCall ;
 
 	const char* param_name ;
 
@@ -575,8 +576,8 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 
 		while (child != NULL)
 		{
-			Symbols_visitExpression(st, child) ;
-			if (child->type == AST_ID)
+			expCall = Symbols_visitExpression(st, child) ;
+			if (expCall[0] == AST_ID)
 			{
 				param_name = child->stringVal ;
 				Symbol* existing_id = SymbolTable_get(st, param_name, symbol_table_scope);
@@ -624,35 +625,41 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 				else
 					return fail("undeclared id as parameter!", param_name, child);
 			}
-			else if (child->type == AST_NUMINT)
+			else if (expCall[0] == AST_NUMINT)
 			{
-				if (existing->fun_param[cont_param][0] == child->type && existing->fun_param[cont_param][1] == child->size)
+				if (((existing->fun_param[cont_param][0] == AST_INT) || (existing->fun_param[cont_param][0] == AST_CHAR))
+					 && existing->fun_param[cont_param][1] == child->size)
 				{
 					cont_param++ ;
 				}
 				else
-					return fail("parameter has invalid type!", name, call);
+					return fail("parameter has invalid type!1", name, call);
 			}
-			else if (child->type == AST_CHAR)
+			else if (expCall[0] == AST_CHAR)
 			{
-				if (existing->fun_param[cont_param][0] == child->type && existing->fun_param[cont_param][1] == child->size)
+				printf("existing->fun_param[cont_param][0]: %d\n", existing->fun_param[cont_param][0]) ;
+				printf("child->type: %d\n", child->type) ;
+				printf("existing->fun_param[cont_param][1]: %d\n", existing->fun_param[cont_param][1]) ;
+				printf("child->size: %d\n", child->size) ;
+				if (existing->fun_param[cont_param][0] == expCall[0] && existing->fun_param[cont_param][1] == child->size)
 				{
 					cont_param++ ;
 				}
 				else
-					return fail("parameter has invalid type!", name, call);
+					return fail("parameter has invalid type!2", name, call);
 			}
-			else if (child->type == AST_BOOL)
+			else if (expCall[0] == AST_BOOL)
 			{
-				if (existing->fun_param[cont_param][0] == child->type && existing->fun_param[cont_param][1] == child->size)
+				if (existing->fun_param[cont_param][0] == expCall[0] && existing->fun_param[cont_param][1] == child->size)
 				{
 					cont_param++ ;
 				}
 				else
-					return fail("parameter has invalid type!", name, call);
+					return fail("parameter has invalid type!3", name, call);
 			}
 			else
 			{
+				printf("child type: %d\n", child->type) ;
 				return fail("Internal compiler error! - call", "!?!?", call);
 			}
 			child = child->nextSibling;

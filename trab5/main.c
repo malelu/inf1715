@@ -205,6 +205,7 @@ int main (int argc, char** argv)
 	yyin = fopen(argv[1], "r");
 	yyparse();
 
+	prettyPrinter(programa) ;
 	error = Symbols_annotate(programa) ;
 	if (error == 1)
 	{
