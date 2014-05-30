@@ -3,16 +3,22 @@
 	ret 4
 
 	fun in ()
+	ret 1
+
+	fun it ()
 	ret 4
 
 	fun k ()
 	f = 0
 	h = 0
 	j = 0
-	param j 
+	$t1 = 4 < 8
+	param $t1 
+	call in
+	$t0 = $ret
+	param $t0 
 	param h 
-	$t2 = 4 + 6
-	param $t2 
+	param 4 
 	call main
 	ret
 

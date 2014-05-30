@@ -163,7 +163,7 @@ static char* IR_getTemp(IR* ir)
 static char* IR_newTemp(IR* ir) 
 {
 	char* temp = malloc(20);
-	printf(" CRIOU TEMP %d \n", ir->temps);
+	//printf(" CRIOU TEMP %d \n", ir->temps);
 	snprintf(temp, 20, "$t%d", ir->temps);
    	ir->temps++;
    	return temp;
@@ -172,7 +172,6 @@ static char* IR_newTemp(IR* ir)
 static char* IR_newString(IR* ir) 
 {
 	char* temp = malloc(20);
-	printf(" CRIOU TEMP %d \n", ir->strings);
 	snprintf(temp, 20, "$str%d", ir->strings);
    	ir->strings++;
    	return temp;
@@ -248,16 +247,70 @@ static void IR_genDeclVar(OpTable* tab, AST* entry)
 	IR_insert_operands(tab->lastNode, NULL, "declvar", entry->firstChild->stringVal, 0, NULL) ;
 }
 
-static void IR_insertParamCall(OpTable* tab, AST* param) 
+static void IR_organizeParamCall(OpTable* tab) 
+{
+	NodeCte* firstParam = tab->lastNode->lastCte->prevNode ;
+	NodeCte* aux ;
+	while(firstParam != NULL)
+	{
+		if(strcmp(firstParam->operand, "param") == 0)
+		{
+			printf("caiu23293829!\n") ;
+			printf("firstParam->op3: %s\n", firstParam->op3) ;
+			if(firstParam->op3[0] == '0')
+			{
+				printf("caiu!\n") ;
+				break ;
+			}
+		}
+		firstParam = firstParam->prevNode ;
+	}
+	printf("passsssssou!\n") ;
+	
+	printf("first param %d\n!\n", firstParam) ;
+	aux = firstParam ;
+	while(aux != tab->lastNode->lastCte)
+	{
+		printf("passsssssou111111111!\n") ;
+		printf("aux %d\n!\n", aux) ;
+		if(strcmp(aux->operand, "param") != 0)	//sobe o cte para antes do primeiro param
+		{
+			printf("passsssssou3333!\n") ;
+			NodeCte* beforeParam = firstParam->prevNode ;
+			NodeCte* beforeAux = aux->prevNode ;
+			NodeCte* afterAux = aux->nextNode ;
+
+			beforeAux->nextNode = afterAux ;
+			afterAux->prevNode = beforeAux ;
+
+			aux->prevNode = beforeParam ;
+			aux->nextNode = firstParam ;
+			beforeParam->nextNode = aux ;
+			firstParam->prevNode = aux ;			
+		}
+
+		printf("passsssssou2222222222222!\n") ;
+
+		aux = aux->nextNode ;
+	}
+
+}
+
+static void IR_insertParamCall(OpTable* tab, AST* param, int *cont) 
 {
 	if(param != NULL)
 	{
 		char* temp ;
-		IR_insertParamCall(tab, param->nextSibling) ;
+		char* contString = malloc(3) ;
+		IR_insertParamCall(tab, param->nextSibling, cont) ;
 		char* lstParams = malloc (50) ;
 		temp = IR_genExp(tab, param, NULL, NULL) ;
 		snprintf(lstParams, 50, "param %s ", temp);
-		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, NULL) ;
+		snprintf(contString, 3, "%d ", *cont);
+		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, contString) ;
+		printf("COOOOONT %d\n", *cont) ;
+		printf("tab->lastNode->lastCte->op3 %s\n", tab->lastNode->lastCte->op3) ;
+		(*cont)++ ;
 	}
 
 }
@@ -265,15 +318,18 @@ static void IR_insertParamCall(OpTable* tab, AST* param)
 static void IR_genCall(OpTable* tab, AST* entry) 
 {
 	AST* param = entry->firstChild->nextSibling ;
-	char listParams[150] = "";
-	char* final = malloc(150) ;
+	//char listParams[150] = "";
+	//char* final = malloc(150) ;
 
-	IR_insertParamCall(tab, param) ;
+	int cont = 0;
+	IR_insertParamCall(tab, param, &cont) ;
 
 	//printf(" call %s\n", entry->firstChild->stringVal);
 
-	strcpy(final, listParams) ;
+	//strcpy(final, listParams) ;
 	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, NULL) ;
+
+	IR_organizeParamCall(tab) ;
 }
 
 static void IR_genParam(OpTable* tab, AST* entry)
@@ -379,10 +435,10 @@ static char* IR_insertExpNot(OpTable* tab, AST* exp, char* temp)
 static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS OUTROS CASOS
 {
 	char* temp = NULL;
-	
+
 	if((exp->type != AST_NUMINT) && (exp->type != AST_CHAR) && (exp->type != AST_STRING) && (exp->type != AST_BOOL) &&
 	(exp->type != AST_TRUE) && (exp->type != AST_FALSE) && (exp->type != AST_LITERAL_STRING) && (exp->type != AST_NOT) &&
-	(exp->type != AST_AND) && (exp->type != AST_NEG) && (exp->type != AST_NEW))
+	(exp->type != AST_AND) && (exp->type != AST_NEG) && (exp->type != AST_NEW) && (exp->type != AST_ID))
 	{
 		if(var == NULL)
 		{

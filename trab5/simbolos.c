@@ -292,41 +292,32 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	else if (exp->type == AST_CALL)
 	{
 		char* name = exp->firstChild->stringVal ;
-		printf("name %s\n", name) ;
 		Symbol* func = SymbolTable_getCall(st, name, symbol_table_scope);
-		printf("func %d\n", func) ;
-	printf("aaaaaaaaaaaaaaaaa\n") ;
-	printf("fuuu %d\n", func->fun_ret[0]) ;
-		if(true)
+
+		if(func->fun_ret[0] == SYM_BOOL)
 		{
-			int* aux = Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, 0, func->size) ;
-//static int* Symbols_setExpression (int* ret_expression, AST* exp, int SymbolType, int ASTtype, int size, int val)
-			printf("aux: %d\n", aux) ;
-			return aux ;
+			return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, 0, func->size) ;
 		}
-/*{
-	exp->symbol_type = SymbolType ;
-	exp->size = size ;
-	ret_expression[0] = ASTtype ;
-	ret_expression[1] = size ;
-	ret_expression[2] = val ;
-	return ret_expression ;
-}
-*/
-		//if(func->fun_ret[0] == exp->first
+		else if(func->fun_ret[0] == SYM_INT)
+		{
+			return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, 0, func->size) ;
+		}
+		else if(func->fun_ret[0] == SYM_CHAR)
+		{
+			return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, 0, func->size) ;
+		}
 
 		else
 		{
 			ret_expression[0]=-1 ;
 			ret_expression[1]=-1 ;
-			fprintf(stderr, "invalid - expression! - %s at line %d\n", "neg", exp->line);
+			fprintf(stderr, "invalid - expression! - %s at line %d\n", "call", exp->line);
 			exit(1);
 		}
 	}
 
 	ret_expression[0]=-1 ;
 	ret_expression[1]=-1 ;
-	printf("EXPPPPPPP %d\n", exp->type) ;
 	fprintf(stderr, "invalid expression! - %s at line %d\n", "exp", exp->line);
 	exit(1);
 }
@@ -627,6 +618,9 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 			}
 			else if (expCall[0] == AST_NUMINT)
 			{
+				printf("IIIIINT: %d\n") ;
+				printf("existing->type: %d\n", existing->type) ;
+				printf("existing->name: %s\n", existing->name) ;
 				if (((existing->fun_param[cont_param][0] == AST_INT) || (existing->fun_param[cont_param][0] == AST_CHAR))
 					 && existing->fun_param[cont_param][1] == child->size)
 				{
@@ -637,6 +631,7 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 			}
 			else if (expCall[0] == AST_CHAR)
 			{
+				printf("CHAAAAAAR: %d\n") ;
 				if (existing->fun_param[cont_param][0] == expCall[0] && existing->fun_param[cont_param][1] == child->size)
 				{
 					cont_param++ ;
@@ -646,6 +641,7 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
 			}
 			else if (expCall[0] == AST_BOOL)
 			{
+				printf("BOOOOOOL: %d\n") ;
 				if (existing->fun_param[cont_param][0] == expCall[0] && existing->fun_param[cont_param][1] == child->size)
 				{
 					cont_param++ ;
