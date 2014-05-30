@@ -248,20 +248,26 @@ static void IR_genDeclVar(OpTable* tab, AST* entry)
 	IR_insert_operands(tab->lastNode, NULL, "declvar", entry->firstChild->stringVal, 0, NULL) ;
 }
 
+static void IR_insertParamCall(OpTable* tab, AST* param) 
+{
+	if(param != NULL)
+	{
+		IR_insertParamCall(tab, param->nextSibling) ;
+		char* lstParams = malloc (50) ;
+		snprintf(lstParams, 50, "param %s ", param->stringVal);
+		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, NULL) ;
+	}
+
+}
+
 static void IR_genCall(OpTable* tab, AST* entry) 
 {
 	AST* param = entry->firstChild->nextSibling ;
 	char listParams[150] = "";
 	char* final = malloc(150) ;
 
-	while(param != NULL)
-	{
-		char* lstParams = malloc (50) ;
-		snprintf(lstParams, 50, "param %s ", param->stringVal);
-		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, NULL) ;
-		//strcat(listParams, aux) ;
-		param = param->nextSibling ;
-	}
+	IR_insertParamCall(tab, param) ;
+
 	//printf(" call %s\n", entry->firstChild->stringVal);
 
 	strcpy(final, listParams) ;
