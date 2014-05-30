@@ -224,14 +224,27 @@ static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char*
 	{
 		if(func->lastCte->operand == "none")
 		{
-			func->lastCte->operand = operand ;
-			func->lastCte->op1 = op1 ;
-			func->lastCte->op2 = op2 ;
-			func->lastCte->op3 = op3 ;			
+			if(func->lastCte->label != NULL)
+			{
+				printf("aqui1\n") ;
+				func->lastCte->operand = operand ;
+				func->lastCte->op1 = op1 ;
+				func->lastCte->op2 = op2 ;
+				func->lastCte->op3 = op3 ;
+			}
+			else
+			{
+				func->lastCte->label = label ;
+				func->lastCte->operand = operand ;
+				func->lastCte->op1 = op1 ;
+				func->lastCte->op2 = op2 ;
+				func->lastCte->op3 = op3 ;	
+			}			
 		}
 
 		else
 		{
+			printf("aqui2\n") ;
 			node = IR_newNode(label, operand, op1, op2, op3) ; 
 			func->lastCte->nextNode = node ;
 			node->prevNode = func->lastCte ;
@@ -948,7 +961,7 @@ static void IR_genIf(OpTable* tab, AST* _if)
 	{
 		char* label2 = malloc(20) ;
 		strcpy(label2, label) ;
-		printf("inseriu LABEEEEEL %s\n", label);
+		printf("inseriu LABEEEEEL %s\n", label2);
 		IR_insert_operands(tab->lastNode, label2, "none", NULL, NULL, NULL) ;
 	}
 }
@@ -1036,6 +1049,8 @@ static void IR_genBlockEntry(OpTable* tab, AST* entry)
 	{
 	      	case AST_IF:
         	 	IR_genIf(tab, entry);
+			printf("tab->lastFunc->lastCte->label: %s\n", tab->lastNode->lastCte->label) ;
+			printf("tab->lastFunc->lastCte->operand: %s\n", tab->lastNode->lastCte->operand) ;
          		return;
 	      	case AST_WHILE:
         	 	IR_genWhile(tab, entry);

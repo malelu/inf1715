@@ -1,26 +1,41 @@
-	fun main (x, y, u)
-	g = 0
-	ret 4
+	global x
+	global p
 
-	fun in ()
-	ret 1
 
-	fun it ()
-	ret 4
-
-	fun k ()
+	fun main ()
+	a = 0
+	k = 0
 	f = 0
-	h = 0
-	j = 0
-	$t0 = 4 < 8
-	$t2 = 5 + 3
-	param $t2 
-	param 6 
-	call it
-	$t1 = $ret
-	param $t0 
-	param h 
-	param $t1 
-	call main
-	ret
+	$t0 = 5 + 6
+	$t2 = 1 * 8
+	$t1 = $t2 / 7
+	a = $t0 - $t1
+	k = 6
+	f = 4 / 1
+	$t3 = 1 < 4
+	ifFalse $t3 goto .L0
+	b = 0
+.L2: 	$t4 = 5 < 7
+	ifFalse $t4 goto .L1
+	c = 0
+	goto .L2
+.L1: 	goto .L3
+.L0: 	ifFalse 0 goto .L4
+	d = 0
+	goto .L3
+.L4: 	e = 0
+.L3: 
+	fun fun2 ()
+	a = 0
+	ifFalse 1 goto .L5
+	b = 0
+.L7: 	ifFalse 1 goto .L6
+	c = 0
+	goto .L7
+.L6: 	goto .L8
+.L5: 	ifFalse 0 goto .L9
+	d = 0
+	goto .L8
+.L9: 	e = 0
+.L8: 	ret
 
