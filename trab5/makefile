@@ -1,34 +1,29 @@
-############### Makefile ########################
-all: programa
+CC=gcc
+CFLAGS=-std=c99 -D_GNU_SOURCE -g -Wall -Werror
 
-programa: analisadorSintatico.o analisadorLexico.o ast.o tabela_simbolos.o simbolos.o ir.o main.c
-	gcc -Wall -o programa analisadorSintatico.o analisadorLexico.o ast.o tabela_simbolos.o simbolos.o ir.o main.c -ll -ly
+PROGRAM=backend
+OBJECTS=main.o ir.o
 
-ir.o : ir.c
-	gcc -c ir.c
+all: $(PROGRAM)
 
-simbolos.o : simbolos.c
-	gcc -c simbolos.c
+$(PROGRAM): grammar.tab.c lexer.lex.c $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(PROGRAM) grammar.tab.c lexer.lex.c $(OBJECTS)
 
-tabela_simbolos.o : tabela_simbolos.c
-	gcc -c tabela_simbolos.c
+grammar.tab.c: grammar.y
+	bison -t -v grammar.y --defines=grammar.tab.h
 
-ast.o : ast.c
-	gcc -c ast.c
+lexer.lex.c: lexer.l grammar.tab.c
+	flex -o lexer.lex.c lexer.l
 
-analisadorSintatico.o : y.tab.c
-	gcc -c -o analisadorSintatico.o y.tab.c
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c
 
-y.tab.c : analisadorSintatico.y
-	yacc -t -y -d analisadorSintatico.y
+ir.o: ir.c
+	$(CC) $(CFLAGS) -c ir.c
 
-analisadorLexico.o : analisadorLexico.c
-	gcc -c -o analisadorLexico.o analisadorLexico.c
+cov:
+	$(MAKE) clean
+	$(MAKE) CFLAGS="$(CFLAGS) -fprofile-arcs -ftest-coverage" all
 
-analisadorLexico.c : analisadorLexico.l
-	lex -t analisadorLexico.l > analisadorLexico.c 
-
-clean: 
-	rm -rf *.o 
-mrproper: clean 
-	rm -rf programa
+clean:
+	rm -f core *.gcov *.gcda *.gcno *.tab.* *.lex.* *.output *.gch *.dot *.o $(PROGRAM)
