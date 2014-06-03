@@ -125,6 +125,10 @@ void dump(OpTable* tab, FILE* file)
 					{
 						fprintf(file, "\tcall %s\n", cte->op1);
 					}
+					else if(strcmp(cte->operand, "none") == 0)
+					{
+						fprintf(file, "\tret\n");
+					}
 					else if(strcmp(cte->operand, "param") == 0)
 					{
 						fprintf(file, "\t%s\n", cte->op1);
@@ -205,6 +209,7 @@ int main (int argc, char** argv)
 	yyin = fopen(argv[1], "r");
 	yyparse();
 
+	prettyPrinter(programa) ;
 	error = Symbols_annotate(programa) ;
 	if (error == 1)
 	{

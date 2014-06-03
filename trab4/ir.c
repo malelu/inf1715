@@ -163,7 +163,7 @@ static char* IR_getTemp(IR* ir)
 static char* IR_newTemp(IR* ir) 
 {
 	char* temp = malloc(20);
-	printf(" CRIOU TEMP %d \n", ir->temps);
+	//printf(" CRIOU TEMP %d \n", ir->temps);
 	snprintf(temp, 20, "$t%d", ir->temps);
    	ir->temps++;
    	return temp;
@@ -172,7 +172,6 @@ static char* IR_newTemp(IR* ir)
 static char* IR_newString(IR* ir) 
 {
 	char* temp = malloc(20);
-	printf(" CRIOU TEMP %d \n", ir->strings);
 	snprintf(temp, 20, "$str%d", ir->strings);
    	ir->strings++;
    	return temp;
@@ -225,14 +224,27 @@ static void IR_insert_operands(NodeFunc* func, char* label, char* operand, char*
 	{
 		if(func->lastCte->operand == "none")
 		{
-			func->lastCte->operand = operand ;
-			func->lastCte->op1 = op1 ;
-			func->lastCte->op2 = op2 ;
-			func->lastCte->op3 = op3 ;			
+			if(func->lastCte->label != NULL)
+			{
+				printf("aqui1\n") ;
+				func->lastCte->operand = operand ;
+				func->lastCte->op1 = op1 ;
+				func->lastCte->op2 = op2 ;
+				func->lastCte->op3 = op3 ;
+			}
+			else
+			{
+				func->lastCte->label = label ;
+				func->lastCte->operand = operand ;
+				func->lastCte->op1 = op1 ;
+				func->lastCte->op2 = op2 ;
+				func->lastCte->op3 = op3 ;	
+			}			
 		}
 
 		else
 		{
+			printf("aqui2\n") ;
 			node = IR_newNode(label, operand, op1, op2, op3) ; 
 			func->lastCte->nextNode = node ;
 			node->prevNode = func->lastCte ;
@@ -248,24 +260,107 @@ static void IR_genDeclVar(OpTable* tab, AST* entry)
 	IR_insert_operands(tab->lastNode, NULL, "declvar", entry->firstChild->stringVal, 0, NULL) ;
 }
 
+static void IR_organizeParamCall(OpTable* tab) 
+{
+	NodeCte* firstParam = tab->lastNode->lastCte->prevNode ;
+	NodeCte* aux ;
+	int cont = 0 ;
+	while(firstParam != NULL)
+	{
+		if(strcmp(firstParam->operand, "param") == 0)
+		{
+			if(firstParam->op3[0] == '0')
+			{
+				if(cont > 0)
+					cont -- ;
+				else
+					break ;
+			}
+		}
+		else if (strcmp(firstParam->operand, "call") == 0)	// um dos parametros é chamada de funcao
+		{
+			cont++ ;
+		}
+		firstParam = firstParam->prevNode ;
+	}
+
+	printf("first param %d\n!\n", firstParam) ;
+	aux = firstParam ;
+	NodeCte* aux2 ;
+	while(aux != tab->lastNode->lastCte)
+	{
+		if(strcmp(aux->operand, "param") != 0)	//sobe o cte para antes do primeiro param
+		{
+			if(strcmp(aux->operand, "call") == 0) //se uma chamada é parametro
+			{
+				int cont = aux->op3 ;
+				while(cont > 0)
+				{
+					aux2 = aux->prevNode ;
+					NodeCte* beforeParam = firstParam->prevNode ;
+					NodeCte* beforeAux2 = aux2->prevNode ;
+					NodeCte* afterAux2 = aux ;
+
+					beforeAux2->nextNode = afterAux2 ;
+					afterAux2->prevNode = beforeAux2 ;
+
+					aux2->prevNode = beforeParam ;
+					aux2->nextNode = firstParam ;
+					beforeParam->nextNode = aux2 ;
+					firstParam->prevNode = aux2 ;
+					cont-- ;	
+				}
+			}
+			NodeCte* beforeParam = firstParam->prevNode ;
+			NodeCte* beforeAux = aux->prevNode ;
+			NodeCte* afterAux = aux->nextNode ;
+
+			beforeAux->nextNode = afterAux ;
+			afterAux->prevNode = beforeAux ;
+
+			aux->prevNode = beforeParam ;
+			aux->nextNode = firstParam ;
+			beforeParam->nextNode = aux ;
+			firstParam->prevNode = aux ;			
+		}
+
+		aux = aux->nextNode ;
+	}
+
+}
+
+static void IR_insertParamCall(OpTable* tab, AST* param, int *cont) 
+{
+	if(param != NULL)
+	{
+		char* temp ;
+		char* contString = malloc(3) ;
+		IR_insertParamCall(tab, param->nextSibling, cont) ;
+		char* lstParams = malloc (50) ;
+		temp = IR_genExp(tab, param, NULL, NULL) ;
+		snprintf(lstParams, 50, "param %s ", temp);
+		snprintf(contString, 3, "%d ", *cont);
+		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, contString) ;
+		printf("COOOOONT %d\n", *cont) ;
+		printf("tab->lastNode->lastCte->op3 %s\n", tab->lastNode->lastCte->op3) ;
+		(*cont)++ ;
+	}
+
+}
+
 static void IR_genCall(OpTable* tab, AST* entry) 
 {
 	AST* param = entry->firstChild->nextSibling ;
-	char listParams[150] = "";
-	char* final = malloc(150) ;
 
-	while(param != NULL)
-	{
-		char* lstParams = malloc (50) ;
-		snprintf(lstParams, 50, "param %s ", param->stringVal);
-		IR_insert_operands(tab->lastNode, NULL, "param", lstParams, NULL, NULL) ;
-		//strcat(listParams, aux) ;
-		param = param->nextSibling ;
-	}
+	int cont = 0;
+	IR_insertParamCall(tab, param, &cont) ;
+
 	//printf(" call %s\n", entry->firstChild->stringVal);
 
-	strcpy(final, listParams) ;
-	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, NULL) ;
+	//strcpy(final, listParams) ;
+	IR_insert_operands(tab->lastNode, NULL, "call", entry->firstChild->stringVal, NULL, cont) ;
+
+	IR_organizeParamCall(tab) ;
 }
 
 static void IR_genParam(OpTable* tab, AST* entry)
@@ -371,10 +466,10 @@ static char* IR_insertExpNot(OpTable* tab, AST* exp, char* temp)
 static char* IR_genExp(OpTable* tab, AST* exp, char* var, char* not) //FAZER OS OUTROS CASOS
 {
 	char* temp = NULL;
-	
+
 	if((exp->type != AST_NUMINT) && (exp->type != AST_CHAR) && (exp->type != AST_STRING) && (exp->type != AST_BOOL) &&
 	(exp->type != AST_TRUE) && (exp->type != AST_FALSE) && (exp->type != AST_LITERAL_STRING) && (exp->type != AST_NOT) &&
-	(exp->type != AST_AND) && (exp->type != AST_NEG) && (exp->type != AST_NEW))
+	(exp->type != AST_AND) && (exp->type != AST_NEG) && (exp->type != AST_NEW) && (exp->type != AST_ID))
 	{
 		if(var == NULL)
 		{
@@ -866,7 +961,7 @@ static void IR_genIf(OpTable* tab, AST* _if)
 	{
 		char* label2 = malloc(20) ;
 		strcpy(label2, label) ;
-		printf("inseriu LABEEEEEL %s\n", label);
+		printf("inseriu LABEEEEEL %s\n", label2);
 		IR_insert_operands(tab->lastNode, label2, "none", NULL, NULL, NULL) ;
 	}
 }
@@ -954,6 +1049,8 @@ static void IR_genBlockEntry(OpTable* tab, AST* entry)
 	{
 	      	case AST_IF:
         	 	IR_genIf(tab, entry);
+			printf("tab->lastFunc->lastCte->label: %s\n", tab->lastNode->lastCte->label) ;
+			printf("tab->lastFunc->lastCte->operand: %s\n", tab->lastNode->lastCte->operand) ;
          		return;
 	      	case AST_WHILE:
         	 	IR_genWhile(tab, entry);

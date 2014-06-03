@@ -19,4 +19,5 @@
 	goto .L1
 .L3: 	e = 0
 .L1: 	ret
+	ret
 

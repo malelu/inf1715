@@ -71,9 +71,10 @@ int main (void)
 {
 	//yydebug = 1;
 	yyparse();
+	prettyPrinter(programa) ;
 	error = Symbols_annotate(programa) ;
 	if (error == 1)
-		prettyPrinter(programa) ;
+		//prettyPrinter(programa) ;
 
 	if (error == 0)
 		return 0 ;

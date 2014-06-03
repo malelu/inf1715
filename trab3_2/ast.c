@@ -30,6 +30,10 @@ void AST_addChild(AST* parent_node, AST* node)
 			parent_node->firstChild = (AST*) malloc(sizeof(AST)) ;
 			parent_node->lastChild = (AST*) malloc(sizeof(AST)) ;	
 			parent_node->firstChild = node ;
+			while(node->nextSibling != NULL)
+			{
+				node = node->nextSibling ;
+			}
 			parent_node->lastChild = node ;
 		}
 		else

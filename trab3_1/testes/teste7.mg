@@ -4,7 +4,7 @@ fun f( c: string , d: int) : bool
 	if 3*4 > 8
 		x = 2
 		while 2 and 0
-			g()
+			g(4, 5)
 			f(4-5)
 		loop
 	else

@@ -198,6 +198,8 @@ void printAST (int type)
 		fprintf(stdout, "AST_DECLVAR");
 	else if (type == 320)
 		fprintf(stdout, "AST_NUMINT");
+	else if (type == 321)
+		fprintf(stdout, "AST_LOOP");
 	else
 		fprintf(stdout, "NO AST");
 }

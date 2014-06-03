@@ -137,12 +137,15 @@ cmdif	: TK_IF exp nl
 						  	AST* block_else = AST_new(AST_BLOCK_ELSE, $5.line);
 						  	AST_addChildren(block_else, $5.node);
 						   	AST_prependSibling(block_else, block);
+							AST_prependSibling(AST_new(AST_END, $6.line), block_else);
 					  	  	AST_addChildren($$.node, block_else); 
 						  }
 						  else if($4.node != NULL)
 						  {
+							AST_prependSibling(AST_new(AST_END, $6.line),block);	
 							AST_addChildren($$.node, block);	
-						  }				  
+						  }
+				  
 						}
 	;
 entradas_else : TK_ELSE TK_IF exp nl 
@@ -178,7 +181,8 @@ cmdwhile: TK_WHILE exp nl
                 				  AST_addChild($$.node, $2.node);
           					  AST* block = AST_new(AST_BLOCK, $4.line);
 						  AST_addChildren(block, $4.node);
-					  	  AST_addChild($$.node, block); }
+						  AST_prependSibling(AST_new(AST_LOOP, $5.line), block);
+					  	  AST_addChildren($$.node, block); }
 	;
 cmdatrib: var '=' exp				{ $$.node = AST_new(AST_ATRIB, $1.line);
 						  AST_addChild($$.node, $1.node);

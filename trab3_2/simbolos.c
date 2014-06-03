@@ -29,7 +29,9 @@ static bool Symbols_visitFunction(SymbolTable* st, AST* function);
 static int symbol_table_scope;
 static int returned ;
 static int has_return ;
-
+//---------------
+static bool okGlobal = true;
+//---------------
 static bool fail(const char* msg, const char* name, AST* node) 
 {
    	fprintf(stderr, "%s - %s at line %d\n", msg, name, node->line);
@@ -69,7 +71,9 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 	else if (exp->type == AST_NEW)
 	{
 		fprintf(stderr, "visit exp new\n") ;
-		Symbols_visitNew(st, exp) ; 
+//----------------
+		okGlobal = Symbols_visitNew(st, exp) ; 
+//---------------
 		return Symbols_setExpression (ret_expression, exp, exp->symbol_type, exp->type, exp->size, exp->intVal);
 	}
 	else if (exp->type == AST_ID)
@@ -80,15 +84,15 @@ static int* Symbols_visitExpression(SymbolTable* st, AST* exp)
 		{
 			if (existing->type == SYM_INT)
 			{
-				return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, existing->size, exp->intVal);
+				return Symbols_setExpression (ret_expression, exp, SYM_INT, AST_NUMINT, existing->size - exp->size, exp->intVal);
 			}
 			else if (existing->type == SYM_BOOL)
 			{
-				return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, existing->size, exp->intVal);
+				return Symbols_setExpression (ret_expression, exp, SYM_BOOL, AST_BOOL, existing->size - exp->size, exp->intVal);
 			}
 			else if (existing->type == SYM_CHAR )
 			{
-				return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, existing->size, exp->intVal);
+				return Symbols_setExpression (ret_expression, exp, SYM_CHAR, AST_CHAR, existing->size - exp->size, exp->intVal);
 			}
 		}
 
@@ -423,28 +427,30 @@ static bool Symbols_visitNew(SymbolTable* st, AST* _new)
 			return fail("invalid \"new\" expression!", "new", _new);
 	}
 
-	if(_new->lastChild->type == AST_NUMINT)
+	if(_new->firstChild->type == AST_NUMINT)
 	{
 		_new->symbol_type = SYM_INT ;
-		_new->size = _new->lastChild->size ;
+		_new->size = _new->lastChild->size+1 ;
+		printf("new size: %d\n", _new->size) ;
 	}
-	else if(_new->lastChild->type == 283)
+	else if(_new->firstChild->type == 283)
 	{
 		_new->symbol_type = SYM_CHAR ;
-		_new->size = _new->lastChild->size ;
+		_new->size = _new->lastChild->size+1 ;
 	}
-	else if(_new->lastChild->type == AST_STRING)
+	else if(_new->firstChild->type == AST_STRING)
 	{
 		_new->symbol_type = SYM_CHAR ;
 		_new->size = 1 ;
 	}
-	else if(_new->lastChild->type == AST_BOOL)
+	else if(_new->firstChild->type == AST_BOOL)
 	{
 		_new->symbol_type = SYM_BOOL ;
-		_new->size = _new->lastChild->size ;
+		_new->size = _new->lastChild->size+1 ;
 	}
 	else
 	{
+		printf("aquie!!!\n") ;
 		return fail("Internal compiler error! - new", "!?!?", _new);
 	}	
 
@@ -564,15 +570,48 @@ static bool Symbols_visitCall(SymbolTable* st, AST* call)
    	return fail("undeclared function!", name, call);
 }
 
+static int Symbols_Module(int val1, int val2)
+{
+	int ans ;
+	ans = val1 - val2 ;
+
+	if(ans < 0)
+		ans*= -1 ;
+
+	return ans ;
+}
 
 static bool Symbols_visitAssign(SymbolTable* st, AST* assign) 
 {
 	const char* name = assign->firstChild->stringVal;
+	int valExistingAssign = 0 ;
    	Symbol* existing = SymbolTable_get(st, name, symbol_table_scope);
 	int* assign_type ;
+	AST* assignVector ;
 
 	assign_type = Symbols_visitExpression(st, assign->lastChild);
 
+printf("name: %s\n", assign->firstChild->stringVal);
+printf("size: %d\n", assign->firstChild->size);
+printf("name: %s\n", assign->firstChild->nextSibling->stringVal);
+printf("size: %d\n", assign->firstChild->nextSibling->size);
+//------------------------------
+	assignVector = assign->firstChild->nextSibling ;
+	while(assignVector != NULL)
+	{
+		if(assignVector->type == AST_ID)
+		{
+			const char* nameAssign = assignVector->stringVal ;
+			Symbol* existingAssign = SymbolTable_get(st, nameAssign, symbol_table_scope);
+			valExistingAssign = existingAssign->size ;
+			break ;
+		}
+		assignVector = assignVector->nextSibling ;
+	}
+
+	if(okGlobal == false)
+		return false ;
+//---------------------
    	if (existing) 
 	{
       		if (existing->type == SYM_FUN) 
@@ -580,9 +619,11 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 
 		else if (existing->type == SYM_INT)
 		{
-			if ((assign_type[0] == AST_NUMINT) || (assign_type[0] == AST_CHAR))
+			if ((assign_type[0] == AST_NUMINT) || (assign_type[0] == AST_CHAR) || (assign_type[0] == AST_NEW))
 			{
-				if(assign_type[1] == existing->size)
+//-----------------------------------------------
+				if((Symbols_Module(assign_type[1], valExistingAssign))==
+										(Symbols_Module(existing->size, assign->firstChild->size)))
 				{
 					assign->symbol_type = SYM_INT ;
 					assign->size = assign_type[1] ;			
@@ -592,17 +633,30 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 					return true;
 				}
 				else
+				{	
+					printf("assign size: %d\n", assign_type[1]);
+					printf("valExistingAssign: %d\n", valExistingAssign);
+					printf("existing size: %d\n", existing->size);
+					printf("firstChild size: %d\n", assign->firstChild->size);
+
 					return fail("assigned wrong size value to an int variable!", name, assign);
+				}
 			}
+			/*else if(assign_type[0] == AST_NEW)
+			{
+				if(assign_type[1] == existing->size)
+					printf("AQUIIIII2\n") ;
+			}*/
 			else
 				return fail("assigned invalid value to an int variable!", name, assign);
 		}
 		
 		else if (existing->type == SYM_BOOL)
 		{
-			if (assign_type[0] == AST_BOOL)
+			if (assign_type[0] == AST_BOOL || (assign_type[0] == AST_NEW))
 			{
-				if(assign_type[1] == existing->size)
+				if((Symbols_Module(assign_type[1], valExistingAssign))==
+										(Symbols_Module(existing->size, assign->firstChild->size)))
 				{
 					assign->symbol_type = SYM_BOOL ;
 					assign->size = assign_type[1] ;			
@@ -620,9 +674,10 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 	
 		else if (existing->type == SYM_CHAR)
 		{
-			if (assign_type[0] == AST_CHAR)
+			if (assign_type[0] == AST_CHAR || (assign_type[0] == AST_NEW))
 			{
-				if(assign_type[1] == existing->size)
+				if((Symbols_Module(assign_type[1], valExistingAssign))==
+										(Symbols_Module(existing->size, assign->firstChild->size)))
 				{
 					assign->symbol_type = SYM_CHAR ;
 					assign->size = assign_type[1] ;			
@@ -634,9 +689,10 @@ static bool Symbols_visitAssign(SymbolTable* st, AST* assign)
 				else
 					return fail("assigned wrong size value to char variable!1", name, assign);
 			}
-			else if (assign_type[0] == AST_NUMINT)
+			else if (assign_type[0] == AST_NUMINT || (assign_type[0] == AST_NEW))
 			{
-				if(assign_type[1] == existing->size)
+				if((Symbols_Module(assign_type[1], valExistingAssign))==
+										(Symbols_Module(existing->size, assign->firstChild->size)))
 				{
 					assign->symbol_type = SYM_CHAR ;
 					assign->size = assign_type[1] ;			

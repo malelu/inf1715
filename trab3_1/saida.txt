@@ -1,0 +1,19 @@
+AST_PROGRAM @1 { 
+   AST_FUN [main] @1 { 
+      AST_INT @1
+      AST_BLOCK @2 { 
+         AST_DECLVAR @2 { 
+            AST_ID [a] @2
+            AST_INT @2
+          }
+         AST_DECLVAR @3 { 
+            AST_ID [b] @3
+            AST_STRING @3
+          }
+         AST_ATRIB @4 { 
+            AST_ID [b] @4
+            AST_ID [Marina] @4
+          }
+       }
+    }
+ }
