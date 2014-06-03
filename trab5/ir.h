@@ -86,6 +86,7 @@ Opcode op;
 Addr x;
 Addr y;
 Addr z;
+int basicBlock ;
 };
 
 /*
