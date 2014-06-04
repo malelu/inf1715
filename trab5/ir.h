@@ -78,17 +78,44 @@ List* next;
 /*
 Registrer table
 */
-typedef struct RegTable_ RegTable;
-struct RegTable_ {
+typedef struct RegList_ RegList;
+struct RegList_ {
 
 };
+
+
+/*
+ListLife
+*/
+typedef struct ListLife_ ListLife;
+struct ListLife_ {
+int alive;
+int nextPosAlive ;
+int posTable ;
+ListLife* next ;
+ListLife* previous ;
+};
+
+
+/*
+ListName
+*/
+typedef struct ListName_ ListName;
+struct ListName_ {
+char* name;
+ListLife* first ;
+ListLife* last ;
+};
+
 
 /*
 Life table
 */
 typedef struct LifeTable_ LifeTable;
-struct lifeTable_ {
-
+struct LifeTable_ {
+ListName* names;
+int qtdNames ;
+int qtdLines ;
 };
 
 /*
@@ -97,7 +124,7 @@ Basic Block
 typedef struct BasicBlock_ BasicBlock;
 struct BasicBlock_ {
 LifeTable* life ;
-RegTable* registrer ;
+RegList* registrer ;
 int basicNum ;
 };
 

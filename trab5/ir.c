@@ -6,6 +6,7 @@
 #include "ir.h"
 
 int basicBlock = 0 ;
+int totalBlockLines ;
 
 // -------------------- List --------------------
 
@@ -192,11 +193,36 @@ bool Addr_eq(Addr a1, Addr a2)
 	return (a1.type == a1.type && a1.num == a1.num);
 }
 
+//--------------------- list Name --------------
+
+ListName* ListName_new(char* name)
+{
+	ListName* new_listName = calloc(1, sizeof(ListName));
+	new_listName->name = name ;
+	new_listName->first = NULL ;
+	new_listName->last = NULL ;
+	return new_listName ;
+}
+
+//--------------------- Life Table --------------
+
+LifeTable* lifeTable_new()
+{
+	LifeTable* new_lifeTable = calloc(1, sizeof(LifeTable));
+	new_lifeTable->names = NULL ;
+	new_lifeTable->qtdNames = 0 ;
+	new_lifeTable->qtdLines = 0 ;
+	return new_lifeTable ;
+}
+
 //--------------------- Basic Block --------------
 
 BasicBlock* basicBlock_new()
 {
 	BasicBlock* new_block = calloc(1, sizeof(BasicBlock));
+	new_block->life = NULL ;
+	new_block->registrer = NULL ;
+	new_block->basicNum = 0 ;
 	return new_block ;
 }
 
@@ -289,6 +315,7 @@ Instr* Instr_new(Opcode op, ...)
 			break;
 		}
 	}
+	totalBlockLines++ ;
 	va_end(ap);
 	return ins;
 }
@@ -410,6 +437,7 @@ Function* Function_new(char* name, Variable* args)
 	}
 	fun->nArgs = nArgs;
 	basicBlock = 0 ;
+	totalBlockLines = 0 ;
 	return fun;
 }
 
@@ -430,7 +458,6 @@ static void Function_dump(Function* fun, FILE* fd)
 		arg = arg->next;
 	}
 	fprintf(fd, ")\n");
-	basicBlock = 0 ;
 	for (Instr* ins = fun->code; ins; ins = ins->next) 
 	{
 		Instr_dump(ins, fd);
