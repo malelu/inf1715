@@ -192,6 +192,14 @@ bool Addr_eq(Addr a1, Addr a2)
 	return (a1.type == a1.type && a1.num == a1.num);
 }
 
+//--------------------- Basic Block --------------
+
+BasicBlock* basicBlock_new()
+{
+	BasicBlock* new_block = calloc(1, sizeof(BasicBlock));
+	return new_block ;
+}
+
 // -------------------- Instr --------------------
 
 /*
@@ -205,11 +213,23 @@ Instr* Instr_new(Opcode op, ...)
 	va_start(ap, op);
 	Instr* ins = calloc(1, sizeof(Instr));
 	ins->op = op;
+	ins->bBlock = basicBlock_new() ;
+	ins->bBlock->basicNum = basicBlock ;
 	switch (op) 
 	{
 	// instructions with x only
 		case OP_LABEL:
+		{
+			ins->x = va_arg(ap, Addr);
+			basicBlock++ ;
+			break ;
+		}
 		case OP_GOTO:
+		{
+			ins->x = va_arg(ap, Addr);
+			basicBlock++ ;
+			break;
+		}
 		case OP_PARAM:
 		case OP_CALL:
 		case OP_RET_VAL:
@@ -219,7 +239,19 @@ Instr* Instr_new(Opcode op, ...)
 		}
 		// instructions with x and y
 		case OP_IF:
+		{
+			ins->x = va_arg(ap, Addr);
+			ins->y = va_arg(ap, Addr);
+			basicBlock++ ;
+			break;
+		}
 		case OP_IF_FALSE:
+		{
+			ins->x = va_arg(ap, Addr);
+			ins->y = va_arg(ap, Addr);
+			basicBlock++ ;
+			break;
+		}
 		case OP_SET:
 		case OP_SET_BYTE:
 		case OP_NEG:
@@ -271,16 +303,13 @@ static void Instr_dump(Instr* ins, FILE* fd)
 	const char* z = ins->z.str;
 	const char* fmt;
 
-	ins->basicBlock = basicBlock ;
 	switch (ins->op) 
 	{
 		case OP_LABEL: 
 			fmt = "%s:\n";	
-			basicBlock++ ;
 			break;
 		case OP_GOTO: 
 			fmt = "\tgoto %s\n";	
-			basicBlock++ ;
 			break;
 		case OP_PARAM: 
 			fmt = "\tparam %s\n";	
@@ -289,12 +318,10 @@ static void Instr_dump(Instr* ins, FILE* fd)
 			fmt = "\tcall %s\n";	
 			break;
 		case OP_IF: 
-			fmt = "\tif %s goto %s\n";
-			basicBlock++ ;	
+			fmt = "\tif %s goto %s\n";	
 			break;
 		case OP_IF_FALSE: 
 			fmt = "\tifFalse %s goto %s\n";	
-			basicBlock++ ;
 			break;
 		case OP_SET: 
 			fmt = "\t%s = %s\n";	
@@ -361,7 +388,7 @@ static void Instr_dump(Instr* ins, FILE* fd)
 			break;
 	}
 
-	fprintf(fd, "block %d\t", ins->basicBlock);
+	fprintf(fd, "block %d\t", ins->bBlock->basicNum);
 	fprintf(fd, fmt, x, y, z);
 	
 }
@@ -382,6 +409,7 @@ Function* Function_new(char* name, Variable* args)
 		nArgs++;
 	}
 	fun->nArgs = nArgs;
+	basicBlock = 0 ;
 	return fun;
 }
 
@@ -402,6 +430,7 @@ static void Function_dump(Function* fun, FILE* fd)
 		arg = arg->next;
 	}
 	fprintf(fd, ")\n");
+	basicBlock = 0 ;
 	for (Instr* ins = fun->code; ins; ins = ins->next) 
 	{
 		Instr_dump(ins, fd);

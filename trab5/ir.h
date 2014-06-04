@@ -76,6 +76,32 @@ List* next;
 };
 
 /*
+Registrer table
+*/
+typedef struct RegTable_ RegTable;
+struct RegTable_ {
+
+};
+
+/*
+Life table
+*/
+typedef struct LifeTable_ LifeTable;
+struct lifeTable_ {
+
+};
+
+/*
+Basic Block
+*/
+typedef struct BasicBlock_ BasicBlock;
+struct BasicBlock_ {
+LifeTable* life ;
+RegTable* registrer ;
+int basicNum ;
+};
+
+/*
 An instruction in the three-address code format of our IR.
 Instructions are stored as a linked list.
 */
@@ -86,7 +112,7 @@ Opcode op;
 Addr x;
 Addr y;
 Addr z;
-int basicBlock ;
+BasicBlock* bBlock ;
 };
 
 /*
