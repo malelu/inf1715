@@ -108,6 +108,18 @@ ListLife* first ;
 ListLife* last ;
 };
 
+/*
+An instruction in the three-address code format of our IR.
+Instructions are stored as a linked list.
+*/
+typedef struct Instr_ Instr;
+typedef struct InstrMod_ InstrMod;
+struct InstrMod_ {
+InstrMod* next;
+InstrMod* prev ;
+Instr* instr ;
+};
+
 
 /*
 Life table
@@ -119,6 +131,8 @@ ListName* lastName;
 LifeTable* next ;
 int qtdNames ;
 int qtdLines ;
+InstrMod* firstInstructions;
+InstrMod* lastInstructions;
 };
 
 /*
@@ -131,11 +145,12 @@ RegList* registrer ;
 int basicNum ;
 };
 
+
 /*
 An instruction in the three-address code format of our IR.
 Instructions are stored as a linked list.
 */
-typedef struct Instr_ Instr;
+//typedef struct Instr_ Instr;
 struct Instr_ {
 Instr* next;
 Opcode op;

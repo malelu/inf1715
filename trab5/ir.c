@@ -193,12 +193,24 @@ bool Addr_eq(Addr a1, Addr a2)
 	return (a1.type == a1.type && a1.num == a1.num);
 }
 
+
+//--------------------- InstrMod --------------
+
+InstrMod* InstrMod_new(Instr* ins)
+{
+	InstrMod* new_mod = calloc(1, sizeof(InstrMod));
+	new_mod->next = NULL;
+	new_mod->prev = NULL;
+	new_mod->instr = ins;
+	return new_mod ;
+}
+
 //--------------------- List Lfe --------------
 
-ListLife* ListLife_new(int posTable)
+ListLife* ListLife_new(int posTable, int alive)
 {
 	ListLife* new_listLife = calloc(1, sizeof(ListLife));
-	new_listLife->alive = 0 ; // 0 = dead
+	new_listLife->alive = alive ; // 0 = dead ; 1 = alive
 	new_listLife->nextPosAlive = 0 ;
 	new_listLife->posTable = posTable ;
 	new_listLife->next = NULL;
@@ -229,6 +241,8 @@ LifeTable* lifeTable_new()
 	new_lifeTable->next = NULL ;
 	new_lifeTable->qtdNames = 0 ;
 	new_lifeTable->qtdLines = 0 ;
+	new_lifeTable->firstInstructions = NULL ;
+	new_lifeTable->lastInstructions = NULL ;
 	return new_lifeTable ;
 }
 
@@ -273,6 +287,24 @@ bool notRepeated(char* name, LifeTable* lifeTab)
 	}
 	return true ;
 } 
+
+// -------------------- Insert instructions -----------
+
+void insertListLifeInstructions (LifeTable* lifeTab, InstrMod* mod)
+{
+	if(lifeTab->firstInstructions == NULL)
+	{
+		lifeTab->firstInstructions = mod ;
+		lifeTab->lastInstructions = mod ;
+	}
+	else
+	{
+		InstrMod* prevLastInst = lifeTab->lastInstructions ;
+		lifeTab->lastInstructions = mod;
+		prevLastInst->next = lifeTab->lastInstructions ;
+		lifeTab->lastInstructions->prev = prevLastInst ;
+	}
+}
 
 //-------------------- Inserting into life table -------
 
@@ -324,7 +356,6 @@ void CreateLifeTable (IR* ir)
 	{
 		Instr* ins = lastFn->code ;
 
-
 		prevTable =lifeTab ;
 		lifeTab = lifeTable_new() ;		//cada nova funcao é o início de uma nova tabela
 		if(prevTable != NULL)
@@ -332,7 +363,7 @@ void CreateLifeTable (IR* ir)
 		printf("NEW BLOCK \n") ;
 		int bBlock = ins->bBlock->basicNum ;
 		while(ins)
-		{
+		{			
 			if(validVariable(ins))
 			{
 				if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
@@ -351,6 +382,8 @@ void CreateLifeTable (IR* ir)
 				}
 			}
 			ins->bBlock->life = lifeTab ;
+			InstrMod* mod = InstrMod_new(ins) ;
+			insertListLifeInstructions (lifeTab, mod) ;
 			ins = ins->next ;
 		}
 		lastFn = lastFn->next;
@@ -368,10 +401,10 @@ void insertListLife (ListName* lstName, ListLife* lstLife)
 	}
 	else
 	{
-		ListLife* prevLst = lstName->last ;
-		lstName->last = lstLife ;
-		prevLst->next = lstName->last ; 
-		lstName->last->previous = prevLst ;
+		ListLife* nextLst = lstName->first ;
+		lstName->first = lstLife ;
+		nextLst->previous = lstName->first ; 
+		lstName->first->next = nextLst ;
 	}
 }
 
@@ -386,17 +419,37 @@ void FillLifeTableStatus (IR* ir)
 	while (lifeTab) 		// cria estruturas listLife
 	{
 		while(lstName)
-		{			
-			for(cont=0;cont < lifeTab->qtdLines+1;cont++)
+		{	
+			InstrMod* mod =  lifeTab->lastInstructions ;
+			//insertListLife (lstName, lstLife) ;		
+			for(cont=lifeTab->qtdLines;cont>0;cont--)
 			{
-				lstLife = ListLife_new(cont) ;
+				if(strcmp(mod->instr->x.str, lstName->name))	// checa se está do lado esquerdo da igualdade
+				{
+					lstLife = ListLife_new(cont, 1) ;
+				}
+				// checa se está do lado direito da igualdade
+				else if((strcmp(mod->instr->y.str, lstName->name)) || (strcmp(mod->instr->z.str, lstName->name))	)
+				{
+					lstLife = ListLife_new(cont, 1) ;
+				}
+				else						// se nao aparece, esta morto
+				{
+					lstLife = ListLife_new(cont, 0) ;
+				}
 				insertListLife (lstName, lstLife) ;
 			}
 			lstName = lstName->nextName ;
+			mod = mod->prev ;
 		}
 		
 		lifeTab = lifeTab->next;
 	}
+
+	//lifeTab = ir->functions->code->bBlock->life;
+	//InstrMod* mod =  lifeTab
+	//while(
+	//InstrMod* InstrMod_new()
 }
 
 // -------------------- Instr --------------------
@@ -679,8 +732,7 @@ void IR_addFunction(IR* ir, Function* fun)
 	{
 		lastFn = lastFn->next;
 	}
-	lastFn->next = fun;
-	
+	lastFn->next = fun;	
 }
 
 /*
