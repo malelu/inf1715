@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -D_GNU_SOURCE -g -Wall -Werror
+CFLAGS=-std=c99 -D_GNU_SOURCE -g -Wall
 
 PROGRAM=backend
 OBJECTS=main.o ir.o

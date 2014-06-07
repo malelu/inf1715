@@ -193,6 +193,18 @@ bool Addr_eq(Addr a1, Addr a2)
 	return (a1.type == a1.type && a1.num == a1.num);
 }
 
+//--------------------- List Lfe --------------
+
+ListLife* ListLife_new(int posTable)
+{
+	ListLife* new_listLife = calloc(1, sizeof(ListLife));
+	new_listLife->alive = 0 ; // 0 = dead
+	new_listLife->nextPosAlive = 0 ;
+	new_listLife->posTable = posTable ;
+	return new_listLife ;
+}
+
+
 //--------------------- list Name --------------
 
 ListName* ListName_new(char* name)
@@ -224,6 +236,47 @@ BasicBlock* basicBlock_new()
 	new_block->registrer = NULL ;
 	new_block->basicNum = 0 ;
 	return new_block ;
+}
+
+//-------------------- Inserting into life table -------
+
+void InsertLifeTable (Instr* code, LifeTable* lifeTab)
+{
+	printf("code->x->str: %s\n",code->x.str) ;
+	lifeTab->qtdLines = lifeTab->qtdLines + 1 ;
+}
+
+//-------------------- Creating life table -------
+
+void CreateLifeTable (IR* ir)
+{
+	Function* lastFn = ir->functions;
+	while (lastFn) 
+	{
+		Instr* ins = lastFn->code ;
+
+		LifeTable* lifeTab = lifeTable_new() ;		//cada nova funcao é o início de uma nova tabela
+		printf("NEW BLOCK \n") ;
+		int bBlock = ins->bBlock->basicNum ;
+		while(ins)
+		{
+			if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
+			{
+				InsertLifeTable(ins, lifeTab) ;
+				//printf("ins %d\n", ins) ;
+			}
+			else
+			{
+				bBlock = ins->bBlock->basicNum ;
+				lifeTab = lifeTable_new() ;		//cada novo bloco é o início de uma nova tabela
+				printf("NEW BLOCK \n") ;
+				InsertLifeTable(ins, lifeTab) ;
+			}
+			ins = ins->next ;
+		}
+		printf("\nfun name %s\n", lastFn->name) ; 
+		lastFn = lastFn->next;
+	}
 }
 
 // -------------------- Instr --------------------
@@ -507,6 +560,11 @@ void IR_addFunction(IR* ir, Function* fun)
 		lastFn = lastFn->next;
 	}
 	lastFn->next = fun;
+
+	//estruta de tres enderecos formada
+	printf("lastFn bb: %d\n", fun->code->bBlock->basicNum) ;
+	CreateLifeTable (ir) ;
+	
 }
 
 /*
