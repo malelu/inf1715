@@ -103,6 +103,7 @@ ListName
 typedef struct ListName_ ListName;
 struct ListName_ {
 char* name;
+ListName* nextName ;
 ListLife* first ;
 ListLife* last ;
 };
@@ -113,7 +114,8 @@ Life table
 */
 typedef struct LifeTable_ LifeTable;
 struct LifeTable_ {
-ListName* names;
+ListName* firstName;
+ListName* lastName;
 int qtdNames ;
 int qtdLines ;
 };

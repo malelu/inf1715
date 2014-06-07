@@ -211,6 +211,7 @@ ListName* ListName_new(char* name)
 {
 	ListName* new_listName = calloc(1, sizeof(ListName));
 	new_listName->name = name ;
+	new_listName->nextName = NULL ;
 	new_listName->first = NULL ;
 	new_listName->last = NULL ;
 	return new_listName ;
@@ -221,7 +222,8 @@ ListName* ListName_new(char* name)
 LifeTable* lifeTable_new()
 {
 	LifeTable* new_lifeTable = calloc(1, sizeof(LifeTable));
-	new_lifeTable->names = NULL ;
+	new_lifeTable->firstName = NULL ;
+	new_lifeTable->lastName = NULL ;
 	new_lifeTable->qtdNames = 0 ;
 	new_lifeTable->qtdLines = 0 ;
 	return new_lifeTable ;
@@ -238,12 +240,65 @@ BasicBlock* basicBlock_new()
 	return new_block ;
 }
 
+//--------------- Inserting into list of names ---------
+
+void InsertListName (char* name, LifeTable* tab)
+{
+	if(tab->firstName == NULL)
+	{
+		tab->firstName = ListName_new(name) ;
+		tab->lastName = tab->firstName ;
+	}	
+	else
+	{
+		ListName* oldLast = tab->lastName ;
+		tab->lastName = ListName_new(name) ;
+		oldLast->nextName = tab->lastName ;		
+	}
+}
+
+//-------------------- Not Repeated --------------------
+
+bool notRepeated(char* name, LifeTable* lifeTab)
+{
+	ListName* lstName = lifeTab->firstName ;
+	while(lstName)
+	{
+		if(strcmp(lstName->name, name) == 0)
+			return false ; 
+		lstName = lstName->nextName ;
+	}
+	return true ;
+} 
 //-------------------- Inserting into life table -------
 
 void InsertLifeTable (Instr* code, LifeTable* lifeTab)
 {
-	printf("code->x->str: %s\n",code->x.str) ;
+
+	if((code->op == OP_IDX_SET) || (code->op == OP_IDX_SET_BYTE))
+	{
+		printf("code->x->str: %s[%s]\n",code->x.str, code->y.str) ;
+	}
+	else
+	{
+		if(notRepeated(code->x.str, lifeTab))
+		{
+			printf("code->x->str: %s\n",code->x.str) ;
+		}
+	}
 	lifeTab->qtdLines = lifeTab->qtdLines + 1 ;
+}
+
+//-------------------- valid variable -------
+
+bool validVariable (Instr* ins)
+{
+	if((ins->op == OP_NE) || (ins->op == OP_LT) || (ins->op == OP_GT) || (ins->op == OP_LE) || (ins->op == OP_GE) ||
+		(ins->op == OP_ADD) || (ins->op == OP_SUB) || (ins->op == OP_DIV) || (ins->op == OP_MUL) || (ins->op == OP_NEG) ||
+		(ins->op == OP_NEW) || (ins->op == OP_NEW_BYTE) || (ins->op == OP_SET) || (ins->op == OP_SET_BYTE) ||
+		(ins->op == OP_SET_IDX) || (ins->op == OP_SET_IDX_BYTE) || (ins->op == OP_IDX_SET) || (ins->op == OP_IDX_SET_BYTE))
+		return true ;
+	return false ;
 }
 
 //-------------------- Creating life table -------
@@ -260,21 +315,23 @@ void CreateLifeTable (IR* ir)
 		int bBlock = ins->bBlock->basicNum ;
 		while(ins)
 		{
-			if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
+			if(validVariable(ins))
 			{
-				InsertLifeTable(ins, lifeTab) ;
-				//printf("ins %d\n", ins) ;
-			}
-			else
-			{
-				bBlock = ins->bBlock->basicNum ;
-				lifeTab = lifeTable_new() ;		//cada novo bloco é o início de uma nova tabela
-				printf("NEW BLOCK \n") ;
-				InsertLifeTable(ins, lifeTab) ;
+				if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
+				{
+					InsertLifeTable(ins, lifeTab) ;
+					//printf("ins %d\n", ins) ;
+				}
+				else
+				{
+					bBlock = ins->bBlock->basicNum ;
+					lifeTab = lifeTable_new() ;		//cada novo bloco é o início de uma nova tabela
+					printf("NEW BLOCK \n") ;
+					InsertLifeTable(ins, lifeTab) ;
+				}
 			}
 			ins = ins->next ;
 		}
-		printf("\nfun name %s\n", lastFn->name) ; 
 		lastFn = lastFn->next;
 	}
 }
@@ -560,10 +617,6 @@ void IR_addFunction(IR* ir, Function* fun)
 		lastFn = lastFn->next;
 	}
 	lastFn->next = fun;
-
-	//estruta de tres enderecos formada
-	printf("lastFn bb: %d\n", fun->code->bBlock->basicNum) ;
-	CreateLifeTable (ir) ;
 	
 }
 
@@ -588,4 +641,8 @@ void IR_dump(IR* ir, FILE* fd)
 		Function_dump(fun, fd);
 		fprintf(fd, "\n");
 	}
+
+	//estruta de tres enderecos formada
+	//printf("lastFn bb: %d\n", fun->code->bBlock->basicNum) ;
+	CreateLifeTable (ir) ;
 }
