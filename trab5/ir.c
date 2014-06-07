@@ -201,6 +201,8 @@ ListLife* ListLife_new(int posTable)
 	new_listLife->alive = 0 ; // 0 = dead
 	new_listLife->nextPosAlive = 0 ;
 	new_listLife->posTable = posTable ;
+	new_listLife->next = NULL;
+	new_listLife->previous = NULL;
 	return new_listLife ;
 }
 
@@ -224,6 +226,7 @@ LifeTable* lifeTable_new()
 	LifeTable* new_lifeTable = calloc(1, sizeof(LifeTable));
 	new_lifeTable->firstName = NULL ;
 	new_lifeTable->lastName = NULL ;
+	new_lifeTable->next = NULL ;
 	new_lifeTable->qtdNames = 0 ;
 	new_lifeTable->qtdLines = 0 ;
 	return new_lifeTable ;
@@ -289,9 +292,12 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab)
 	{
 		printf("name: %s\n", name) ;
 		InsertListName (name, lifeTab) ;
+		lifeTab->qtdNames = lifeTab->qtdNames + 1 ;
 	}
 
 	lifeTab->qtdLines = lifeTab->qtdLines + 1 ;
+	//printf("bloco basico: %d\n", code->bBlock->basicNum) ;
+	//printf("num linhas: %d\n", lifeTab->qtdLines) ;
 }
 
 //-------------------- valid variable -------
@@ -311,11 +317,18 @@ bool validVariable (Instr* ins)
 void CreateLifeTable (IR* ir)
 {
 	Function* lastFn = ir->functions;
+	LifeTable* lifeTab = NULL;
+	LifeTable* prevTable = lifeTab ;
+
 	while (lastFn) 
 	{
 		Instr* ins = lastFn->code ;
 
-		LifeTable* lifeTab = lifeTable_new() ;		//cada nova funcao é o início de uma nova tabela
+
+		prevTable =lifeTab ;
+		lifeTab = lifeTable_new() ;		//cada nova funcao é o início de uma nova tabela
+		if(prevTable != NULL)
+			prevTable->next = lifeTab ;
 		printf("NEW BLOCK \n") ;
 		int bBlock = ins->bBlock->basicNum ;
 		while(ins)
@@ -330,14 +343,59 @@ void CreateLifeTable (IR* ir)
 				else
 				{
 					bBlock = ins->bBlock->basicNum ;
+					prevTable = lifeTab;
 					lifeTab = lifeTable_new() ;		//cada novo bloco é o início de uma nova tabela
+					prevTable->next = lifeTab ;
 					printf("NEW BLOCK \n") ;
 					InsertLifeTable(ins, lifeTab) ;
 				}
 			}
+			ins->bBlock->life = lifeTab ;
 			ins = ins->next ;
 		}
 		lastFn = lastFn->next;
+	}
+}
+
+// -------------------- Insert ListLife -----------
+
+void insertListLife (ListName* lstName, ListLife* lstLife)
+{
+	if(lstName->first == NULL)
+	{
+		lstName->first = lstLife ;
+		lstName->last = lstName->first ;
+	}
+	else
+	{
+		ListLife* prevLst = lstName->last ;
+		lstName->last = lstLife ;
+		prevLst->next = lstName->last ; 
+		lstName->last->previous = prevLst ;
+	}
+}
+
+// -------------------- Fill Life Table Status -----
+void FillLifeTableStatus (IR* ir)
+{
+	LifeTable* lifeTab = ir->functions->code->bBlock->life;
+	ListName* lstName = lifeTab->firstName ;
+	ListLife* lstLife ;
+	int cont ;
+
+	while (lifeTab) 		// cria estruturas listLife
+	{
+		while(lstName)
+		{			
+			for(cont=0;cont < lifeTab->qtdLines+1;cont++)
+			{
+				lstLife = ListLife_new(cont) ;
+				insertListLife (lstName, lstLife) ;
+			}
+			lstName = lstName->nextName ;
+		}
+		
+		lifeTab = lifeTab->next;
 	}
 }
 
@@ -650,4 +708,5 @@ void IR_dump(IR* ir, FILE* fd)
 	//estruta de tres enderecos formada
 	//printf("lastFn bb: %d\n", fun->code->bBlock->basicNum) ;
 	CreateLifeTable (ir) ;
+	FillLifeTableStatus (ir) ;
 }

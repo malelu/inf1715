@@ -116,6 +116,7 @@ typedef struct LifeTable_ LifeTable;
 struct LifeTable_ {
 ListName* firstName;
 ListName* lastName;
+LifeTable* next ;
 int qtdNames ;
 int qtdLines ;
 };
@@ -229,7 +230,7 @@ String* String_new(char* name, char* value);
 Variable* Variable_new(char* name);
 #define Variable_link(e, l) ((Variable*)List_link((List*)(e), (List*)(l)))
 
-Instr* Instr_new(Opcode op, ...);
+Instr* Instr_new(Opcode op,  ...);
 #define Instr_link(e, l) ((Instr*)List_link((List*)(e), (List*)(l)))
 
 Addr Addr_litNum(int num);
