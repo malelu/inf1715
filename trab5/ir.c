@@ -270,22 +270,27 @@ bool notRepeated(char* name, LifeTable* lifeTab)
 	}
 	return true ;
 } 
+
 //-------------------- Inserting into life table -------
 
 void InsertLifeTable (Instr* code, LifeTable* lifeTab)
 {
-
+	char* name = malloc(20) ;
 	if((code->op == OP_IDX_SET) || (code->op == OP_IDX_SET_BYTE))
 	{
-		printf("code->x->str: %s[%s]\n",code->x.str, code->y.str) ;
+		snprintf(name, 20, "%s[%s]", code->x.str, code->y.str);
 	}
 	else
 	{
-		if(notRepeated(code->x.str, lifeTab))
-		{
-			printf("code->x->str: %s\n",code->x.str) ;
-		}
+		strcpy(name, code->x.str) ;	
 	}
+		
+	if(notRepeated(name, lifeTab))
+	{
+		printf("name: %s\n", name) ;
+		InsertListName (name, lifeTab) ;
+	}
+
 	lifeTab->qtdLines = lifeTab->qtdLines + 1 ;
 }
 
