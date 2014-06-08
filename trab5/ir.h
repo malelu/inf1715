@@ -75,16 +75,7 @@ struct List_ {
 List* next;
 };
 
-/*
-Registrer table
-*/
-typedef struct RegList_ RegList;
-struct RegList_ {
 
-ListName* firstName;
-ListName* lastName;
-
-};
 
 
 /*
@@ -112,6 +103,19 @@ ListLife* last ;
 };
 
 /*
+Registrer table
+*/
+typedef struct RegList_ RegList;
+struct RegList_ {
+char* reg1 ;
+char* reg2 ;
+char* reg3 ;
+ListName* firstName;
+ListName* lastName;
+
+};
+
+/*
 An instruction in the three-address code format of our IR.
 Instructions are stored as a linked list.
 */
@@ -132,6 +136,7 @@ struct LifeTable_ {
 ListName* firstName;
 ListName* lastName;
 LifeTable* next ;
+RegList* regs ;
 int qtdNames ;
 int qtdLines ;
 InstrMod* firstInstructions;
