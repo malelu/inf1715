@@ -81,6 +81,9 @@ Registrer table
 typedef struct RegList_ RegList;
 struct RegList_ {
 
+ListName* firstName;
+ListName* lastName;
+
 };
 
 

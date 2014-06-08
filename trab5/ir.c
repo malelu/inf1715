@@ -207,11 +207,11 @@ InstrMod* InstrMod_new(Instr* ins)
 
 //--------------------- List Lfe --------------
 
-ListLife* ListLife_new(int posTable, int alive)
+ListLife* ListLife_new(int posTable, int alive, int nextPosAlive)
 {
 	ListLife* new_listLife = calloc(1, sizeof(ListLife));
 	new_listLife->alive = alive ; // 0 = dead ; 1 = alive
-	new_listLife->nextPosAlive = 0 ;
+	new_listLife->nextPosAlive = nextPosAlive ;
 	new_listLife->posTable = posTable ;
 	new_listLife->next = NULL;
 	new_listLife->previous = NULL;
@@ -306,9 +306,9 @@ void insertListLifeInstructions (LifeTable* lifeTab, InstrMod* mod)
 	}
 }
 
-//-------------------- Inserting into life table -------
+//-------------------- Inserting into life table and registrer -------
 
-void InsertLifeTable (Instr* code, LifeTable* lifeTab)
+void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs)
 {
 	char* name = malloc(20) ;
 	if((code->op == OP_IDX_SET) || (code->op == OP_IDX_SET_BYTE))
@@ -351,6 +351,7 @@ void CreateLifeTable (IR* ir)
 	Function* lastFn = ir->functions;
 	LifeTable* lifeTab = NULL;
 	LifeTable* prevTable = lifeTab ;
+	RegList* regs = NULL ;
 
 	while (lastFn) 
 	{
@@ -358,6 +359,7 @@ void CreateLifeTable (IR* ir)
 
 		prevTable =lifeTab ;
 		lifeTab = lifeTable_new() ;		//cada nova funcao é o início de uma nova tabela
+		regs = regList_new() ;
 		if(prevTable != NULL)
 			prevTable->next = lifeTab ;
 		printf("NEW BLOCK \n") ;
@@ -369,6 +371,7 @@ void CreateLifeTable (IR* ir)
 				if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
 				{
 					InsertLifeTable(ins, lifeTab) ;
+					InsertRegst(ins, regs) ;		// insere na tabela de registradores a nova variável
 					//printf("ins %d\n", ins) ;
 				}
 				else
@@ -376,12 +379,15 @@ void CreateLifeTable (IR* ir)
 					bBlock = ins->bBlock->basicNum ;
 					prevTable = lifeTab;
 					lifeTab = lifeTable_new() ;		//cada novo bloco é o início de uma nova tabela
+					regs = regList_new() ;
 					prevTable->next = lifeTab ;
 					printf("NEW BLOCK \n") ;
 					InsertLifeTable(ins, lifeTab) ;
+					InsertRegst(ins, regs) ;
 				}
 			}
 			ins->bBlock->life = lifeTab ;
+			ins->bBlock->registrer = regs ;
 			InstrMod* mod = InstrMod_new(ins) ;
 			insertListLifeInstructions (lifeTab, mod) ;
 			ins = ins->next ;
@@ -415,27 +421,30 @@ void FillLifeTableStatus (IR* ir)
 	ListName* lstName = lifeTab->firstName ;
 	ListLife* lstLife ;
 	int cont ;
+	int nextPosAlive = -1 ;
 
 	while (lifeTab) 		// cria estruturas listLife
 	{
 		while(lstName)
 		{	
 			InstrMod* mod =  lifeTab->lastInstructions ;
-			//insertListLife (lstName, lstLife) ;		
+			insertListLife (lstName, lstLife, 1, nextPosALive) ;  // na última linha está sempre vivo		
 			for(cont=lifeTab->qtdLines;cont>0;cont--)
 			{
 				if(strcmp(mod->instr->x.str, lstName->name))	// checa se está do lado esquerdo da igualdade
 				{
-					lstLife = ListLife_new(cont, 1) ;
+					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
+					nextPosAlive = -1 ;
 				}
 				// checa se está do lado direito da igualdade
 				else if((strcmp(mod->instr->y.str, lstName->name)) || (strcmp(mod->instr->z.str, lstName->name))	)
 				{
-					lstLife = ListLife_new(cont, 1) ;
+					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
+					nextPosAlive = cont ;		// nessa altura a variavel é usada
 				}
 				else						// se nao aparece, esta morto
 				{
-					lstLife = ListLife_new(cont, 0) ;
+					lstLife = ListLife_new(cont, 0, nextPosAlive) ;
 				}
 				insertListLife (lstName, lstLife) ;
 			}
@@ -450,6 +459,11 @@ void FillLifeTableStatus (IR* ir)
 	//InstrMod* mod =  lifeTab
 	//while(
 	//InstrMod* InstrMod_new()
+}
+
+// -------------------- Fill Reg List ------------
+void FillRegList (IR* ir)
+{
 }
 
 // -------------------- Instr --------------------
