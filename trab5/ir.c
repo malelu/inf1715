@@ -556,84 +556,98 @@ void FillLifeTableStatus (IR* ir)
 	}
 }
 
+// ---------------- Insert Registrers --------------
+
+void insertRegElse (Instr* ins, char** regNum, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
+{
+
+	ListName* lstName = lifeTab->firstName ;
+	char* regName ;
+	regName = *regNum ;			// FAZER PARA OS TRES REGS
+	ListName* var = regs->firstName ;
+	while(strcmp(regName, var->name)!= 0)
+	{
+		var = var->nextName ;
+		lstName = lstName->nextName ;
+	}
+	ListLife* life = lstName->first ;
+		while(life->posTable != blockLine)
+	{
+		life = life->next ;
+	}
+	//if(var->status == 1) 			// se a variavel está armazenada na memória
+	if(true)
+	{
+		*regNum = name ;
+	}//------------------------------------------- para as tres regs
+	else if(strcmp(regName, ins->x.str) == 0)		// se a variavel é resultado da operacao
+	{
+		*regNum = name ;
+	} //------------------------------------------- para as tres regs
+	else if(life->nextPosAlive != -1)		// se nao tem proximo uso
+	{
+		*regNum = name ;
+	} //------------------------------------------- para as tres regs
+	else				// faz spill
+	{
+		//var->status = regs->reg1 ;		//VER!
+		*regNum = name ;
+	}
+}
+
+// ---------------- Insert Registrers --------------
+
+void insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
+{
+
+	ListName* lstName = lifeTab->firstName ;
+	char* regName ;
+	if(strcmp(regs->reg1, name) == 0)		// se estiver em algum registrador atuaiza
+	{
+		regs->reg1 = name ;
+		printf("MOV\n") ;
+	}
+		else if(strcmp(regs->reg2, name) == 0)
+	{
+		regs->reg2 = name ;
+		printf("MOV\n") ;
+	}
+	else if(strcmp(regs->reg3, name) == 0)
+	{
+		regs->reg3 = name ;
+		printf("MOV\n") ;
+	}
+	else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
+	{
+		regs->reg1 = name ;
+		printf("MOV\n") ;
+	}
+	else if(regs->reg2 == NULL)
+	{
+		regs->reg2 = name ;
+		printf("MOV\n") ;
+	}
+	else if(regs->reg3 == NULL)
+	{
+		regs->reg3 = name ;
+		printf("MOV\n") ;
+	}
+	else
+	{
+		printf("FAZER!\n") ;
+		insertRegElse (ins, &(regs->reg1), name, lifeTab, blockLine, regs) ;
+				
+	}
+}
+
 // ---------------- Update Registrers --------------
 
 void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
-	ListName* lstName = lifeTab->firstName ;
-	char* regName ;
-	char* name = ins->y.str ;
-	//while (lifeTab) 		// cria estruturas listLife
-	//{
-		//while(strcmp(lstName->name, name)==0)		// acha a variavel na tabela de vida
-		//{	
 
-			if(strcmp(regs->reg1, name) == 0)		// se estiver em algum registrador atuaiza
-			{
-				regs->reg1 = name ;
-				printf("MOV\n") ;
-			}
-			else if(strcmp(regs->reg2, name) == 0)
-			{
-				regs->reg2 = name ;
-				printf("MOV\n") ;
-			}
-			else if(strcmp(regs->reg3, name) == 0)
-			{
-				regs->reg3 = name ;
-				printf("MOV\n") ;
-			}
-			else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
-			{
-				regs->reg1 = name ;
-				printf("MOV\n") ;
-			}
-			else if(regs->reg2 == NULL)
-			{
-				regs->reg2 = name ;
-				printf("MOV\n") ;
-			}
-			else if(regs->reg3 == NULL)
-			{
-				regs->reg3 = name ;
-				printf("MOV\n") ;
-			}
-			else
-			{
-				regName = regs->reg1 ;			// FAZER PARA OS TRES REGS
-				ListName* var = regs->firstName ;
-				while(strcmp(regName, var->name)!= 0)
-				{
-					var = var->nextName ;
-					lstName = lstName->nextName ;
-				}
-				ListLife* life = lstName->first ;
-				while(life->posTable != blockLine)
-				{
-					life = life->next ;
-				}
-
-				//if(var->status == 1) 			// se a variavel está armazenada na memória
-				if(true)
-				{
-					regs->reg1 = name ;
-				}//------------------------------------------- para as tres regs
-
-				else if(strcmp(regName, ins->x.str) == 0)		// se a variavel é resultado da operacao
-				{
-					regs->reg1 = name ;
-				} //------------------------------------------- para as tres regs
-				else if(life->nextPosAlive != -1)		// se nao tem proximo uso
-				{
-					regs->reg1 = name ;
-				} //------------------------------------------- para as tres regs
-				else				// faz spill
-				{
-					//var->status = regs->reg1 ;		//VER!
-					regs->reg1 = name ;
-				}
-				
-			}
+	insertReg (ins, ins->y.str, lifeTab, blockLine, regs) ;
+	insertReg (ins, ins->z.str, lifeTab, blockLine, regs) ;
+	insertReg (ins, ins->x.str, lifeTab, blockLine, regs) ;
 	
 }
 
@@ -653,17 +667,21 @@ void FillRegList (IR* ir)
 		regs = lifeTab->regs ;
 		blockLine = 0 ;
 
-		printf("NEW BLOCK \n") ;
+		printf("NEW BLOCK! \n") ;
 		int bBlock = ins->bBlock->basicNum ;
 		while(ins)
-		{			
+		{	
+			printf("passou \n") ;		
 			if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
 			{
+				printf("passou2 \n") ;
 				updateRegs(ins, lifeTab, blockLine, regs) ;	//atualiza os registradores
 				blockLine++ ;
+				printf("saiu2 \n") ;
 			}
 			else
 			{
+				printf("passou3 \n") ;
 				bBlock = ins->bBlock->basicNum ;
 				lifeTab = ins->bBlock->life ;		//cada novo bloco é o início de uma nova tabela
 				regs = lifeTab->regs ;
@@ -971,11 +989,6 @@ void printLifeTable(IR* ir)
 	ListLife* lstLife ;
 	int cont ;
 
-	/*while (lifeTab)
-	{
-		printf("-------------------\n") ;
-		lifeTab = lifeTab->next;
-	}*/
 	while (lifeTab)
 	{
 		//printf("lifetab: %d\n", lifeTab) ;
@@ -985,7 +998,7 @@ void printLifeTable(IR* ir)
 		{	
 			//printf("entrou\n") ;
 			printf("lstName: %s\n", lstName->name) ;
-			printf("%s: ", lstName->name) ; 
+			printf("%s: \n", lstName->name) ; 
 			//printf("passou\n") ;
 			lstLife = lstName->first ;	
 			//printf("passou2\n") ;	
@@ -1031,4 +1044,5 @@ void IR_dump(IR* ir, FILE* fd)
 	CreateLifeTable (ir) ;
 	FillLifeTableStatus (ir) ;
 	printLifeTable(ir) ;
+	FillRegList (ir) ;
 }
