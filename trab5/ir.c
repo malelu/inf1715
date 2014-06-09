@@ -502,64 +502,79 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegLine* regs)
 	ListLife* lstLife ;
 	int cont ;
 	int nextPosAlive = -1 ;
-
-	char* name = ins->x.str ;
-	while (lifeTab) 		// cria estruturas listLife
-	{
-		while(strcmp(lstName->name, name)==0)		// acha a variavel na tabela de vida
-		{	
+	
+	char* regName ;
+	char* name = ins->y.str ;
+	//while (lifeTab) 		// cria estruturas listLife
+	//{
+		//while(strcmp(lstName->name, name)==0)		// acha a variavel na tabela de vida
+		//{	
 
 			if(strcmp(regs->reg1, name) == 0)		// se estiver em algum registrador atuaiza
 			{
 				regs->reg1 = name ;
+				printf("MOV\n") ;
 			}
 			else if(strcmp(regs->reg2, name) == 0)
 			{
 				regs->reg2 = name ;
+				printf("MOV\n") ;
 			}
 			else if(strcmp(regs->reg3, name) == 0)
 			{
 				regs->reg3 = name ;
+				printf("MOV\n") ;
 			}
 			else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
 			{
 				regs->reg1 = name ;
+				printf("MOV\n") ;
 			}
 			else if(regs->reg2 == NULL)
 			{
 				regs->reg2 = name ;
+				printf("MOV\n") ;
 			}
 			else if(regs->reg3 == NULL)
 			{
 				regs->reg3 = name ;
+				printf("MOV\n") ;
 			}
-			InstrMod* mod =  lifeTab->lastInstructions ;
-			insertListLife (lstName, lstLife, 1, nextPosALive) ;  // na última linha está sempre vivo		
-			for(cont=lifeTab->qtdLines;cont>0;cont--)
+			else
 			{
-				if(strcmp(mod->instr->x.str, lstName->name))	// checa se está do lado esquerdo da igualdade
+				regName = regs->reg1 ;			// FAZER PARA OS TRES REGS
+				ListName* var = regs->firstName ;
+				while(strcmp(regName, var->name)!= 0)
 				{
-					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
-					nextPosAlive = -1 ;
+					var = var->nextName ;
+					lstName = lastName->nextName ;
 				}
-				// checa se está do lado direito da igualdade
-				else if((strcmp(mod->instr->y.str, lstName->name)) || (strcmp(mod->instr->z.str, lstName->name))	)
+				ListLife* life = lstName->first ;
+				while(life->posTable != blockLine)
 				{
-					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
-					nextPosAlive = cont ;		// nessa altura a variavel é usada
+					life = life->next ;
 				}
-				else						// se nao aparece, esta morto
+
+				if(var->status == 1) 			// se a variavel está armazenada na memória
 				{
-					lstLife = ListLife_new(cont, 0, nextPosAlive) ;
+					regs->reg1 = name ;
+				}//------------------------------------------- para as tres regs
+
+				else if(strcmp(regName, ins->x.str) == 0)		// se a variavel é resultado da operacao
+				{
+					regs->reg1 = name ;
+				} //------------------------------------------- para as tres regs
+				else if(life->nextPosAlive != -1)		// se nao tem proximo uso
+				{
+					regs->reg1 = name ;
+				} //------------------------------------------- para as tres regs
+				else				// faz spill
+				{
+					var->status = regs->reg1 ;
+					regs->reg1 = name ;
 				}
-				insertListLife (lstName, lstLife) ;
-			}
-			lstName = lstName->nextName ;
-			mod = mod->prev ;
-		}
-		
-		lifeTab = lifeTab->next;
-	}
+				
+			//}
 	
 }
 
