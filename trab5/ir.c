@@ -323,6 +323,9 @@ bool notRepeated(char* name, LifeTable* lifeTab)
 
 void insertListLifeInstructions (LifeTable* lifeTab, InstrMod* mod)
 {
+				printf("mod->instr->x.str %s\n", mod->instr->x.str) ;
+				//printf("mod->instr->y.str %s\n", mod->instr->y.str) ;
+				//printf("mod->instr->z.str %s\n", mod->instr->z.str) ;
 	if(lifeTab->firstInstructions == NULL)
 	{
 		lifeTab->firstInstructions = mod ;
@@ -334,6 +337,7 @@ void insertListLifeInstructions (LifeTable* lifeTab, InstrMod* mod)
 		lifeTab->lastInstructions = mod;
 		prevLastInst->next = lifeTab->lastInstructions ;
 		lifeTab->lastInstructions->prev = prevLastInst ;
+		//printf("lifeTab->lastInstructions->prev->instr->x.str %s\n", lifeTab->lastInstructions->prev->instr->x.str) ;
 	}
 }
 
@@ -424,19 +428,31 @@ void CreateLifeTable (IR* ir)
 					InsertLifeTable(ins, lifeTab, regs) ;
 				}
 			}
+			else
+			{
+				lifeTab->qtdLines = lifeTab->qtdLines + 1 ;
+			}
 			ins->bBlock->life = lifeTab ;
 			ins->bBlock->registrer = regs ;
 			InstrMod* mod = InstrMod_new(ins) ;
 			insertListLifeInstructions (lifeTab, mod) ;
 			ins = ins->next ;
 		}
+		// printando mod------------------------
+		InstrMod* mod2 = lifeTab->lastInstructions ;
+		while(mod2)
+		{
+			printf("--mod2->instr->x.str %s\n", mod2->instr->x.str) ;
+			mod2 = mod2->prev ;
+		}
+		//-------------------------------------------
 		lastFn = lastFn->next;
 	}
 
 	aux = ir->functions->code->bBlock->life ;
 	while(aux)
 	{
-		printf("TABELA!\n") ; 
+		//printf("TABELA!\n") ; 
 		aux = aux->next ;
 	}
 }
@@ -467,6 +483,7 @@ void FillLifeTableStatus (IR* ir)
 	ListLife* lstLife ;
 	int cont ;
 	int nextPosAlive = -1 ;
+	InstrMod* mod ;
 
 	while (lifeTab) 		// cria estruturas listLife
 	{
@@ -474,15 +491,26 @@ void FillLifeTableStatus (IR* ir)
 		while(lstName)
 		{	
 			//printf("---LSTNAME->NAME: %s\n", lstName->name) ;
-			InstrMod* mod =  lifeTab->lastInstructions ;
+			mod =  lifeTab->lastInstructions ;
 			lstLife = ListLife_new(lifeTab->qtdLines, 1, nextPosAlive) ;
 			//printf("---LSTLIFE1: %d\n", lstLife) ;
-			insertListLife (lstName, lstLife) ;  // na última linha está sempre vivo		
+			insertListLife (lstName, lstLife) ;  // na última linha está sempre vivo
+
+		// printando mod------------------------
+		while(mod)
+		{
+			printf("====mod//->instr->x.str %s\n", mod->instr->x.str) ;
+			mod = mod->prev ;
+		}
+		mod =  lifeTab->lastInstructions ;
+		//-------------------------------------------	
+	
 			for(cont=lifeTab->qtdLines-1;cont>=0;cont--)
 			{//printf("---0 \n") ;
-				//printf("mod->instr->x.str %d\n", mod->instr->x.str) ;
-				//printf("mod->instr->y.str %d\n", mod->instr->y.str) ;
-				//printf("mod->instr->z.str %d\n", mod->instr->z.str) ;
+				//if(mod == NULL)
+					//break ;
+				printf("--mod//->instr->x.str %s\n", mod->instr->x.str) ;
+
 				// checa se está do lado esquerdo da igualdade
 				if((mod->instr->x.str != NULL) && (strcmp(mod->instr->x.str, lstName->name) == 0))	
 				{
@@ -516,9 +544,11 @@ void FillLifeTableStatus (IR* ir)
 				}
 				//printf("---LSTLIFE2: %d\n", lstLife) ;
 				insertListLife (lstName, lstLife) ;
+				mod = mod->prev ;
+				//printf("mod: %d\n", mod) ;
 			}
 			lstName = lstName->nextName ;
-			mod = mod->prev ;
+			//mod = mod->prev ;
 		}
 		
 		lifeTab = lifeTab->next;
