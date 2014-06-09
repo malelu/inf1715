@@ -599,38 +599,38 @@ void insertRegElse (Instr* ins, char** regNum, char* name, LifeTable* lifeTab, i
 
 void insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
-
+	//printf("entrou regs\n") ;
 	ListName* lstName = lifeTab->firstName ;
 	char* regName ;
-	if(strcmp(regs->reg1, name) == 0)		// se estiver em algum registrador atuaiza
+	if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atuaiza
 	{
 		regs->reg1 = name ;
-		printf("MOV\n") ;
+		printf("mov ebx %s \n", name) ;
 	}
-		else if(strcmp(regs->reg2, name) == 0)
+	else if((regs->reg2 != NULL) && (strcmp(regs->reg2, name) == 0))
 	{
 		regs->reg2 = name ;
-		printf("MOV\n") ;
+		printf("mov ecx %s \n", name) ;
 	}
-	else if(strcmp(regs->reg3, name) == 0)
+	else if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
 	{
 		regs->reg3 = name ;
-		printf("MOV\n") ;
+		printf("mov eax %s \n", name) ;
 	}
 	else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
 	{
 		regs->reg1 = name ;
-		printf("MOV\n") ;
+		printf("mov ebx %s \n", name) ;
 	}
 	else if(regs->reg2 == NULL)
 	{
 		regs->reg2 = name ;
-		printf("MOV\n") ;
+		printf("mov ecx %s \n", name) ;
 	}
 	else if(regs->reg3 == NULL)
 	{
 		regs->reg3 = name ;
-		printf("MOV\n") ;
+		printf("mov eax %s \n", name) ;
 	}
 	else
 	{
@@ -644,10 +644,39 @@ void insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegLi
 
 void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
+	ListName* lstName = lifeTab->firstName ;
 
-	insertReg (ins, ins->y.str, lifeTab, blockLine, regs) ;
-	insertReg (ins, ins->z.str, lifeTab, blockLine, regs) ;
-	insertReg (ins, ins->x.str, lifeTab, blockLine, regs) ;
+	while(lstName)
+	{
+		if((ins->y.str != NULL) && (strcmp(lstName->name, ins->y.str) == 0))		// so aloca se for uma variavel valida
+		{
+			insertReg (ins, ins->y.str, lifeTab, blockLine, regs) ;
+			break ;
+		}
+		lstName = lstName->nextName ;	
+	}
+
+	lstName = lifeTab->firstName ;
+	while(lstName)
+	{
+		if((ins->z.str != NULL) && (strcmp(lstName->name, ins->z.str) == 0))
+		{
+			insertReg (ins, ins->z.str, lifeTab, blockLine, regs) ;
+			break ;
+		}
+		lstName = lstName->nextName ;	
+	}
+
+	lstName = lifeTab->firstName ;
+	while(lstName)
+	{
+		if((ins->x.str != NULL) && (strcmp(lstName->name, ins->x.str) == 0))
+		{
+			insertReg (ins, ins->x.str, lifeTab, blockLine, regs) ;
+			break ;
+		}
+		lstName = lstName->nextName ;	
+	}
 	
 }
 
@@ -658,34 +687,30 @@ void FillRegList (IR* ir)
 	Function* lastFn = ir->functions;
 	LifeTable* lifeTab = NULL;
 	RegList* regs = NULL ;
+	Instr* ins = NULL ;
 
 	while (lastFn) 
 	{
-		Instr* ins = lastFn->code ;
-
+		ins = lastFn->code ;
 		lifeTab = ins->bBlock->life ;		//cada nova funcao é o início de uma nova tabela
 		regs = lifeTab->regs ;
 		blockLine = 0 ;
 
-		printf("NEW BLOCK! \n") ;
+		//printf("NEW BLOCK! \n") ;
 		int bBlock = ins->bBlock->basicNum ;
 		while(ins)
-		{	
-			printf("passou \n") ;		
+		{		
 			if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
 			{
-				printf("passou2 \n") ;
 				updateRegs(ins, lifeTab, blockLine, regs) ;	//atualiza os registradores
 				blockLine++ ;
-				printf("saiu2 \n") ;
 			}
 			else
 			{
-				printf("passou3 \n") ;
 				bBlock = ins->bBlock->basicNum ;
 				lifeTab = ins->bBlock->life ;		//cada novo bloco é o início de uma nova tabela
 				regs = lifeTab->regs ;
-				printf("NEW BLOCK \n") ;
+				//printf("NEW BLOCK \n") ;
 				updateRegs(ins, lifeTab, blockLine, regs) ;	//atualiza os registradores
 				blockLine = 1 ;
 			}
