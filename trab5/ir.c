@@ -503,19 +503,17 @@ void FillLifeTableStatus (IR* ir)
 			insertListLife (lstName, lstLife) ;  // na última linha está sempre vivo
 
 		// printando mod------------------------
-		while(mod)
+		/*while(mod)
 		{
 			printf("====mod//->instr->x.str %s\n", mod->instr->x.str) ;
 			mod = mod->prev ;
 		}
-		mod =  lifeTab->lastInstructions ;
+		mod =  lifeTab->lastInstructions ;*/
 		//-------------------------------------------	
 	
 			for(cont=lifeTab->qtdLines-1;cont>=0;cont--)
 			{//printf("---0 \n") ;
-				//if(mod == NULL)
-					//break ;
-				printf("--mod//->instr->x.str %s\n", mod->instr->x.str) ;
+				//printf("--mod//->instr->x.str %s\n", mod->instr->x.str) ;
 
 				// checa se está do lado esquerdo da igualdade
 				if((mod->instr->x.str != NULL) && (strcmp(mod->instr->x.str, lstName->name) == 0))	
@@ -652,6 +650,54 @@ int insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegLis
 	}
 }
 
+// ---------------- Print Operations --------------------
+void printOperation(int op, int regstr1, int regstr2)
+{
+	switch(op)
+	{
+		case OP_ADD:
+			printf("\tADD ") ;
+			break ;
+		case OP_SUB:
+			printf("\tSUB ") ;
+			break ;
+		case OP_MUL:
+			printf("\tIMUL ") ;
+			break ;
+		default:
+			printf("\tCMP ") ;
+			break ;	
+	}
+
+	if(regstr1 == 1)
+		printf("ebx ") ;
+	else if(regstr1 == 2)
+		printf("ecx ") ;
+	else
+		printf("eax ") ;
+
+	if(regstr2 == 1)
+		printf("ebx\n") ;
+	else if(regstr2 == 2)
+		printf("ecx\n") ;
+	else
+		printf("eax\n") ;
+}
+
+// ---------------- Search Var In Registrers --------------
+
+char* searchVarInReg(char* name, RegList* regs)
+{
+	if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))
+		return "ebx" ;
+	else if((regs->reg2 != NULL) && (strcmp(regs->reg2, name) == 0))
+		return "ecx" ;
+	else if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
+		return "eax" ;
+	else
+		return NULL ;
+}
+
 // ---------------- Search Insert Registrers --------------
 int searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
@@ -672,6 +718,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
 	ListName* lstName = lifeTab->firstName ;
 	int regstr1, regstr2 ;
+	char* var = NULL ;
 
 	switch(ins->op)
 	{
@@ -688,10 +735,13 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			printf("%s: \n", ins->x.str) ;
 			break ;
 		case OP_PARAM: 
-			//fmt = "\tparam %s\n";	
+			var = searchVarInReg(ins->x.str, regs) ;
+			printf("\tPUSH %s\n", var) ;
 			break;
 		case OP_CALL: 
-			//fmt = "\tcall %s\n";	
+			printf("\tCALL %s\n", ins->x.str) ;
+			if(var != NULL)
+				printf("\tPOP %s\n", var) ;
 			break;
 		case OP_IF: 
 			//fmt = "\tif %s goto %s\n";	
@@ -701,8 +751,8 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break;
 		case OP_SET: 
 			{
-				searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				searchInsert (ins, ins->x.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs) ;
 				break ;
 			}
 		case OP_SET_BYTE: 
@@ -721,35 +771,60 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			//fmt = "\t%s[%s] = byte %s\n";	
 			break;
 		case OP_NE: 
-			//fmt = "\t%s = %s != %s\n";	
-			break;
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printOperation(0, regstr1, regstr2) ;
+				break ;
+			}
 		case OP_EQ: 
-			//fmt = "\t%s = %s == %s\n";	
-			break;
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printOperation(0, regstr1, regstr2) ;
+				break ;
+			}
 		case OP_LT: 
-			//fmt = "\t%s = %s < %s\n";	
-			break;
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printOperation(0, regstr1, regstr2) ;
+				break ;
+			}
 		case OP_GT: 
-			//fmt = "\t%s = %s > %s\n";	
-			break;
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printOperation(0, regstr1, regstr2) ;
+				break ;
+			}
 		case OP_LE: 
-			//fmt = "\t%s = %s <= %s\n";	
-			break;
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printOperation(0, regstr1, regstr2) ;
+				break ;
+			}
 		case OP_GE: 
-			//fmt = "\t%s = %s >= %s\n";	
-			break;
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printOperation(0, regstr1, regstr2) ;
+				break ;
+			}
 		case OP_ADD: 
 			{
 				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
 				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
-				printf("\tADD\n") ;
+				// mudar o registrador do z para x!
+				printOperation(OP_ADD, regstr1, regstr2) ;
 				break;
 			}			
 		case OP_SUB: 
 			{
 				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
 				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
-				printf("\tSUB\n") ;
+				printOperation(OP_SUB, regstr1, regstr2) ;
 				break;
 			}
 		case OP_DIV: 
@@ -763,7 +838,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
 				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
-				printf("\tIMUL\n") ;
+				printOperation(OP_MUL, regstr1, regstr2) ;
 				break;
 			}
 		case OP_NEG: 
@@ -1201,6 +1276,6 @@ void IR_dump(IR* ir, FILE* fd)
 	//printf("lastFn bb: %d\n", fun->code->bBlock->basicNum) ;
 	CreateLifeTable (ir) ;
 	FillLifeTableStatus (ir) ;
-	printLifeTable(ir) ;
+	//printLifeTable(ir) ;
 	FillRegList (ir) ;
 }
