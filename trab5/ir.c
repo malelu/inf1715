@@ -206,7 +206,7 @@ InstrMod* InstrMod_new(Instr* ins)
 }
 
 
-//--------------------- List Lfe --------------
+//--------------------- List Life --------------
 
 ListLife* ListLife_new(int posTable, int alive, int nextPosAlive)
 {
@@ -237,7 +237,7 @@ ListName* ListName_new(char* name)
 RegList* regList_new()
 {
 	RegList* regs = calloc(1, sizeof(RegList));
-	regs->firstName = NULL
+	regs->firstName = NULL ;
 	regs->lastName = NULL ;
 	regs->reg1 = NULL ;
 	regs->reg2 = NULL ;
@@ -460,8 +460,9 @@ void FillLifeTableStatus (IR* ir)
 		while(lstName)
 		{	
 			InstrMod* mod =  lifeTab->lastInstructions ;
-			insertListLife (lstName, lstLife, 1, nextPosALive) ;  // na última linha está sempre vivo		
-			for(cont=lifeTab->qtdLines;cont>0;cont--)
+			lstLife = ListLife_new(lifeTab->qtdLines, 1, nextPosAlive) ;
+			insertListLife (lstName, lstLife) ;  // na última linha está sempre vivo		
+			for(cont=lifeTab->qtdLines-1;cont>=0;cont--)
 			{
 				if(strcmp(mod->instr->x.str, lstName->name))	// checa se está do lado esquerdo da igualdade
 				{
@@ -495,14 +496,9 @@ void FillLifeTableStatus (IR* ir)
 
 // ---------------- Update Registrers --------------
 
-void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegLine* regs)
+void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
-	LifeTable* lifeTab = ir->functions->code->bBlock->life;
 	ListName* lstName = lifeTab->firstName ;
-	ListLife* lstLife ;
-	int cont ;
-	int nextPosAlive = -1 ;
-	
 	char* regName ;
 	char* name = ins->y.str ;
 	//while (lifeTab) 		// cria estruturas listLife
@@ -547,7 +543,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegLine* regs)
 				while(strcmp(regName, var->name)!= 0)
 				{
 					var = var->nextName ;
-					lstName = lastName->nextName ;
+					lstName = lstName->nextName ;
 				}
 				ListLife* life = lstName->first ;
 				while(life->posTable != blockLine)
@@ -555,7 +551,8 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegLine* regs)
 					life = life->next ;
 				}
 
-				if(var->status == 1) 			// se a variavel está armazenada na memória
+				//if(var->status == 1) 			// se a variavel está armazenada na memória
+				if(true)
 				{
 					regs->reg1 = name ;
 				}//------------------------------------------- para as tres regs
@@ -570,11 +567,11 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegLine* regs)
 				} //------------------------------------------- para as tres regs
 				else				// faz spill
 				{
-					var->status = regs->reg1 ;
+					//var->status = regs->reg1 ;		//VER!
 					regs->reg1 = name ;
 				}
 				
-			//}
+			}
 	
 }
 
