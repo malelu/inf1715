@@ -11,17 +11,23 @@ int totalBlockLines ;
 // -------------------- List --------------------
 
 /*
-Given an element and a list, make it a new list
-with the given element as the head ("cons" a.k.a. (x:xs) operation).
+Concatenate two lists. Either list may be NULL.
+In that case, the other one is returned unmodified.
 */
-List* List_link(List* elem, List* list) 
-{
-	if (!elem) 
+List* List_link(List* l1, List* l2) {
+
+	if (!l1) 
 	{
-		return list;
+		return l2;
 	}
-	elem->next = list;
-	return elem;
+	List* last = l1;
+
+	while (last->next) 
+	{
+		last = last->next;
+	}
+	last->next = l2;
+	return l1;
 }
 
 // -------------------- String --------------------
@@ -597,7 +603,7 @@ void insertRegElse (Instr* ins, char** regNum, char* name, LifeTable* lifeTab, i
 
 // ---------------- Insert Registrers --------------
 
-void insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
+int insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
 	//printf("entrou regs\n") ;
 	ListName* lstName = lifeTab->firstName ;
@@ -605,32 +611,38 @@ void insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegLi
 	if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atuaiza
 	{
 		regs->reg1 = name ;
-		printf("mov ebx %s \n", name) ;
+		printf("\tMOV ebx %s \n", name) ;
+		return 1 ;
 	}
 	else if((regs->reg2 != NULL) && (strcmp(regs->reg2, name) == 0))
 	{
 		regs->reg2 = name ;
-		printf("mov ecx %s \n", name) ;
+		printf("\tMOV ecx %s \n", name) ;
+		return 2 ;
 	}
 	else if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
 	{
 		regs->reg3 = name ;
-		printf("mov eax %s \n", name) ;
+		printf("\tMOV eax %s \n", name) ;
+		return 3 ;
 	}
 	else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
 	{
 		regs->reg1 = name ;
-		printf("mov ebx %s \n", name) ;
+		printf("\tMOV ebx %s \n", name) ;
+		return 1 ;
 	}
 	else if(regs->reg2 == NULL)
 	{
 		regs->reg2 = name ;
-		printf("mov ecx %s \n", name) ;
+		printf("\tMOV ecx %s \n", name) ;
+		return 2 ;
 	}
 	else if(regs->reg3 == NULL)
 	{
 		regs->reg3 = name ;
-		printf("mov eax %s \n", name) ;
+		printf("\tMOV eax %s \n", name) ;
+		return 3 ;
 	}
 	else
 	{
@@ -640,43 +652,164 @@ void insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegLi
 	}
 }
 
+// ---------------- Search Insert Registrers --------------
+int searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs)
+{
+	ListName* lstName = lifeTab->firstName ;
+	while(lstName)
+	{
+		if((var != NULL) && (strcmp(lstName->name, var) == 0))		// so aloca se for uma variavel valida
+		{
+			return insertReg (ins, var, lifeTab, blockLine, regs) ;
+		}
+		lstName = lstName->nextName ;	
+	}
+}
+
 // ---------------- Update Registrers --------------
 
 void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
 	ListName* lstName = lifeTab->firstName ;
+	int regstr1, regstr2 ;
 
-	while(lstName)
+	switch(ins->op)
 	{
-		if((ins->y.str != NULL) && (strcmp(lstName->name, ins->y.str) == 0))		// so aloca se for uma variavel valida
-		{
-			insertReg (ins, ins->y.str, lifeTab, blockLine, regs) ;
+		case OP_RET:
+			printf("\tRET\n") ;
+			break ;		
+		case OP_RET_VAL: 
+			//fmt = "\tret %s\n";	
+			break;
+		case OP_GOTO:
+			printf("\tJMP %s\n", ins->x.str) ;
 			break ;
-		}
-		lstName = lstName->nextName ;	
+		case OP_LABEL:
+			printf("%s: \n", ins->x.str) ;
+			break ;
+		case OP_PARAM: 
+			//fmt = "\tparam %s\n";	
+			break;
+		case OP_CALL: 
+			//fmt = "\tcall %s\n";	
+			break;
+		case OP_IF: 
+			//fmt = "\tif %s goto %s\n";	
+			break;
+		case OP_IF_FALSE: 
+			//fmt = "\tifFalse %s goto %s\n";	
+			break;
+		case OP_SET: 
+			{
+				searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				searchInsert (ins, ins->x.str, lifeTab, blockLine, regs) ;
+				break ;
+			}
+		case OP_SET_BYTE: 
+			//fmt = "\t%s = byte %s\n";	
+			break;
+		case OP_SET_IDX: 
+			//fmt = "\t%s = %s[%s]\n";	
+			break;
+		case OP_SET_IDX_BYTE: 
+			//fmt = "\t%s = byte %s[%s]\n";	
+			break;
+		case OP_IDX_SET: 
+			//fmt = "\t%s[%s] = %s\n";	
+			break;
+		case OP_IDX_SET_BYTE: 
+			//fmt = "\t%s[%s] = byte %s\n";	
+			break;
+		case OP_NE: 
+			//fmt = "\t%s = %s != %s\n";	
+			break;
+		case OP_EQ: 
+			//fmt = "\t%s = %s == %s\n";	
+			break;
+		case OP_LT: 
+			//fmt = "\t%s = %s < %s\n";	
+			break;
+		case OP_GT: 
+			//fmt = "\t%s = %s > %s\n";	
+			break;
+		case OP_LE: 
+			//fmt = "\t%s = %s <= %s\n";	
+			break;
+		case OP_GE: 
+			//fmt = "\t%s = %s >= %s\n";	
+			break;
+		case OP_ADD: 
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printf("\tADD\n") ;
+				break;
+			}			
+		case OP_SUB: 
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printf("\tSUB\n") ;
+				break;
+			}
+		case OP_DIV: 
+			{
+				//regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				//regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				//printf("\tIDIV\n") ;
+				//break;
+			}
+		case OP_MUL: 
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				printf("\tIMUL\n") ;
+				break;
+			}
+		case OP_NEG: 
+			//fmt = "\t%s = - %s\n";	
+			break;
+		case OP_NEW: 
+			//fmt = "\t%s = new %s\n";	
+			break;
+		case OP_NEW_BYTE: 
+			//fmt = "\t%s = new byte %s\n";	
+			break;
 	}
+/*	else
+	{
+		while(lstName)
+		{
+			if((ins->y.str != NULL) && (strcmp(lstName->name, ins->y.str) == 0))		// so aloca se for uma variavel valida
+			{
+				insertReg (ins, ins->y.str, lifeTab, blockLine, regs) ;
+				break ;
+			}
+			lstName = lstName->nextName ;	
+		}
 
-	lstName = lifeTab->firstName ;
-	while(lstName)
-	{
-		if((ins->z.str != NULL) && (strcmp(lstName->name, ins->z.str) == 0))
+		lstName = lifeTab->firstName ;
+		while(lstName)
 		{
-			insertReg (ins, ins->z.str, lifeTab, blockLine, regs) ;
-			break ;
+			if((ins->z.str != NULL) && (strcmp(lstName->name, ins->z.str) == 0))
+			{
+				insertReg (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				break ;
+			}
+			lstName = lstName->nextName ;	
 		}
-		lstName = lstName->nextName ;	
-	}
 
-	lstName = lifeTab->firstName ;
-	while(lstName)
-	{
-		if((ins->x.str != NULL) && (strcmp(lstName->name, ins->x.str) == 0))
+		lstName = lifeTab->firstName ;
+		while(lstName)
 		{
-			insertReg (ins, ins->x.str, lifeTab, blockLine, regs) ;
-			break ;
+			if((ins->x.str != NULL) && (strcmp(lstName->name, ins->x.str) == 0))
+			{
+				insertReg (ins, ins->x.str, lifeTab, blockLine, regs) ;
+				break ;
+			}
+			lstName = lstName->nextName ;	
 		}
-		lstName = lstName->nextName ;	
-	}
+	}*/
 	
 }
 
