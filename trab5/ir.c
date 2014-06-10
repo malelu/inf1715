@@ -253,6 +253,9 @@ RegList* regList_new()
 	regs->reg1 = NULL ;
 	regs->reg2 = NULL ;
 	regs->reg3 = NULL ;
+	regs->reg4 = NULL ;
+	regs->reg5 = NULL ;
+	regs->reg6 = NULL ;
 	return regs ;
 }
 
@@ -768,115 +771,186 @@ int makeSpill(LifeTable* lifeTab, char* name)
 		info = info->next ;
 	}
 }
+// ---------------- Future Life --------------
+
+ListLife* FutureLife (ListName* varLifeTab, int blockLine) 
+{
+	ListLife* life = varLifeTab->first ;				// ve a vida futura de cada variavel
+	while(life->posTable != blockLine)
+	{
+		life = life->next ;
+	}
+	return life ;
+}
+
+// ---------------- Get Name --------------
+
+ListName* getLstName (char* regName, ListName* var)
+{
+	while(strcmp(regName, var->name)!= 0)
+	{
+		var = var->nextName ;
+	}
+	return var ;
+}
+
+// ---------------- Insert eax --------------
+
+char* insertRegElseEax (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
+{
+	ListName* var3 = getLstName (regs->reg3, regs->firstName) ;
+	ListName* varLifeTab3 = getLstName (regs->reg3, lifeTab->firstName) ;
+
+	ListLife* life3 =  (varLifeTab3, blockLine) ;	// ve a vida futura de cada variavel
+		
+	if(var3->status == 1) 		// se a variavel está armazenada na memória	
+	{
+		regs->reg3 = name ;
+		printf("\tmovl %s, \%%eax \n", name) ;
+		return "eax" ;
+	}	
+	else if(strcmp(regs->reg3, ins->x.str) == 0)	// se a variavel é resultado da operacao
+	{
+		regs->reg3 = name ;
+		printf("\tmovl %s, %%eax \n", name) ;
+		return "eax" ;
+	}
+	else if(life3->nextPosAlive != -1)		// se nao tem proximo uso
+	{
+		regs->reg3 = name ;
+		printf("\tmovl %s, %%eax \n", name) ;
+		return "eax" ;
+	}
+	else				// faz spill
+	{
+		var3->status = 1 ;		//VER!
+		regs->reg3 = name ;
+		printf("SPILL\n") ;
+		makeSpill(lifeTab, regs->reg3) ;
+		printf("\tmovl %s, %%eax \n", name) ;
+		return "eax" ;
+	}
+}
+
+
 
 // ---------------- Insert Registrers --------------
 
 char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
+// reg1 = ebx ; reg2 = ecx ; reg3 = eax ; reg4 = edx ; reg5 = edi ; reg6 = esi
 
-	ListName* lstName = lifeTab->firstName ;
-	ListName* var1 = regs->firstName ;			//acha as variaveis de cada reg na lifetable
-	ListName* varLifeTab1 = lifeTab->firstName ;
-	while(strcmp(regs->reg1, var1->name)!= 0)
-	{
-		var1 = var1->nextName ;
-		varLifeTab1 = varLifeTab1->nextName ;
-		lstName = lstName->nextName ;
-		printf("var1: %s\n", var1->name) ;
-		printf("regs: %s\n", regs->reg1) ;
-	}
+			
+	ListName* var1 = getLstName (regs->reg1, regs->firstName) ;		//acha as variaveis de cada reg na lifetable
+	ListName* varLifeTab1 = getLstName (regs->reg1, lifeTab->firstName) ;
 
-	lstName = lifeTab->firstName ;	
-	ListName* var2 = regs->firstName ;
-	ListName* varLifeTab2 = lifeTab->firstName ;
-	while(strcmp(regs->reg2, var2->name)!= 0)
-	{
-		var2 = var2->nextName ;
-		varLifeTab2 = varLifeTab2->nextName ;
-		lstName = lstName->nextName ;
-	}
+	ListName* var2 = getLstName (regs->reg2, regs->firstName) ;
+	ListName* varLifeTab2 = getLstName (regs->reg2, lifeTab->firstName) ;
 
-	lstName = lifeTab->firstName ;	
-	ListName* var3 = regs->firstName ;
-	ListName* varLifeTab3 = lifeTab->firstName ;
-	while(strcmp(regs->reg3, var3->name)!= 0)
-	{
-		var3 = var3->nextName ;
-		varLifeTab3 = varLifeTab3->nextName ;
-		lstName = lstName->nextName ;
-	}
+	ListName* var4 = getLstName (regs->reg4, regs->firstName) ;
+	ListName* varLifeTab4 = getLstName (regs->reg4, lifeTab->firstName) ;
 
-	ListLife* life1 = varLifeTab1->first ;				// ve a vida futura de cada variavel
-	while(life1->posTable != blockLine)
-	{
-		life1 = life1->next ;
-	}
+	ListName* var5 = getLstName (regs->reg5, regs->firstName) ;
+	ListName* varLifeTab5 = getLstName (regs->reg5, lifeTab->firstName) ;
 
-	ListLife* life2 = varLifeTab2->first ;
-	while(life2->posTable != blockLine)
-	{
-		life2 = life2->next ;
-	}
+	ListName* var6 = getLstName (regs->reg6, regs->firstName) ;
+	ListName* varLifeTab6 = getLstName (regs->reg6, lifeTab->firstName) ;
 
-	ListLife* life3 = varLifeTab3->first ;
-	while(life3->posTable != blockLine)
-	{
-		life3 = life3->next ;
-	}
+	ListLife* life1 =  (varLifeTab1, blockLine) ;	// ve a vida futura de cada variavel
+	ListLife* life2 =  (varLifeTab2, blockLine) ;
+	ListLife* life4 =  (varLifeTab4, blockLine) ;
+	ListLife* life5 =  (varLifeTab5, blockLine) ;
+	ListLife* life6 =  (varLifeTab6, blockLine) ;
 
 	if(var1->status == 1) 			// se a variavel está armazenada na memória
 	{
 		regs->reg1 = name ;
-		printf("\tmovl %s, \%ebx \n", name) ;
+		printf("\tmovl %s, %%ebx \n", name) ;
 		return "ebx" ;
 	}
 	else if(var2->status == 1) 			
 	{
 		regs->reg2 = name ;
-		printf("\tmovl %s, \%ecx \n", name) ;
+		printf("\tmovl %s, %%ecx \n", name) ;
 		return "ecx" ;
 	}
-	else if(var3->status == 1) 			
+	else if(var4->status == 1) 			
 	{
-		regs->reg3 = name ;
-		printf("\tmovl %s, \%eax \n", name) ;
-		return "eax" ;
+		regs->reg4 = name ;
+		printf("\tmovl %s, %%edx \n", name) ;
+		return "edx" ;
+	}
+	else if(var5->status == 1) 			
+	{
+		regs->reg5 = name ;
+		printf("\tmovl %s, %%edi \n", name) ;
+		return "edi" ;
+	}
+	else if(var6->status == 1) 			
+	{
+		regs->reg6 = name ;
+		printf("\tmovl %s, %%esi \n", name) ;
+		return "esi" ;
 	}
 	else if(strcmp(regs->reg1, ins->x.str) == 0)		// se a variavel é resultado da operacao
 	{
 		regs->reg1 = name ;
-		printf("\tmovl %s ebx \n", name) ;
+		printf("\tmovl %s, %%ebx \n", name) ;
 		return "ebx" ;
 	}
 	else if(strcmp(regs->reg2, ins->x.str) == 0)		
 	{
 		regs->reg2 = name ;
-		printf("\tmovl %s ecx \n", name) ;
+		printf("\tmovl %s, %%ecx \n", name) ;
 		return "ecx" ;
 	}
-	else if(strcmp(regs->reg3, ins->x.str) == 0)	
+	else if(strcmp(regs->reg4, ins->x.str) == 0)	
 	{
-		regs->reg3 = name ;
-		printf("\tmovl %s eax \n", name) ;
-		return "eax" ;
+		regs->reg4 = name ;
+		printf("\tmovl %s, %%edx \n", name) ;
+		return "edx" ;
+	}
+	else if(strcmp(regs->reg5, ins->x.str) == 0)	
+	{
+		regs->reg5 = name ;
+		printf("\tmovl %s, %%edi \n", name) ;
+		return "edi" ;
+	}
+	else if(strcmp(regs->reg6, ins->x.str) == 0)	
+	{
+		regs->reg6 = name ;
+		printf("\tmovl %s, %%esi \n", name) ;
+		return "esi" ;
 	}
 	else if(life1->nextPosAlive != -1)		// se nao tem proximo uso
 	{
 		regs->reg1 = name ;
-		printf("\tmovl %s ebx \n", name) ;
+		printf("\tmovl %s, %%ebx \n", name) ;
 		return "ebx" ;
 	}
 	else if(life2->nextPosAlive != -1)		// se nao tem proximo uso
 	{
 		regs->reg2 = name ;
-		printf("\tmovl %s ecx \n", name) ;
+		printf("\tmovl %s, %%ecx \n", name) ;
 		return "ecx" ;
 	}
-	else if(life3->nextPosAlive != -1)		// se nao tem proximo uso
+	else if(life4->nextPosAlive != -1)		// se nao tem proximo uso
 	{
-		regs->reg3 = name ;
-		printf("\tMOV %s eax \n", name) ;
-		return "eax" ;
+		regs->reg4 = name ;
+		printf("\tmovl %s, %%edx \n", name) ;
+		return "edx" ;
+	}
+	else if(life5->nextPosAlive != -1)		// se nao tem proximo uso
+	{
+		regs->reg5 = name ;
+		printf("\tmovl %s, %%edi \n", name) ;
+		return "edi" ;
+	}
+	else if(life6->nextPosAlive != -1)		// se nao tem proximo uso
+	{
+		regs->reg6 = name ;
+		printf("\tmovl %s, %%esi \n", name) ;
+		return "esi" ;
 	}
 	else				// faz spill
 	{
@@ -890,59 +964,121 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 
 // ---------------- Insert Registrers --------------
 
-char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder)
+char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret)  //ret = 1 se eh retorno
 {
-	//printf("entrou regs\n") ;
-	if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atualiza
+
+	if( ret == 1)			// mexer apenas no reg3 -> eax
 	{
-		regs->reg1 = name ;
-		if(varOrder == 1)		// se for x, precisa alocar
+		if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
 		{
-			printf("\tmovl %s, %%ebx \n", name) ;
+			regs->reg3 = name ;
+			if(varOrder == 1)		// se for x, precisa alocar
+			{
+				printf("\tmovl %s, %%eax \n", name) ;
+			}
+			return "eax" ;
 		}
-		return "ebx" ;
-	}
-	else if((regs->reg2 != NULL) && (strcmp(regs->reg2, name) == 0))
-	{
-		regs->reg2 = name ;
-		if(varOrder == 1)		// se for x, precisa alocar
+		else if(regs->reg3 == NULL)
 		{
-			printf("\tmovl %s, %%ecx \n", name) ;
-		}
-		return "ecx" ;
-	}
-	else if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
-	{
-		regs->reg3 = name ;
-		if(varOrder == 1)		// se for x, precisa alocar
-		{
+			regs->reg3 = name ;
 			printf("\tmovl %s, %%eax \n", name) ;
+			return "eax" ;
 		}
-		return "eax" ;
+		else
+		{
+			return insertRegElseEax (ins, name, lifeTab, blockLine, regs) ;
+		}
 	}
-	else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
-	{
-		regs->reg1 = name ;
-		printf("\tmovl %s, %%ebx \n", name) ;
-		return "ebx" ;
-	}
-	else if(regs->reg2 == NULL)
-	{
-		regs->reg2 = name ;
-		printf("\tmovl %s, %%ecx \n", name) ;
-		return "ecx" ;
-	}
-	else if(regs->reg3 == NULL)
-	{
-		regs->reg3 = name ;
-		printf("\tmovl %s, %%eax \n", name) ;
-		return "eax" ;
-	}
+	//printf("entrou regs\n") ;
 	else
 	{
-		printf("FAZER!\n") ;
-		return insertRegElse (ins, name, lifeTab, blockLine, regs) ;
+		if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atualiza
+		{
+			regs->reg1 = name ;
+			if(varOrder == 1)		// se for x, precisa alocar
+			{
+				printf("\tmovl %s, %%ebx \n", name) ;
+			}
+			return "ebx" ;
+		}
+		else if((regs->reg2 != NULL) && (strcmp(regs->reg2, name) == 0))
+		{
+			regs->reg2 = name ;
+			if(varOrder == 1)		// se for x, precisa alocar
+			{
+				printf("\tmovl %s, %%ecx \n", name) ;
+			}
+			return "ecx" ;
+		}
+		else if((regs->reg4 != NULL) && (strcmp(regs->reg4, name) == 0))
+		{
+			regs->reg4 = name ;
+			if(varOrder == 1)		// se for x, precisa alocar
+			{
+				printf("\tmovl %s, %%edx \n", name) ;
+			}
+			return "edx" ;
+		}
+		else if((regs->reg5 != NULL) && (strcmp(regs->reg5, name) == 0))
+		{
+			regs->reg5 = name ;
+			if(varOrder == 1)		// se for x, precisa alocar
+			{
+				printf("\tmovl %s, %%edi \n", name) ;
+			}
+			return "edi" ;
+		}
+		else if((regs->reg6 != NULL) && (strcmp(regs->reg6, name) == 0))
+		{
+			regs->reg6 = name ;
+			if(varOrder == 1)		// se for x, precisa alocar
+			{
+				printf("\tmovl %s, %%esi \n", name) ;
+			}
+			return "esi" ;
+		}
+		else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
+		{
+			regs->reg1 = name ;
+			printf("\tmovl %s, %%ebx \n", name) ;
+			return "ebx" ;
+		}
+		else if(regs->reg2 == NULL)
+		{
+			regs->reg2 = name ;
+			printf("\tmovl %s, %%ecx \n", name) ;
+			return "ecx" ;
+		}
+		else if(regs->reg3 == NULL)
+		{
+			regs->reg3 = name ;
+			printf("\tmovl %s, %%eax \n", name) ;
+			return "eax" ;
+		}
+		else if(regs->reg4 == NULL)		
+		{
+			regs->reg4 = name ;
+			printf("\tmovl %s, %%edx \n", name) ;
+			return "edx" ;
+		}
+		else if(regs->reg5 == NULL)
+		{
+			regs->reg5 = name ;
+			printf("\tmovl %s, %%edi \n", name) ;
+			return "edi" ;
+		}
+		else if(regs->reg6 == NULL)
+		{
+			regs->reg6 = name ;
+			printf("\tmovl %s, %%esi \n", name) ;
+			return "esi" ;
+		}
+		else
+		{
+			printf("FAZER!\n") ;
+			return insertRegElse (ins, name, lifeTab, blockLine, regs) ;
 				
+		}
 	}
 }
 
@@ -985,7 +1121,7 @@ char* searchVarInReg(char* name, RegList* regs)
 }
 
 // ---------------- Search Insert Registrers --------------
-char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder) //varOrder = 1 -> x
+char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret) //varOrder = 1 -> x
 {
 	//printf("var: %s\n", var) ;
 	ListName* lstName = lifeTab->firstName ;
@@ -997,7 +1133,7 @@ char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, Re
 		if((var != NULL) && (strcmp(lstName->name, var) == 0))		// so aloca se for uma variavel valida
 		{
 			//printf("aqui\n" );
-			return insertReg (ins, var, lifeTab, blockLine, regs, varOrder) ;
+			return insertReg (ins, var, lifeTab, blockLine, regs, varOrder, ret) ;
 		}
 		lstName = lstName->nextName ;	
 		//printf("%d\n", lstName) ;
@@ -1005,10 +1141,10 @@ char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, Re
 }
 
 // ---------------- Search Insert Number In Registrers --------------
-char* searchInsertNumber (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder) //varOrder = 1 -> x
+char* searchInsertNumber (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret) //varOrder = 1 -> x
 {
 
-	return insertReg (ins, var, lifeTab, blockLine, regs, varOrder) ;
+	return insertReg (ins, var, lifeTab, blockLine, regs, varOrder, ret) ;
 
 }
 
@@ -1034,7 +1170,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 		case OP_RET_VAL: 
 			printf("\tmovl %%ebp, %%esp\n") ;
 			printf("\tpopl %ebp\n") ;
-			//eax = var
+			regs->reg3 = ins->x.str ;
 			//printf("\tmovl $s, eax\n") ;
 			//fmt = "\tret %s\n";	
 			break;
@@ -1067,8 +1203,8 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break;
 		case OP_SET: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
-				regstr2 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
+				regstr2 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1, 0) ;
 				break ;
 			}
 		case OP_SET_BYTE: 
@@ -1090,14 +1226,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);
@@ -1107,7 +1243,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
 				printf("\tjl %s\n", label1); 			// MUDAR O TIPO DE PULO
-				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
+				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
@@ -1122,14 +1258,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);
@@ -1139,7 +1275,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
 				printf("\tjl %s\n", label1); 			// MUDAR O TIPO DE PULO
-				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
+				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
@@ -1154,14 +1290,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);
@@ -1171,7 +1307,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
 				printf("\tjl %s\n", label1); 
-				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
+				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
@@ -1186,14 +1322,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);
@@ -1203,7 +1339,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
 				printf("\tjg %s\n", label1); 			
-				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
+				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
@@ -1218,14 +1354,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);
@@ -1235,7 +1371,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
 				printf("\tjle %s\n", label1); 			
-				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
+				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
@@ -1250,14 +1386,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);
@@ -1267,7 +1403,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
 				printf("\tjge %s\n", label1); 			
-				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
+				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
@@ -1326,14 +1462,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);
@@ -1351,14 +1487,14 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 				}
 				else
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 				if (!notRepeated(ins->z.str, lifeTab))
 				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 				}
 				else
 					snprintf(regstr2, 20, "$%s", ins->z.str);

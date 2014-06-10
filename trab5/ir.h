@@ -111,6 +111,9 @@ struct RegList_ {
 char* reg1 ;
 char* reg2 ;
 char* reg3 ;
+char* reg4 ;
+char* reg5 ;
+char* reg6 ;
 ListName* firstName;
 ListName* lastName;
 
