@@ -426,7 +426,7 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* sta
 				{
 					InfoStack* info = InfoStack_new(name2, posVar) ;
 					InsertInfo(stack->stackVar, info) ;
-					stack->qtdParam = posVar ;
+					stack->qtdVar++ ;
 					posVar++ ;
 				}
 			}
@@ -449,7 +449,7 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* sta
 			{
 				InfoStack* info = InfoStack_new(name2, posVar) ;
 				InsertInfo(stack->stackVar, info) ;
-				stack->qtdParam = posVar ;
+				stack->qtdVar++ ;
 				posVar++ ;
 			}
 		}
@@ -471,7 +471,7 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* sta
 				{
 					InfoStack* info = InfoStack_new(name2, posVar) ;
 					InsertInfo(stack->stackVar, info) ;
-					stack->qtdParam = posVar ;
+					stack->qtdVar++ ;
 					posVar++ ;
 				}
 			}
@@ -489,7 +489,7 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* sta
 				{
 					InfoStack* info = InfoStack_new(name3, posVar) ;
 					InsertInfo(stack->stackVar, info) ;
-					stack->qtdParam = posVar ;
+					stack->qtdVar++ ;
 					posVar++ ;
 				}
 			}
@@ -508,7 +508,7 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* sta
 		{
 			InfoStack* info = InfoStack_new(name, posVar) ;
 			InsertInfo(stack->stackVar, info) ;
-			stack->qtdParam = posVar ;
+			stack->qtdVar++ ;
 			posVar++ ;
 		}
 	}
@@ -568,6 +568,7 @@ void CreateLifeTable (IR* ir)
 			InsertInfo(stack->stackParam, info) ;
 			stack->qtdParam++ ;
 			//printf("=======================%s\n", args->name);
+			//printf("=====%d\n", stack->qtdParam);
 			args = args->next;
 		}
 		
@@ -590,8 +591,6 @@ void CreateLifeTable (IR* ir)
 					lifeTab->regs = regs ;
 					lifeTab->stack = stack ;
 					prevTable->next = lifeTab ;
-					printf("prevTable %d\n", prevTable) ;
-					printf("prevTable->next %d\n", prevTable->next) ;
 					printf("NEW BLOCK2 \n") ;
 					InsertLifeTable(ins, lifeTab, regs, stack) ;
 				}
@@ -606,6 +605,7 @@ void CreateLifeTable (IR* ir)
 			insertListLifeInstructions (lifeTab, mod) ;
 			ins = ins->next ;
 		}
+
 		// printando mod------------------------
 		InstrMod* mod2 = lifeTab->lastInstructions ;
 		while(mod2)
@@ -1361,6 +1361,8 @@ void FillRegList (IR* ir)
 	String* s = NULL;
 	Variable* v = NULL ;
 	regsCmp = malloc(20) ;
+	Stack* stack ;
+	int vars ;
 
 	printf(".data\n") ;
 	for (s = ir->strings; s; s = s->next) 
@@ -1379,17 +1381,13 @@ void FillRegList (IR* ir)
 		lifeTab = ins->bBlock->life ;		//cada nova funcao é o início de uma nova tabela
 		regs = lifeTab->regs ;
 		blockLine = 0 ;
-
+		stack = lifeTab->stack ;
 
 		printf("%s:\n", lastFn->name) ;
 		printf("\tpush %%ebp\n") ;
 		printf("\tmovl %%esp, %%ebp\n") ; 
-		printf("=-=-=-=%d\n", lifeTab->qtdNames - lastFn->nArgs) ;
-
-//subl $4*num de var locais, %esp
-
-
-		
+		vars = 4*(stack->qtdVar) ;
+		printf("\tsubl $%d, %%esp\n", vars) ;		
 
 		//printf("NEW BLOCK! \n") ;
 		int bBlock = ins->bBlock->basicNum ;
