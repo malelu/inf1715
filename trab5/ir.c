@@ -9,6 +9,7 @@ int basicBlock = 0 ;
 int totalBlockLines ;
 LifeTable* allVars = NULL;
 int qtdLabel = 1 ;
+char* regsCmp = NULL ;
 
 // -------------------- List --------------------
 
@@ -899,7 +900,8 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			//fmt = "\tif %s goto %s\n";	
 			break;
 		case OP_IF_FALSE: 
-			printf("\tIF FALSE\n") ;
+			printf("\tcmpl %s, $0\n", regsCmp) ;
+			printf("\tjmp %s\n", ins->y.str) ;
 			//fmt = "\tifFalse %s goto %s\n";	
 			break;
 		case OP_SET: 
@@ -952,6 +954,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				printf("%s:\n", label1) ;
 				printf("\tmovl $1, %%%s\n", regstr3);
 				printf("%s:\n", label2) ;
+				strcpy(regsCmp, regstr3) ;
 				break ;
 			}
 		case OP_EQ: 
@@ -982,7 +985,8 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				printf("\tjmp %s\n", label2);
 				printf("%s:\n", label1) ;
 				printf("\tmovl $1, %%%s\n", regstr3);
-				printf("%s:\n", label2) ;
+				printf("%s:\n", label2) ;		
+				strcpy(regsCmp, regstr3) ;
 				break ;
 			}
 		case OP_LT: 
@@ -1014,6 +1018,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				printf("%s:\n", label1) ;
 				printf("\tmovl $1, %%%s\n", regstr3);
 				printf("%s:\n", label2) ;
+				strcpy(regsCmp, regstr3) ;
 				break ;
 			}
 		case OP_GT: 
@@ -1045,6 +1050,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				printf("%s:\n", label1) ;
 				printf("\tmovl $1, %%%s\n", regstr3);
 				printf("%s:\n", label2) ;
+				strcpy(regsCmp, regstr3) ;
 				break ;
 			}
 		case OP_LE: 
@@ -1076,6 +1082,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				printf("%s:\n", label1) ;
 				printf("\tmovl $1, %%%s\n", regstr3);
 				printf("%s:\n", label2) ;
+				strcpy(regsCmp, regstr3) ;
 				break ;
 			}
 		case OP_GE: 
@@ -1107,6 +1114,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				printf("%s:\n", label1) ;
 				printf("\tmovl $1, %%%s\n", regstr3);
 				printf("%s:\n", label2) ;
+				strcpy(regsCmp, regstr3) ;
 				break ;
 			}
 		case OP_ADD: 
@@ -1200,10 +1208,23 @@ void FillRegList (IR* ir)
 	LifeTable* lifeTab = NULL;
 	RegList* regs = NULL ;
 	Instr* ins = NULL ;
+	String* s = NULL;
+	Variable* v = NULL ;
+	regsCmp = malloc(20) ;
 
 	printf(".data\n") ;
+	for (s = ir->strings; s; s = s->next) 
+	{
+		printf("%s string %s\n", s->name, s->value);
+	}
+	printf(".global\n") ;				//VER NOMES CORRETOS!!!!!!!!!!!!!!!!
+	for (v = ir->globals; v; v = v->next) 
+	{
+		printf("%s\n", v->name);
+	}
 	while (lastFn) 
 	{
+		printf("%s:\n", lastFn->name) ;
 		ins = lastFn->code ;
 		lifeTab = ins->bBlock->life ;		//cada nova funcao é o início de uma nova tabela
 		regs = lifeTab->regs ;
