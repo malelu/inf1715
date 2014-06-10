@@ -10,6 +10,7 @@ int totalBlockLines ;
 LifeTable* allVars = NULL;
 int qtdLabel = 1 ;
 char* regsCmp = NULL ;
+int posVar = 0 ;
 
 // -------------------- List --------------------
 
@@ -255,6 +256,41 @@ RegList* regList_new()
 	return regs ;
 }
 
+//------------------Insert Info --------------
+
+void InsertInfo(InfoStack* info, InfoStack* stack)
+{
+	InfoStack* stackAux = stack ;
+	while(stackAux->next)
+	{
+		stackAux = stackAux->next ;
+	}
+	stackAux->next = info ;
+}
+
+//------------------Info Stack --------------
+
+InfoStack* InfoStack_new(char* name, int pos)
+{
+	InfoStack* new_infoStack = calloc(1, sizeof(InfoStack));
+	new_infoStack->name = name ; 
+	new_infoStack->pos = pos ;
+	new_infoStack->next = NULL ;
+	return new_infoStack ;
+}
+
+//--------------------- Stack --------------
+
+Stack* Stack_new()
+{
+	Stack* new_stack = calloc(1, sizeof(Stack));
+	new_stack->stackParam = NULL ; 
+	new_stack->qtdParam = 0 ;
+	new_stack->stackVar = NULL ;
+	new_stack->qtdVar = 0 ;
+	return new_stack ;
+}
+
 //--------------------- Life Table --------------
 
 LifeTable* lifeTable_new()
@@ -267,6 +303,7 @@ LifeTable* lifeTable_new()
 	new_lifeTable->qtdLines = 0 ;
 	new_lifeTable->firstInstructions = NULL ;
 	new_lifeTable->lastInstructions = NULL ;
+	new_lifeTable->stack = NULL ;
 	return new_lifeTable ;
 }
 
@@ -353,7 +390,20 @@ void insertListLifeInstructions (LifeTable* lifeTab, InstrMod* mod)
 
 //-------------------- Inserting into life table and registrer -------
 
-void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs)
+bool isParam (Stack* stack, char* var)
+{
+	InfoStack* info = stack->stackParam ;
+	while(info)
+	{
+		if(strcmp(info->name, var) == 0)
+			return true ;
+		info = info->next ;
+	}
+	return false ;
+}
+//-------------------- Inserting into life table and registrer -------
+
+void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* stack)
 {
 	char* name = malloc(20) ;
 	char* name2 = malloc(20) ;
@@ -370,6 +420,15 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs)
 				InsertListName (name2, lifeTab) ;
 				InsertRegsListName (name2, regs) ;
 				lifeTab->qtdNames = lifeTab->qtdNames + 1 ;
+
+
+				if(!isParam(stack, name2))		// insere na pilha de variaveis
+				{
+					InfoStack* info = InfoStack_new(name2, posVar) ;
+					InsertInfo(stack->stackVar, info) ;
+					stack->qtdParam = posVar ;
+					posVar++ ;
+				}
 			}
 		}
 	}
@@ -385,6 +444,14 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs)
 			InsertRegsListName (name2, regs) ;
 			InsertListName (name2, allVars) ;
 			lifeTab->qtdNames = lifeTab->qtdNames + 1 ;
+
+			if(!isParam(stack, name2))		// insere na pilha de variaveis
+			{
+				InfoStack* info = InfoStack_new(name2, posVar) ;
+				InsertInfo(stack->stackVar, info) ;
+				stack->qtdParam = posVar ;
+				posVar++ ;
+			}
 		}
 		
 	}
@@ -399,6 +466,14 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs)
 				InsertListName (name2, lifeTab) ;
 				InsertRegsListName (name2, regs) ;
 				lifeTab->qtdNames = lifeTab->qtdNames + 1 ;
+
+				if(!isParam(stack, name2))		// insere na pilha de variaveis
+				{
+					InfoStack* info = InfoStack_new(name2, posVar) ;
+					InsertInfo(stack->stackVar, info) ;
+					stack->qtdParam = posVar ;
+					posVar++ ;
+				}
 			}
 		}
 		snprintf(name3, 20, "%s", code->z.str);		//lado direito da igualdade => pode nao ser uma variavel
@@ -409,6 +484,14 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs)
 				InsertListName (name3, lifeTab) ;
 				InsertRegsListName (name3, regs) ;
 				lifeTab->qtdNames = lifeTab->qtdNames + 1 ;
+
+				if(!isParam(stack, name3))		// insere na pilha de variaveis
+				{
+					InfoStack* info = InfoStack_new(name3, posVar) ;
+					InsertInfo(stack->stackVar, info) ;
+					stack->qtdParam = posVar ;
+					posVar++ ;
+				}
 			}
 		}	
 	}
@@ -420,6 +503,14 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs)
 		InsertListName (name, allVars) ;
 		InsertRegsListName (name, regs) ;
 		lifeTab->qtdNames = lifeTab->qtdNames + 1 ;
+
+		if(!isParam(stack, name))		// insere na pilha de variaveis
+		{
+			InfoStack* info = InfoStack_new(name, posVar) ;
+			InsertInfo(stack->stackVar, info) ;
+			stack->qtdParam = posVar ;
+			posVar++ ;
+		}
 	}
 	
 
@@ -450,6 +541,8 @@ void CreateLifeTable (IR* ir)
 	RegList* regs = NULL ;
 	printf("lifeTab inicial %d\n", lifeTab) ;
 	LifeTable* aux ;
+	Variable* args ;
+	Stack* stack ;
 
 	while (lastFn) 
 	{
@@ -465,13 +558,27 @@ void CreateLifeTable (IR* ir)
 		printf("lifeTab %d\n", lifeTab) ;
 		printf("lifeTab->next %d\n", lifeTab->next) ;
 		int bBlock = ins->bBlock->basicNum ;
+
+		stack = Stack_new() ;			// a cada nova funcao cria uma pilha
+		lifeTab->stack = stack ;
+		args = lastFn->locals;			// Insere os parametros na pilha
+		for (int i = 0; i < lastFn->nArgs; i++) 
+		{
+			InfoStack* info = InfoStack_new(args->name, i) ; 
+			InsertInfo(stack->stackParam, info) ;
+			stack->qtdParam++ ;
+			//printf("=======================%s\n", args->name);
+			args = args->next;
+		}
+		
+		posVar = 0 ;
 		while(ins)
 		{			
 			if(validVariable(ins))
 			{
 				if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
 				{
-					InsertLifeTable(ins, lifeTab, regs) ;		// insere na tabela de registradores a nova variável
+					InsertLifeTable(ins, lifeTab, regs, stack) ;		// insere na tabela de registradores a nova variável
 					//printf("ins %d\n", ins) ;
 				}
 				else
@@ -481,11 +588,12 @@ void CreateLifeTable (IR* ir)
 					lifeTab = lifeTable_new() ;		//cada novo bloco é o início de uma nova tabela
 					regs = regList_new() ;
 					lifeTab->regs = regs ;
+					lifeTab->stack = stack ;
 					prevTable->next = lifeTab ;
 					printf("prevTable %d\n", prevTable) ;
 					printf("prevTable->next %d\n", prevTable->next) ;
 					printf("NEW BLOCK2 \n") ;
-					InsertLifeTable(ins, lifeTab, regs) ;
+					InsertLifeTable(ins, lifeTab, regs, stack) ;
 				}
 			}
 			else
@@ -641,6 +749,8 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 		var1 = var1->nextName ;
 		varLifeTab1 = varLifeTab1->nextName ;
 		lstName = lstName->nextName ;
+		printf("var1: %s\n", var1->name) ;
+		printf("regs: %s\n", regs->reg1) ;
 	}
 
 	lstName = lifeTab->firstName ;	
@@ -796,7 +906,7 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 	}
 	else
 	{
-		//printf("FAZER!\n") ;
+		printf("FAZER!\n") ;
 		return insertRegElse (ins, name, lifeTab, blockLine, regs) ;
 				
 	}
@@ -843,15 +953,29 @@ char* searchVarInReg(char* name, RegList* regs)
 // ---------------- Search Insert Registrers --------------
 char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder) //varOrder = 1 -> x
 {
+	//printf("var: %s\n", var) ;
 	ListName* lstName = lifeTab->firstName ;
 	while(lstName)
 	{
+		//printf("OI\n") ;
+		//if(lstName != NULL)
+		 	//printf("---%s\n", lstName->name) ;
 		if((var != NULL) && (strcmp(lstName->name, var) == 0))		// so aloca se for uma variavel valida
 		{
+			//printf("aqui\n" );
 			return insertReg (ins, var, lifeTab, blockLine, regs, varOrder) ;
 		}
 		lstName = lstName->nextName ;	
+		//printf("%d\n", lstName) ;
 	}
+}
+
+// ---------------- Search Insert Number In Registrers --------------
+char* searchInsertNumber (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder) //varOrder = 1 -> x
+{
+
+	return insertReg (ins, var, lifeTab, blockLine, regs, varOrder) ;
+
 }
 
 // ---------------- Update Registrers --------------
@@ -869,9 +993,13 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 	switch(ins->op)
 	{
 		case OP_RET:
+			printf("\tmovl %%ebp, %%esp\n") ;
+			printf("\tpopl %%ebp\n") ;
 			printf("\tret\n") ;
 			break ;		
 		case OP_RET_VAL: 
+			printf("\tmovl %%ebp, %%esp\n") ;
+			printf("\tpopl %ebp\n") ;
 			//eax = var
 			//printf("\tmovl $s, eax\n") ;
 			//fmt = "\tret %s\n";	
@@ -896,13 +1024,12 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				printf("\tPOP %s\n", var) ;
 			break;
 		case OP_IF: 
-			printf("\tIF\n") ;
-			//fmt = "\tif %s goto %s\n";	
+			printf("\tcmpl %s, $1\n", regsCmp) ;
+			printf("\tjmp %s\n", ins->y.str) ;	
 			break;
 		case OP_IF_FALSE: 
 			printf("\tcmpl %s, $0\n", regsCmp) ;
-			printf("\tjmp %s\n", ins->y.str) ;
-			//fmt = "\tifFalse %s goto %s\n";	
+			printf("\tjmp %s\n", ins->y.str) ;	
 			break;
 		case OP_SET: 
 			{
@@ -1119,23 +1246,46 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			}
 		case OP_ADD: 
 			{
+				/*printf("ADD\n") ;
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
+					printf("PASSOU!\n") ;
 					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+					printf("PASSOU!\n") ;
+
+					if (!notRepeated(ins->z.str, lifeTab))
+					{
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+						printOperation(OP_ADD, regstr1, regstr2) ;
+					}
+					else
+					{
+						snprintf(regstr2, 20, "$%s", ins->z.str);
+						printOperation(OP_ADD, regstr2, regstr1) ;   //mudar o registrador
+					}
 				}
 				else
+				{
+					printf("PASSOU2!\n") ;
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
-				if (!notRepeated(ins->z.str, lifeTab))
-				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
-				}
-				else
-					snprintf(regstr2, 20, "$%s", ins->z.str);
+					if (!notRepeated(ins->z.str, lifeTab))
+					{
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+						printOperation(OP_ADD, regstr1, regstr2) ;
+					}
+					else
+					{
+						//snprintf(regstr2, 20, "$%s", ins->z.str);
+						regstr2 = searchInsertNumber (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+						printf("AQUI\n") ;
+						printOperation(OP_ADD, regstr1, regstr2) ;
+					}
+				}*/
 
 				// mudar o registrador do z para x!
 				//switchReg() ;
-				printOperation(OP_ADD, regstr1, regstr2) ;
+				
 				break;
 			}			
 		case OP_SUB: 
@@ -1224,11 +1374,22 @@ void FillRegList (IR* ir)
 	}
 	while (lastFn) 
 	{
-		printf("%s:\n", lastFn->name) ;
+
 		ins = lastFn->code ;
 		lifeTab = ins->bBlock->life ;		//cada nova funcao é o início de uma nova tabela
 		regs = lifeTab->regs ;
 		blockLine = 0 ;
+
+
+		printf("%s:\n", lastFn->name) ;
+		printf("\tpush %%ebp\n") ;
+		printf("\tmovl %%esp, %%ebp\n") ; 
+		printf("=-=-=-=%d\n", lifeTab->qtdNames - lastFn->nArgs) ;
+
+//subl $4*num de var locais, %esp
+
+
+		
 
 		//printf("NEW BLOCK! \n") ;
 		int bBlock = ins->bBlock->basicNum ;

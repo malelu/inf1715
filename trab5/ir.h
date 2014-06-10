@@ -130,6 +130,27 @@ Instr* instr ;
 
 
 /*
+InfoStack
+*/
+typedef struct InfoStack_ InfoStack;
+struct InfoStack_ {
+char* name ;
+int pos ;
+InfoStack* next ;
+} ;
+
+/*
+Stack
+*/
+typedef struct Stack_ Stack;
+struct Stack_ {
+InfoStack* stackParam ;
+int qtdParam ;
+InfoStack* stackVar ;
+int qtdVar ;
+} ;
+
+/*
 Life table
 */
 typedef struct LifeTable_ LifeTable;
@@ -142,6 +163,7 @@ int qtdNames ;
 int qtdLines ;
 InstrMod* firstInstructions;
 InstrMod* lastInstructions;
+Stack* stack ;
 };
 
 /*
