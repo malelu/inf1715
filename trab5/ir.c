@@ -736,6 +736,39 @@ void FillLifeTableStatus (IR* ir)
 	}
 }
 
+// ---------------- Make Spill --------------
+
+int makeSpill(LifeTable* lifeTab, char* name)
+{
+	Stack* stack = lifeTab->stack ;
+	InfoStack * info = stack->stackParam ;
+
+	while(info)
+	{
+		if(strcmp(info->name, name)==0)
+		{
+			int pos ;
+			pos = 4*(info->pos) + 8 ;
+			printf("\tmovl %%ebx, %d(%%ebp)\n", pos) ;
+			return 1 ;
+		}
+		info = info->next ;
+	}
+
+	info = stack->stackVar ;		// se a variavel nao eh parametro
+	while(info)
+	{
+		if(strcmp(info->name, name)==0)
+		{
+			int pos ;
+			pos = -4*(info->pos) -4 ;
+			printf("\tmovl %%ebx, %d(%%ebp)\n", pos) ;
+			return 1 ;
+		}
+		info = info->next ;
+	}
+}
+
 // ---------------- Insert Registrers --------------
 
 char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
@@ -850,6 +883,7 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 		var1->status = 1 ;		//VER!
 		regs->reg1 = name ;
 		printf("SPILL\n") ;
+		makeSpill(lifeTab, regs->reg1) ;
 		return "ebx" ;
 	}
 }
@@ -1168,7 +1202,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
-				printf("\tjl %s\n", label1); 			// MUDAR O TIPO DE PULO
+				printf("\tjg %s\n", label1); 			
 				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
@@ -1200,7 +1234,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
-				printf("\tjl %s\n", label1); 			// MUDAR O TIPO DE PULO
+				printf("\tjle %s\n", label1); 			
 				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
@@ -1232,7 +1266,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
-				printf("\tjl %s\n", label1); 			// MUDAR O TIPO DE PULO
+				printf("\tjge %s\n", label1); 			
 				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
