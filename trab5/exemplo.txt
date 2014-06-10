@@ -1,0 +1,35 @@
+
+$t1 = y < 10			1
+ifFalse $t1 goto L9		2
+
+	cmpl %ebx, $10		1
+	jl .L1			1
+	movl $0, %eax		1
+	jmp .L2			1
+L1				1
+	movl $1, %eax		1
+L2				1
+	cmpl %eax, $0		2
+	je L9			2
+
+
+x = y + z ===> x = y
+		x+=z
+
+inicio funcao:
+pushl %ebp
+movl %esp, %ebp
+subl $4*num de var locais, %esp
+
+final da funcao:
+movl %ebp, %esp
+popl %ebp
+ret
+
+eax, ebx, ecx, edx. edi -> , esi
+
+
+parametros sao positivos 1-> +8, 2->+12, 3->16
+variaveis na funcao 1->-4, 2-> -8, 3->-12...
+
+chamaou funcao : 3 push e 3 pops
