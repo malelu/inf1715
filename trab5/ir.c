@@ -1123,6 +1123,16 @@ char* searchVarInReg(char* name, RegList* regs)
 // ---------------- Search Insert Registrers --------------
 char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret) //varOrder = 1 -> x
 {
+
+	if (notRepeated(var, allVars))		// eh um numero
+	{
+		if( ret == 1)
+		{
+			printf("\tmovl $%s, %%eax\n", var) ;
+			return "eax" ;
+		}
+		return insertReg (ins, var, lifeTab, blockLine, regs, varOrder, ret) ;
+	}
 	//printf("var: %s\n", var) ;
 	ListName* lstName = lifeTab->firstName ;
 	while(lstName)
@@ -1169,10 +1179,9 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break ;		
 		case OP_RET_VAL: 
 			printf("\tmovl %%ebp, %%esp\n") ;
-			printf("\tpopl %ebp\n") ;
-			regs->reg3 = ins->x.str ;
-			//printf("\tmovl $s, eax\n") ;
-			//fmt = "\tret %s\n";	
+			printf("\tpopl %%ebp\n") ;
+			regstr1 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1, 1) ;
+			printf("\tret\n") ;	
 			break;
 		case OP_GOTO:
 			printf("\tjmp %s\n", ins->x.str) ;
