@@ -235,6 +235,7 @@ ListName* ListName_new(char* name)
 	new_listName->nextName = NULL ;
 	new_listName->first = NULL ;
 	new_listName->last = NULL ;
+	new_listName->status = 0 ;
 	return new_listName ;
 }
 
@@ -490,6 +491,7 @@ void FillLifeTableStatus (IR* ir)
 	int cont ;
 	int nextPosAlive = -1 ;
 	InstrMod* mod ;
+	char* name = " ";
 
 	while (lifeTab) 		// cria estruturas listLife
 	{
@@ -515,6 +517,26 @@ void FillLifeTableStatus (IR* ir)
 			{//printf("---0 \n") ;
 				//printf("--mod//->instr->x.str %s\n", mod->instr->x.str) ;
 
+
+				/*if((mod->instr->op == OP_IDX_SET) || (mod->instr->op == OP_IDX_SET_BYTE))
+				{
+					printf("entrou\n") ;
+					printf("mod->instr->x.str: %d\n", mod->instr->x.str) ;
+					printf("mod->instr->y.str: %d\n", mod->instr->y.str) ;
+					snprintf(name, 20, "%s[%s]", mod->instr->x.str, mod->instr->y.str);
+					printf("saiu\n") ;
+				}
+
+				// checa se vetor está do lado esquerdo da igualdade
+				if((mod->instr->x.str != NULL) && (mod->instr->y.str != NULL) && (name != ' ' ))
+				{
+					if(strcmp(name, lstName->name) == 0)
+					{
+						//printf("---1 \n") ;
+						lstLife = ListLife_new(cont, 1, nextPosAlive) ;
+						nextPosAlive = -1 ;
+					}
+				}*/
 				// checa se está do lado esquerdo da igualdade
 				if((mod->instr->x.str != NULL) && (strcmp(mod->instr->x.str, lstName->name) == 0))	
 				{
@@ -535,12 +557,6 @@ void FillLifeTableStatus (IR* ir)
 					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
 					nextPosAlive = cont ;		// nessa altura a variavel é usada					
 				}
-				/*else if((strcmp(mod->instr->y.str, lstName->name) == 0) || (strcmp(mod->instr->z.str, lstName->name) == 0))
-				{
-					printf("---2 \n") ;
-					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
-					nextPosAlive = cont ;		// nessa altura a variavel é usada
-				}*/
 				else						// se nao aparece, esta morto
 				{
 					//printf("---3 \n") ;
@@ -552,7 +568,6 @@ void FillLifeTableStatus (IR* ir)
 				//printf("mod: %d\n", mod) ;
 			}
 			lstName = lstName->nextName ;
-			//mod = mod->prev ;
 		}
 		
 		lifeTab = lifeTab->next;
@@ -562,90 +577,174 @@ void FillLifeTableStatus (IR* ir)
 
 // ---------------- Insert Registrers --------------
 
-void insertRegElse (Instr* ins, char** regNum, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
+int insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
 
 	ListName* lstName = lifeTab->firstName ;
-	char* regName ;
-	regName = *regNum ;			// FAZER PARA OS TRES REGS
-	ListName* var = regs->firstName ;
-	while(strcmp(regName, var->name)!= 0)
+	ListName* var1 = regs->firstName ;			//acha as variaveis de cada reg na lifetable
+	ListName* varLifeTab1 = lifeTab->firstName ;
+	while(strcmp(regs->reg1, var1->name)!= 0)
 	{
-		var = var->nextName ;
+		var1 = var1->nextName ;
+		varLifeTab1 = varLifeTab1->nextName ;
 		lstName = lstName->nextName ;
 	}
-	ListLife* life = lstName->first ;
-		while(life->posTable != blockLine)
+
+	lstName = lifeTab->firstName ;	
+	ListName* var2 = regs->firstName ;
+	ListName* varLifeTab2 = lifeTab->firstName ;
+	while(strcmp(regs->reg2, var2->name)!= 0)
 	{
-		life = life->next ;
+		var2 = var2->nextName ;
+		varLifeTab2 = varLifeTab2->nextName ;
+		lstName = lstName->nextName ;
 	}
-	//if(var->status == 1) 			// se a variavel está armazenada na memória
-	if(true)
+
+	lstName = lifeTab->firstName ;	
+	ListName* var3 = regs->firstName ;
+	ListName* varLifeTab3 = lifeTab->firstName ;
+	while(strcmp(regs->reg3, var3->name)!= 0)
 	{
-		*regNum = name ;
-	}//------------------------------------------- para as tres regs
-	else if(strcmp(regName, ins->x.str) == 0)		// se a variavel é resultado da operacao
+		var3 = var3->nextName ;
+		varLifeTab3 = varLifeTab3->nextName ;
+		lstName = lstName->nextName ;
+	}
+
+	ListLife* life1 = varLifeTab1->first ;				// ve a vida futura de cada variavel
+	while(life1->posTable != blockLine)
 	{
-		*regNum = name ;
-	} //------------------------------------------- para as tres regs
-	else if(life->nextPosAlive != -1)		// se nao tem proximo uso
+		life1 = life1->next ;
+	}
+
+	ListLife* life2 = varLifeTab2->first ;
+	while(life2->posTable != blockLine)
 	{
-		*regNum = name ;
-	} //------------------------------------------- para as tres regs
+		life2 = life2->next ;
+	}
+
+	ListLife* life3 = varLifeTab3->first ;
+	while(life3->posTable != blockLine)
+	{
+		life3 = life3->next ;
+	}
+
+	if(var1->status == 1) 			// se a variavel está armazenada na memória
+	{
+		regs->reg1 = name ;
+		printf("\tMOV %s ebx \n", name) ;
+		return 1 ;
+	}
+	else if(var2->status == 1) 			
+	{
+		regs->reg2 = name ;
+		printf("\tMOV %s ecx \n", name) ;
+		return 2 ;
+	}
+	else if(var3->status == 1) 			
+	{
+		regs->reg3 = name ;
+		printf("\tMOV %s eax \n", name) ;
+		return 3 ;
+	}
+	else if(strcmp(regs->reg1, ins->x.str) == 0)		// se a variavel é resultado da operacao
+	{
+		regs->reg1 = name ;
+		printf("\tMOV %s ebx \n", name) ;
+		return 1 ;
+	}
+	else if(strcmp(regs->reg2, ins->x.str) == 0)		
+	{
+		regs->reg2 = name ;
+		printf("\tMOV %s ecx \n", name) ;
+		return 2 ;
+	}
+	else if(strcmp(regs->reg3, ins->x.str) == 0)	
+	{
+		regs->reg3 = name ;
+		printf("\tMOV %s eax \n", name) ;
+		return 3 ;
+	}
+	else if(life1->nextPosAlive != -1)		// se nao tem proximo uso
+	{
+		regs->reg1 = name ;
+		printf("\tMOV %s ebx \n", name) ;
+		return 1 ;
+	}
+	else if(life2->nextPosAlive != -1)		// se nao tem proximo uso
+	{
+		regs->reg2 = name ;
+		printf("\tMOV %s ecx \n", name) ;
+		return 2 ;
+	}
+	else if(life3->nextPosAlive != -1)		// se nao tem proximo uso
+	{
+		regs->reg3 = name ;
+		printf("\tMOV %s eax \n", name) ;
+		return 3 ;
+	}
 	else				// faz spill
 	{
-		//var->status = regs->reg1 ;		//VER!
-		*regNum = name ;
+		var1->status = 1 ;		//VER!
+		regs->reg1 = name ;
+		printf("SPILL\n") ;
+		return 1 ;
 	}
 }
 
 // ---------------- Insert Registrers --------------
 
-int insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
+int insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder)
 {
 	//printf("entrou regs\n") ;
-	ListName* lstName = lifeTab->firstName ;
-	char* regName ;
-	if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atuaiza
+	if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atualiza
 	{
 		regs->reg1 = name ;
-		printf("\tMOV ebx %s \n", name) ;
+		if(varOrder == 1)		// se for x, precisa alocar
+		{
+			printf("\tMOV %s ebx \n", name) ;
+		}
 		return 1 ;
 	}
 	else if((regs->reg2 != NULL) && (strcmp(regs->reg2, name) == 0))
 	{
 		regs->reg2 = name ;
-		printf("\tMOV ecx %s \n", name) ;
+		if(varOrder == 1)		// se for x, precisa alocar
+		{
+			printf("\tMOV %s ecx \n", name) ;
+		}
 		return 2 ;
 	}
 	else if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
 	{
 		regs->reg3 = name ;
-		printf("\tMOV eax %s \n", name) ;
+		if(varOrder == 1)		// se for x, precisa alocar
+		{
+			printf("\tMOV %s eax \n", name) ;
+		}
 		return 3 ;
 	}
 	else if(regs->reg1 == NULL)		// se o registrador estiver vazio atualiza
 	{
 		regs->reg1 = name ;
-		printf("\tMOV ebx %s \n", name) ;
+		printf("\tMOV %s ebx \n", name) ;
 		return 1 ;
 	}
 	else if(regs->reg2 == NULL)
 	{
 		regs->reg2 = name ;
-		printf("\tMOV ecx %s \n", name) ;
+		printf("\tMOV %s ecx \n", name) ;
 		return 2 ;
 	}
 	else if(regs->reg3 == NULL)
 	{
 		regs->reg3 = name ;
-		printf("\tMOV eax %s \n", name) ;
+		printf("\tMOV %s eax \n", name) ;
 		return 3 ;
 	}
 	else
 	{
-		printf("FAZER!\n") ;
-		insertRegElse (ins, &(regs->reg1), name, lifeTab, blockLine, regs) ;
+		//printf("FAZER!\n") ;
+		return insertRegElse (ins, name, lifeTab, blockLine, regs) ;
 				
 	}
 }
@@ -699,14 +798,14 @@ char* searchVarInReg(char* name, RegList* regs)
 }
 
 // ---------------- Search Insert Registrers --------------
-int searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs)
+int searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder) //varOrder = 1 -> x
 {
 	ListName* lstName = lifeTab->firstName ;
 	while(lstName)
 	{
 		if((var != NULL) && (strcmp(lstName->name, var) == 0))		// so aloca se for uma variavel valida
 		{
-			return insertReg (ins, var, lifeTab, blockLine, regs) ;
+			return insertReg (ins, var, lifeTab, blockLine, regs, varOrder) ;
 		}
 		lstName = lstName->nextName ;	
 	}
@@ -751,8 +850,8 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break;
 		case OP_SET: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1) ;
 				break ;
 			}
 		case OP_SET_BYTE: 
@@ -772,58 +871,58 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break;
 		case OP_NE: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(0, regstr1, regstr2) ;
 				break ;
 			}
 		case OP_EQ: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(0, regstr1, regstr2) ;
 				break ;
 			}
 		case OP_LT: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(0, regstr1, regstr2) ;
 				break ;
 			}
 		case OP_GT: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(0, regstr1, regstr2) ;
 				break ;
 			}
 		case OP_LE: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(0, regstr1, regstr2) ;
 				break ;
 			}
 		case OP_GE: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(0, regstr1, regstr2) ;
 				break ;
 			}
 		case OP_ADD: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				// mudar o registrador do z para x!
 				printOperation(OP_ADD, regstr1, regstr2) ;
 				break;
 			}			
 		case OP_SUB: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(OP_SUB, regstr1, regstr2) ;
 				break;
 			}
@@ -836,8 +935,8 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			}
 		case OP_MUL: 
 			{
-				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
-				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
+				regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
 				printOperation(OP_MUL, regstr1, regstr2) ;
 				break;
 			}

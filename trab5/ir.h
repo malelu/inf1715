@@ -100,6 +100,7 @@ char* name;
 ListName* nextName ;
 ListLife* first ;
 ListLife* last ;
+int status ;
 };
 
 /*
