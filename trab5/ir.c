@@ -1311,7 +1311,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
-				printf("\tjl %s\n", label1); 			// MUDAR O TIPO DE PULO
+				printf("\tjne %s\n", label1); 			
 				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
@@ -1343,7 +1343,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 
 				snprintf(label1, 20, ".L%d", qtdLabel);
 				qtdLabel++ ;
-				printf("\tjl %s\n", label1); 			// MUDAR O TIPO DE PULO
+				printf("\tje %s\n", label1); 			
 				regstr3 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 3, 0) ;
 				printf("\tmovl $0, %%%s\n", regstr3);
 				snprintf(label2, 20, ".L%d", qtdLabel);
@@ -1485,12 +1485,9 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			}
 		case OP_ADD: 
 			{
-				//printf("ADD\n") ;
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					//printf("PASSOU!\n") ;
 					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
-					//printf("PASSOU!\n") ;
 
 					if (!notRepeated(ins->z.str, lifeTab))
 					{
@@ -1505,7 +1502,6 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				}
 				else
 				{
-					//printf("PASSOU2!\n") ;
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 					if (!notRepeated(ins->z.str, lifeTab))
@@ -1515,18 +1511,11 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 					}
 					else
 					{
-						//snprintf(regstr2, 20, "$%s", ins->z.str);
 						regstr2 = searchInsertNumber (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
-						//printf("AQUI\n") ;
 						printOperation(OP_ADD, regstr1, regstr2) ;
-						//printf("AQUI3\n") ;
 						insertVarReg(ins->x.str, regstr2, regs) ;
-						//printf("AQUI2\n") ;
 					}
 				}
-
-				// mudar o registrador do z para x!
-				//switchReg() ;
 				
 				break;
 			}			
@@ -1535,17 +1524,34 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
 					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
+
+					if (!notRepeated(ins->z.str, lifeTab))
+					{
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+						printOperation(OP_SUB, regstr1, regstr2) ;
+					}
+					else
+					{
+						snprintf(regstr2, 20, "$%s", ins->z.str);
+						printOperation(OP_SUB, regstr2, regstr1) ;   //mudar o registrador
+					}
 				}
 				else
+				{
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
-				if (!notRepeated(ins->z.str, lifeTab))
-				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+					if (!notRepeated(ins->z.str, lifeTab))
+					{
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+						printOperation(OP_SUB, regstr1, regstr2) ;
+					}
+					else
+					{
+						regstr2 = searchInsertNumber (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+						printOperation(OP_SUB, regstr1, regstr2) ;
+						insertVarReg(ins->x.str, regstr2, regs) ;
+					}
 				}
-				else
-					snprintf(regstr2, 20, "$%s", ins->z.str);
-				printOperation(OP_SUB, regstr1, regstr2) ;
 				break;
 			}
 		case OP_DIV: 
@@ -1560,23 +1566,43 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
 					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
+
+					if (!notRepeated(ins->z.str, lifeTab))
+					{
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+						printOperation(OP_MUL, regstr1, regstr2) ;
+					}
+					else
+					{
+						snprintf(regstr2, 20, "$%s", ins->z.str);
+						printOperation(OP_MUL, regstr2, regstr1) ;   //mudar o registrador
+					}
 				}
 				else
+				{
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
-				if (!notRepeated(ins->z.str, lifeTab))
-				{
-					regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+					if (!notRepeated(ins->z.str, lifeTab))
+					{
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+						printOperation(OP_MUL, regstr1, regstr2) ;
+					}
+					else
+					{
+						regstr2 = searchInsertNumber (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+						printOperation(OP_MUL, regstr1, regstr2) ;
+						insertVarReg(ins->x.str, regstr2, regs) ;
+					}
 				}
-				else
-					snprintf(regstr2, 20, "$%s", ins->z.str);
-				printOperation(OP_MUL, regstr1, regstr2) ;
 				break;
 			}
 		case OP_NEG: 
-			//fmt = "\t%s = - %s\n";
-			//negl	
+			{
+			regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
+			printf("\timul $-1, %%%s\n", regstr1) ;
+			insertVarReg(ins->x.str, regstr1, regs) ;
 			break;
+			}
 		case OP_NEW: 
 			{
 			int num = atoi(ins->y.str); 
