@@ -855,6 +855,39 @@ char* insertRegElseEax (Instr* ins, char* name, LifeTable* lifeTab, int blockLin
 	}
 }
 
+// ---------------- find Regitrers --------------
+
+char* findReg(char* var, RegList* regs)
+{	
+	if((regs->reg1 != NULL) && (strcmp(regs->reg1, var) == 0))
+	{	
+		return "%ebx" ;
+	}
+	else if((regs->reg2 != NULL) && (strcmp(regs->reg2, var) == 0))
+	{
+		return "%ecx" ;
+	}
+	else if((regs->reg3 != NULL) && (strcmp(regs->reg3, var) == 0))
+	{
+		return "%eax" ;
+	}
+	else if((regs->reg4 != NULL) && (strcmp(regs->reg4, var) == 0))
+	{
+		return "%edx" ;
+	}
+	else if((regs->reg5 != NULL) && (strcmp(regs->reg5, var) == 0))
+	{
+		return "%edi" ;
+	}
+	else if((regs->reg6 != NULL) && (strcmp(regs->reg6, var) == 0))
+	{
+		return "%esi" ;
+	}
+	else
+	{
+		return var ;
+	}
+}
 
 
 // ---------------- Insert Registrers --------------
@@ -1043,6 +1076,7 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		{
 			//printf("entrou1\n") ;
 			regs->reg3 = name ;
+			name = findReg(name, regs) ;
 			if(varOrder == 1)		// se for x, precisa alocar
 			{
 				if(byte != 'b')
@@ -1056,6 +1090,7 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		{
 			//printf("entrou2\n") ;
 			regs->reg3 = name ;
+			name = findReg(name, regs) ;
 			if(byte != 'b')
 				printf("\tmovl %s, %%eax \n", name) ;
 			else
@@ -1240,7 +1275,7 @@ char* searchVarInReg(char* name, RegList* regs)
 // ---------------- Search Insert Registrers --------------
 char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret, char byte) //varOrder = 1 -> x
 {
-
+	char* num = malloc(20) ;
 	if (notRepeated(var, allVars))		// eh um numero
 	{
 		if( ret == 1)
@@ -1248,7 +1283,11 @@ char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, Re
 			printf("\tmovl $%s, %%eax\n", var) ;
 			return "eax" ;
 		}
-		return insertReg (ins, var, lifeTab, blockLine, regs, varOrder, ret, byte) ;
+		else
+		{
+			snprintf(num, 20, "$%s", var) ;
+			return insertReg (ins, num, lifeTab, blockLine, regs, varOrder, ret, byte) ;
+		}
 	}
 	//printf("var: %s\n", var) ;
 	ListName* lstName = lifeTab->firstName ;
