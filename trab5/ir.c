@@ -1062,12 +1062,6 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 			printf("\tmovl %s, %%ecx \n", name) ;
 			return "ecx" ;
 		}
-		else if(regs->reg3 == NULL)
-		{
-			regs->reg3 = name ;
-			printf("\tmovl %s, %%eax \n", name) ;
-			return "eax" ;
-		}
 		else if(regs->reg4 == NULL)		
 		{
 			regs->reg4 = name ;
@@ -1277,20 +1271,33 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				break ;
 			}
 		case OP_SET_BYTE: 
+			{
 			//fmt = "\t%s = byte %s\n";	
 			break;
-		case OP_SET_IDX: 
+			}
+		case OP_SET_IDX:
+			{ 
 			//fmt = "\t%s = %s[%s]\n";	
 			break;
+			}
 		case OP_SET_IDX_BYTE: 
+			{
 			//fmt = "\t%s = byte %s[%s]\n";	
 			break;
+			}
 		case OP_IDX_SET: 
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
+				printf("\timul $4, %%%s\n", regstr1) ;
 			//fmt = "\t%s[%s] = %s\n";	
 			break;
+			}
 		case OP_IDX_SET_BYTE: 
+			{
+				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
 			//fmt = "\t%s[%s] = byte %s\n";	
 			break;
+			}
 		case OP_NE: 
 			{
 				if (!notRepeated(ins->y.str, lifeTab))
@@ -1556,6 +1563,10 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			}
 		case OP_DIV: 
 			{
+				regstr2 = searchInsertNumber (ins, ins->y.str, lifeTab, blockLine, regs, 2, 1) ; //armazena y em eax
+				regstr1 = searchInsertNumber (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+				printf("\tidivl %%%s\n", regstr1) ;
+				insertVarReg(ins->x.str, "eax", regs) ;
 				//regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs) ;
 				//regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs) ;
 				//printf("\tIDIV\n") ;
