@@ -19,13 +19,13 @@ fun g()
    $t3 = $t4 + x
    $t2 = $t3 + x
    $t1 = $t2 + 3
-   $t0 = $t1 + 9
+   $t0 = $t1 + 91
    i = byte 0
    v = new byte 10
    i = byte v[y]
    v[x] = byte i
    x = $t0
-   x = 9
+   x = 99
    x = g
    y = y+1
    goto .L1

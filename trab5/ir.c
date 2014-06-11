@@ -705,8 +705,15 @@ void FillLifeTableStatus (IR* ir)
 				if((mod->instr->x.str != NULL) && (strcmp(mod->instr->x.str, lstName->name) == 0))	
 				{
 					//printf("---1 \n") ;
-					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
-					nextPosAlive = -1 ;
+					if((mod->instr->op == OP_IDX_SET) || (mod->instr->op == OP_IDX_SET_BYTE))
+					{
+						lstLife = ListLife_new(cont, 0, nextPosAlive) ;
+					}
+					else
+					{
+						lstLife = ListLife_new(cont, 1, nextPosAlive) ;
+						nextPosAlive = -1 ;
+					}
 				}
 				// checa se está do lado direito da igualdade
 				else if ((mod->instr->y.str != NULL) && (strcmp(mod->instr->y.str, lstName->name) == 0) )
@@ -787,6 +794,7 @@ ListLife* FutureLife (ListName* varLifeTab, int blockLine)
 
 ListName* getLstName (char* regName, ListName* var)
 {
+
 	while(strcmp(regName, var->name)!= 0)
 	{
 		var = var->nextName ;
@@ -801,8 +809,8 @@ char* insertRegElseEax (Instr* ins, char* name, LifeTable* lifeTab, int blockLin
 	ListName* var3 = getLstName (regs->reg3, regs->firstName) ;
 	ListName* varLifeTab3 = getLstName (regs->reg3, lifeTab->firstName) ;
 
-	ListLife* life3 =  (varLifeTab3, blockLine) ;	// ve a vida futura de cada variavel
-		
+	ListLife* life3 =  FutureLife(varLifeTab3, blockLine) ;	// ve a vida futura de cada variavel
+
 	if(var3->status == 1) 		// se a variavel está armazenada na memória	
 	{
 		regs->reg3 = name ;
@@ -839,28 +847,29 @@ char* insertRegElseEax (Instr* ins, char* name, LifeTable* lifeTab, int blockLin
 char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs)
 {
 // reg1 = ebx ; reg2 = ecx ; reg3 = eax ; reg4 = edx ; reg5 = edi ; reg6 = esi
-
 			
-	ListName* var1 = getLstName (regs->reg1, regs->firstName) ;		//acha as variaveis de cada reg na lifetable
-	ListName* varLifeTab1 = getLstName (regs->reg1, lifeTab->firstName) ;
+	ListName* var1 = getLstName(regs->reg1, regs->firstName) ;		//acha as variaveis de cada reg na lifetable
+	ListName* varLifeTab1 = getLstName(regs->reg1, lifeTab->firstName) ;
 
-	ListName* var2 = getLstName (regs->reg2, regs->firstName) ;
-	ListName* varLifeTab2 = getLstName (regs->reg2, lifeTab->firstName) ;
+	ListName* var2 = getLstName(regs->reg2, regs->firstName) ;
+	ListName* varLifeTab2 = getLstName(regs->reg2, lifeTab->firstName) ;
 
-	ListName* var4 = getLstName (regs->reg4, regs->firstName) ;
-	ListName* varLifeTab4 = getLstName (regs->reg4, lifeTab->firstName) ;
+	ListName* var4 = getLstName(regs->reg4, regs->firstName) ;
+	ListName* varLifeTab4 = getLstName(regs->reg4, lifeTab->firstName) ;
 
-	ListName* var5 = getLstName (regs->reg5, regs->firstName) ;
-	ListName* varLifeTab5 = getLstName (regs->reg5, lifeTab->firstName) ;
+	ListName* var5 = getLstName(regs->reg5, regs->firstName) ;
+	ListName* varLifeTab5 = getLstName(regs->reg5, lifeTab->firstName) ;
 
-	ListName* var6 = getLstName (regs->reg6, regs->firstName) ;
-	ListName* varLifeTab6 = getLstName (regs->reg6, lifeTab->firstName) ;
+	ListName* var6 = getLstName(regs->reg6, regs->firstName) ;
+	ListName* varLifeTab6 = getLstName(regs->reg6, lifeTab->firstName) ;
 
-	ListLife* life1 =  (varLifeTab1, blockLine) ;	// ve a vida futura de cada variavel
-	ListLife* life2 =  (varLifeTab2, blockLine) ;
-	ListLife* life4 =  (varLifeTab4, blockLine) ;
-	ListLife* life5 =  (varLifeTab5, blockLine) ;
-	ListLife* life6 =  (varLifeTab6, blockLine) ;
+	ListLife* life1 = FutureLife(varLifeTab1, blockLine) ;	// ve a vida futura de cada variavel
+	ListLife* life2 = FutureLife(varLifeTab2, blockLine) ;
+	ListLife* life4 = FutureLife(varLifeTab4, blockLine) ;
+	ListLife* life5 = FutureLife(varLifeTab5, blockLine) ;
+	ListLife* life6 = FutureLife(varLifeTab6, blockLine) ;
+
+	//printf("var1: %d\n", var1) ;
 
 	if(var1->status == 1) 			// se a variavel está armazenada na memória
 	{
@@ -966,11 +975,13 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 
 char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret)  //ret = 1 se eh retorno
 {
-
+//printf("entrou\n") ;
 	if( ret == 1)			// mexer apenas no reg3 -> eax
 	{
+		//printf("entrou\n") ;
 		if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
 		{
+			//printf("entrou1\n") ;
 			regs->reg3 = name ;
 			if(varOrder == 1)		// se for x, precisa alocar
 			{
@@ -980,18 +991,21 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		}
 		else if(regs->reg3 == NULL)
 		{
+			//printf("entrou2\n") ;
 			regs->reg3 = name ;
 			printf("\tmovl %s, %%eax \n", name) ;
 			return "eax" ;
 		}
 		else
 		{
+			printf("regs->reg3: %s\n", regs->reg3) ;
 			return insertRegElseEax (ins, name, lifeTab, blockLine, regs) ;
 		}
 	}
-	//printf("entrou regs\n") ;
+	
 	else
 	{
+		//printf("entrou regs\n") ;
 		if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atualiza
 		{
 			regs->reg1 = name ;
@@ -1075,7 +1089,7 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		}
 		else
 		{
-			printf("FAZER!\n") ;
+			printf("FAZER!1\n") ;
 			return insertRegElse (ins, name, lifeTab, blockLine, regs) ;
 				
 		}
@@ -1123,7 +1137,7 @@ char* searchVarInReg(char* name, RegList* regs)
 // ---------------- Search Insert Registrers --------------
 char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret) //varOrder = 1 -> x
 {
-//printf("var: %s\n", var) ;
+
 	if (notRepeated(var, allVars))		// eh um numero
 	{
 		if( ret == 1)
@@ -1142,7 +1156,6 @@ char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, Re
 		 	//printf("---%s\n", lstName->name) ;
 		if((var != NULL) && (strcmp(lstName->name, var) == 0))		// so aloca se for uma variavel valida
 		{
-			//printf("aqui\n" );
 			return insertReg (ins, var, lifeTab, blockLine, regs, varOrder, ret) ;
 		}
 		lstName = lstName->nextName ;	
@@ -1156,6 +1169,40 @@ char* searchInsertNumber (Instr* ins, char* var, LifeTable* lifeTab, int blockLi
 
 	return insertReg (ins, var, lifeTab, blockLine, regs, varOrder, ret) ;
 
+}
+
+// ---------------- insert Var Regs --------------
+
+void insertVarReg(char* var, char* regstr, RegList* regs)
+{
+	//printf("oi2\n") ;
+	//printf("regstr: %s\n", regstr) ;
+	//printf("regs->reg1: %s\n", regs->reg1) ;
+	
+	if(strcmp(regstr, "ebx") == 0)
+	{	
+		regs->reg1 = var ;
+	}
+	else if(strcmp(regstr, "ecx") == 0)
+	{
+		regs->reg2 = var ;
+	}
+	else if(strcmp(regstr, "eax") == 0)
+	{
+		regs->reg3 = var ;
+	}
+	else if(strcmp(regstr, "edx") == 0)
+	{
+		regs->reg4 = var ;
+	}
+	else if(strcmp(regstr, "edi") == 0)
+	{
+		regs->reg5 = var ;
+	}
+	else
+	{
+		regs->reg6 = var ;
+	}
 }
 
 // ---------------- Update Registrers --------------
@@ -1213,7 +1260,7 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 		case OP_SET: 
 			{
 				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
-				regstr2 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1, 0) ;
+				insertVarReg(ins->x.str, regstr1, regs) ;
 				break ;
 			}
 		case OP_SET_BYTE: 
@@ -1425,16 +1472,16 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			}
 		case OP_ADD: 
 			{
-				/*printf("ADD\n") ;
+				//printf("ADD\n") ;
 				if (!notRepeated(ins->y.str, lifeTab))
 				{
-					printf("PASSOU!\n") ;
-					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2) ;
-					printf("PASSOU!\n") ;
+					//printf("PASSOU!\n") ;
+					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0) ;
+					//printf("PASSOU!\n") ;
 
 					if (!notRepeated(ins->z.str, lifeTab))
 					{
-						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 						printOperation(OP_ADD, regstr1, regstr2) ;
 					}
 					else
@@ -1445,22 +1492,25 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 				}
 				else
 				{
-					printf("PASSOU2!\n") ;
+					//printf("PASSOU2!\n") ;
 					snprintf(regstr1, 20, "$%s", ins->y.str);
 
 					if (!notRepeated(ins->z.str, lifeTab))
 					{
-						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
+						regstr2 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
 						printOperation(OP_ADD, regstr1, regstr2) ;
 					}
 					else
 					{
 						//snprintf(regstr2, 20, "$%s", ins->z.str);
-						regstr2 = searchInsertNumber (ins, ins->z.str, lifeTab, blockLine, regs, 3) ;
-						printf("AQUI\n") ;
+						regstr2 = searchInsertNumber (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
+						//printf("AQUI\n") ;
 						printOperation(OP_ADD, regstr1, regstr2) ;
+						//printf("AQUI3\n") ;
+						insertVarReg(ins->x.str, regstr2, regs) ;
+						//printf("AQUI2\n") ;
 					}
-				}*/
+				}
 
 				// mudar o registrador do z para x!
 				//switchReg() ;
@@ -1516,12 +1566,9 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break;
 		case OP_NEW: 
 			{
-			//fmt = "\t%s = new %s\n";
-			//push 4*tamanho
-			int num = atoi(ins->y.str);
-			//priontf("%s\n", ins->y.str) ; 
+			int num = atoi(ins->y.str); 
 			printf("\tpushl %d\n", num*4) ;
-			printf("\tcall malloc---------\n") ;	
+			printf("\tcall malloc\n") ;	
 			regstr1 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1, 1) ;
 			break;
 			}
@@ -1949,6 +1996,6 @@ void IR_dump(IR* ir, FILE* fd)
 	allVars = lifeTable_new();
 	CreateLifeTable (ir) ;
 	FillLifeTableStatus (ir) ;
-	//printLifeTable(ir) ;
+	printLifeTable(ir) ;
 	FillRegList (ir) ;
 }
