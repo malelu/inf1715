@@ -1123,7 +1123,7 @@ char* searchVarInReg(char* name, RegList* regs)
 // ---------------- Search Insert Registrers --------------
 char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret) //varOrder = 1 -> x
 {
-
+//printf("var: %s\n", var) ;
 	if (notRepeated(var, allVars))		// eh um numero
 	{
 		if( ret == 1)
@@ -1515,15 +1515,20 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			//negl	
 			break;
 		case OP_NEW: 
+			{
 			//fmt = "\t%s = new %s\n";
 			//push 4*tamanho
-			printf("\tcall malloc\n") ;	
+			int num = atoi(ins->y.str);
+			//priontf("%s\n", ins->y.str) ; 
+			printf("\tpushl %d\n", num*4) ;
+			printf("\tcall malloc---------\n") ;	
+			regstr1 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1, 1) ;
 			break;
-		case OP_NEW_BYTE: 
-			//fmt = "\t%s = new byte %s\n";	
+			}
+		case OP_NEW_BYTE: 	
 			printf("\tpush %s\n", ins->y.str) ;
 			printf("\tcall malloc\n") ;
-			//eax = retorno
+			regstr1 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1, 1) ;
 			break;
 	}
 	
@@ -1548,11 +1553,13 @@ void FillRegList (IR* ir)
 	{
 		printf("%s string %s\n", s->name, s->value);
 	}
-	printf(".global\n") ;				//VER NOMES CORRETOS!!!!!!!!!!!!!!!!
+
 	for (v = ir->globals; v; v = v->next) 
 	{
-		printf("%s\n", v->name);
+		printf("%s:\n", v->name);
 	}
+
+	printf(".text\n") ;
 	while (lastFn) 
 	{
 
