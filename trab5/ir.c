@@ -998,7 +998,6 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		}
 		else
 		{
-			printf("regs->reg3: %s\n", regs->reg3) ;
 			return insertRegElseEax (ins, name, lifeTab, blockLine, regs) ;
 		}
 	}
@@ -1115,8 +1114,22 @@ void printOperation(int op, char* regstr1, char* regstr2)
 			break ;	
 	}
 
+	if((strcmp(regstr1, "ebx") == 0) || (strcmp(regstr1, "ecx") == 0) || (strcmp(regstr1, "eax") == 0) ||
+		(strcmp(regstr1, "edx") == 0) || (strcmp(regstr1, "edi") == 0) || (strcmp(regstr1, "esi") == 0))
+	{	
+		printf("%%%s, ", regstr1) ;
+	}
+	else
+		printf("%s, ", regstr1) ;
 
-	printf("%s %s\n", regstr1, regstr2) ;
+
+	if((strcmp(regstr2, "ebx") == 0) || (strcmp(regstr2, "ecx") == 0) || (strcmp(regstr2, "eax") == 0) ||
+		(strcmp(regstr2, "edx") == 0) || (strcmp(regstr2, "edi") == 0) || (strcmp(regstr2, "esi") == 0))
+	{	
+		printf("%%%s\n", regstr2) ;
+	}
+	else
+		printf("%s\n", regstr2) ;
 
 }
 
