@@ -1,0 +1,22 @@
+	string $str0 = "Marina"
+	string $str1 = "Marina"
+	string $str2 = "Lucena"
+	global u
+	global x
+	global p
+
+	fun main (t, f)
+	a = 0
+	b = 0
+	c = 0
+	d = 0
+	i = 0
+	i = 55
+	ret a
+
+
+	fun func ()
+	b = 0
+	ret
+
+

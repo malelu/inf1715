@@ -1178,7 +1178,7 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		}
 		else
 		{
-			printf("FAZER!1\n") ;
+			//printf("FAZER!1\n") ;
 			return insertRegElse (ins, name, lifeTab, blockLine, regs, byte) ;
 				
 		}
@@ -1365,19 +1365,22 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			}
 		case OP_SET_BYTE: 
 			{
-			//fmt = "\t%s = byte %s\n";
 				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0, 'b') ; // b = byte
 				insertVarReg(ins->x.str, regstr1, regs) ;
 				break ;	
-			break;
 			}
 		case OP_SET_IDX:
 			{ 
+				regstr1 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0, 'n') ;
+				printf("\timul $4, %%%s\n", regstr1) ;
 			//fmt = "\t%s = %s[%s]\n";	
 			break;
 			}
 		case OP_SET_IDX_BYTE: 
 			{
+				regstr1 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0, 'n') ;
+				regstr2 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0, 'n') ;
+				printOperation(OP_ADD, regstr2, regstr1) ;
 			//fmt = "\t%s = byte %s[%s]\n";	
 			break;
 			}
