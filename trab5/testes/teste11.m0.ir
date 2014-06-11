@@ -1,0 +1,13 @@
+	fun main (k)
+	ret 4
+
+	fun func ()
+	x = 0
+	c = 0
+	l = 0
+	param l 
+	call main
+	$t0 = $ret
+	x = $t0 + 6
+	ret 4
+

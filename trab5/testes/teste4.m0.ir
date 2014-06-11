@@ -1,0 +1,42 @@
+	fun main ()
+	a = 0
+	s = 0
+	$t0 = 4 >= 3
+	ifFalse $t0 goto .L0
+	b = 0
+	$t2 = 1 + 1
+.L2: 	$t1 = $t2 < 1
+	ifFalse $t1 goto .L1
+	a = a + 1
+	goto .L2
+.L1: 	goto .L3
+.L0: 	$t3 = 9 != 4
+	ifFalse $t3 goto .L4
+	a = 5
+	s = 1
+	goto .L3
+.L4: 	e = 0
+.L6: 	ifFalse 1 goto .L5
+	a = a + 1
+	goto .L6
+.L8: 	s = 1
+	ifFalse 0 goto .L7
+	a = a + 1
+	goto .L8
+.L7: 	ret
+
+	fun main2 ()
+	$t4 = 5 != 6
+	ifFalse $t4 goto .L9
+	g = 0
+.L9: 	$t5 = 5 == 6
+	ifFalse $t5 goto .L10
+	k = 0
+.L10: 	$t8 = 6 * 4
+	$t7 = 5 + $t8
+	$t6 = $t7 >= 5
+	ifFalse $t6 goto .L11
+	b = 0
+.L11: 	ret
+	ret
+

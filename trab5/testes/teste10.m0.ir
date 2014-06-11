@@ -1,0 +1,23 @@
+	fun main ()
+	c = 0
+	b = 0
+	f = 0
+	g = 0
+	f = new 5
+	$t0 = f[4]
+	f = new 2
+	$t1 = f[5]
+	$t2 = $t1[1]
+	f = new byte 2
+	g = new 1
+	$t3 = f[4]
+	$t4 = $t3[9]
+	c = $t4
+	$t6 = c[1]
+	$t5 = $t6 - 6
+	b = $t5 + 8
+	$t7 = b[5]
+	$t8 = $t7[5]
+	b = b
+	ret c
+

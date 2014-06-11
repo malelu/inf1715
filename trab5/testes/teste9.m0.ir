@@ -1,0 +1,17 @@
+	fun main ()
+	g = 0
+	a = 0
+	c = 0
+	b = 0
+	w = 0
+	v = 0
+	$t0 = -5
+	g = $t0
+	$t1 = -6
+	a = 5 - $t1
+	w = 4
+	v = 4
+	c = new byte 63
+	b = new 7
+	ret
+

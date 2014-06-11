@@ -1,0 +1,25 @@
+	fun f (c, d)
+	x = 0
+	$t0 = 6 == 9
+	ifFalse $t0 goto .L0
+	ifFalse 0 goto .L0
+	x = 5
+	ret 2
+	goto .L1
+.L0: 	$t1 = 6 < 5
+	ifFalse $t1 goto .L2
+	$t2 = 9 != 4
+	ifFalse $t2 goto .L2
+	x = x + 1
+	goto .L1
+.L2: 	b = 0
+.L1: 	$t3 = 6 == 9
+	if $t3 goto .L3
+	ifFalse 0 goto .L4
+.L3: 	x = 5
+	ret 2
+	goto .L5
+.L4: 	x = 4
+.L5: 	ret
+
+
