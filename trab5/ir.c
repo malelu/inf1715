@@ -837,7 +837,6 @@ ListLife* FutureLife (ListName* varLifeTab, int blockLine)
 
 ListName* getLstName (char* regName, ListName* var)
 {
-
 	while(strcmp(regName, var->name)!= 0)
 	{
 		var = var->nextName ;
@@ -849,7 +848,6 @@ ListName* getLstName (char* regName, ListName* var)
 
 int getVal(char* var, RegList* regs)
 {	
-	printf("eita...\n") ;
 	ListName* name = regs->firstName ;
 	while(strcmp(name->name, var) != 0)
 	{
@@ -997,11 +995,12 @@ bool nameIsReg(char* reg, RegList* regs)
 
 char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs, char byte)
 {
+char* nameAux = malloc(20) ;
 // reg1 = ebx ; reg2 = ecx ; reg3 = eax ; reg4 = edx ; reg5 = edi ; reg6 = esi
 //printf("var: %s\n", name) ;			
 	ListName* var1 = getLstName(regs->reg1, regs->firstName) ;		//acha as variaveis de cada reg na lifetable
 	ListName* varLifeTab1 = getLstName(regs->reg1, lifeTab->firstName) ;
-	
+
 	ListName* var2 = getLstName(regs->reg2, regs->firstName) ;
 	ListName* varLifeTab2 = getLstName(regs->reg2, lifeTab->firstName) ;
 
@@ -1030,7 +1029,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%ebx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%ebx \n", nameAux) ;
+				return "ebx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1047,7 +1051,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%ecx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%exc \n", nameAux) ;
+				return "ecx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1064,7 +1073,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%edx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%edx \n", nameAux) ;
+				return "edx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1081,7 +1095,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%edi \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%edi \n", nameAux) ;
+				return "edi" ;
 			}
 		}
 		if(byte != 'b')
@@ -1098,7 +1117,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%esi \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%esi \n", nameAux) ;
+				return "esi" ;
 			}
 		}
 		if(byte != 'b')
@@ -1115,7 +1139,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%ebx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%ebx \n", nameAux) ;
+				return "ebx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1132,7 +1161,13 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+
+				if(byte != 'b')
+					printf("\tmovl %s, %%ecx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%ecx \n", nameAux) ;
+				return "ecx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1149,7 +1184,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%edx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%edx \n", nameAux) ;
+				return "edx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1166,7 +1206,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%edi \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%edi \n", nameAux) ;
+				return "edi" ;
 			}
 		}
 		if(byte != 'b')
@@ -1183,7 +1228,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%esi \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%esi \n", nameAux) ;
+				return "esi" ;
 			}
 		}
 		if(byte != 'b')
@@ -1200,7 +1250,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%ebx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%ebx \n", nameAux) ;
+				return "esi" ;
 			}
 		}
 		if(byte != 'b')
@@ -1217,7 +1272,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%ecx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%ecx \n", nameAux) ;
+				return "ecx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1234,7 +1294,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%edx \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%edx \n", nameAux) ;
+				return "edx" ;
 			}
 		}
 		if(byte != 'b')
@@ -1251,7 +1316,12 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+				if(byte != 'b')
+					printf("\tmovl %s, %%edi \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%edi \n", nameAux) ;
+				return "edi" ;
 			}
 		}
 		if(byte != 'b')
@@ -1268,7 +1338,13 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 			if(!nameIsReg(name, regs))
 			{
 				int val = getVal(name, regs) ;
-				snprintf(name, 20, "$%d", val) ;
+				snprintf(nameAux, 20, "$%d", val) ;
+			
+				if(byte != 'b')
+					printf("\tmovl %s, %%esi \n", nameAux) ;
+				else
+					printf("\tmovsbl %s, %%esi \n", nameAux) ;
+				return "esi" ;
 			}
 		}
 		if(byte != 'b')
@@ -1292,6 +1368,7 @@ char* insertRegElse (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, 
 char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret, char byte)  //ret = 1 se eh retorno
 {
 //printf("entrou\n") ;
+	char* nameAux = malloc(20);
 	if( ret == 1)			// mexer apenas no reg3 -> eax
 	{
 		//printf("entrou\n") ;
@@ -1337,7 +1414,15 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+					if(varOrder == 1)		// se for x, precisa alocar
+					{				
+						if(byte != 'b')
+							printf("\tmovl %s, %%ebx \n", nameAux) ;
+						else
+							printf("\tmovsbl %s, %%ebx \n", nameAux) ;
+						return "ebx" ;
+					}			
 				}
 			}
 			if(varOrder == 1)		// se for x, precisa alocar
@@ -1357,7 +1442,15 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+					if(varOrder == 1)		// se for x, precisa alocar
+					{				
+						if(byte != 'b')
+							printf("\tmovl %s, %%ecx \n", nameAux) ;
+						else
+							printf("\tmovsbl %s, %%ecx \n", nameAux) ;
+						return "ecx" ;
+					}			
 				}
 			}
 			if(varOrder == 1)		// se for x, precisa alocar
@@ -1377,7 +1470,15 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+					if(varOrder == 1)		// se for x, precisa alocar
+					{				
+						if(byte != 'b')
+							printf("\tmovl %s, %%edx \n", nameAux) ;
+						else
+							printf("\tmovsbl %s, %%edx \n", nameAux) ;
+						return "edx" ;
+					}			
 				}
 			}
 			if(varOrder == 1)		// se for x, precisa alocar
@@ -1392,15 +1493,23 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		else if((regs->reg5 != NULL) && (strcmp(regs->reg5, name) == 0))
 		{
 			regs->reg5 = name ;
+
 			if(!notRepeated(name, allVars))			// se eh variavel
 			{
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+					if(varOrder == 1)		// se for x, precisa alocar
+					{				
+						if(byte != 'b')
+							printf("\tmovl %s, %%edi \n", nameAux) ;
+						else
+							printf("\tmovsbl %s, %%edi \n", nameAux) ;
+						return "edi" ;
+					}			
 				}
 			}
-			//name = findReg(name, regs) ;
 			if(varOrder == 1)		// se for x, precisa alocar
 			{				
 				if(byte != 'b')
@@ -1408,6 +1517,7 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				else
 					printf("\tmovsbl %s, %%edi \n", name) ;
 			}
+
 			return "edi" ;
 		}
 		else if((regs->reg6 != NULL) && (strcmp(regs->reg6, name) == 0))
@@ -1418,7 +1528,15 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+					if(varOrder == 1)		// se for x, precisa alocar
+					{				
+						if(byte != 'b')
+							printf("\tmovl %s, %%esi \n", nameAux) ;
+						else
+							printf("\tmovsbl %s, %%esi \n", nameAux) ;
+						return "esi" ;
+					}			
 				}
 			}
 			if(varOrder == 1)		// se for x, precisa alocar
@@ -1438,7 +1556,13 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+				
+					if(byte != 'b')
+						printf("\tmovl %s, %%ebx \n", nameAux) ;
+					else
+						printf("\tmovsbl %s, %%ebx \n", nameAux) ;
+					return "ebx" ;
 				}
 			}
 			if(byte != 'b')
@@ -1455,7 +1579,13 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+			
+					if(byte != 'b')
+						printf("\tmovl %s, %%ecx \n", nameAux) ;
+					else
+						printf("\tmovsbl %s, %%ecx \n", nameAux) ;
+					return "ecx" ;
 				}
 			}
 			if(byte != 'b')
@@ -1472,7 +1602,14 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+			
+					if(byte != 'b')
+						printf("\tmovl %s, %%edx \n", nameAux) ;
+					else
+						printf("\tmovsbl %s, %%edx \n", nameAux) ;
+					return "edx" ;
+		
 				}
 			}
 			if(byte != 'b')
@@ -1489,7 +1626,13 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;
+				
+					if(byte != 'b')
+						printf("\tmovl %s, %%edi \n", nameAux) ;
+					else
+						printf("\tmovsbl %s, %%edi \n", nameAux) ;
+					return "edi" ;	
 				}
 			}
 			if(byte != 'b')
@@ -1506,7 +1649,13 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 				if(!nameIsReg(name, regs))
 				{
 					int val = getVal(name, regs) ;
-					snprintf(name, 20, "$%d", val) ;
+					snprintf(nameAux, 20, "$%d", val) ;				
+					if(byte != 'b')
+						printf("\tmovl %s, %%esi \n", nameAux) ;
+					else
+						printf("\tmovsbl %s, %%esi \n", nameAux) ;
+					return "esi" ;
+			
 				}
 			}
 			if(byte != 'b')
@@ -1685,7 +1834,6 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break ;
 		case OP_PARAM: 
 			{
-				printf("PARAM\n") ;
 				var = NULL ;
 				var = searchVarInReg(ins->x.str, regs) ;
 				if(push == 0)
@@ -1695,11 +1843,11 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 					printf("\tpushl %%edx\n") ;				
 				}
 				if(var != NULL)
-				{printf("PARAM1\n") ;
+				{
 					printf("\tpushl %%%s\n", var) ;
 				}
 				else
-				{printf("PARAM2\n") ;	
+				{	
 					if(notRepeated(ins->x.str, allVars))  	// eh numero
 					{
 						printf("\tpushl $%s\n", ins->x.str) ;
@@ -1736,13 +1884,11 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs)
 			break;
 		case OP_SET: 
 			{
-				printf("---%s\n", ins->y.str) ;
 				if(strcmp(ins->y.str, "$ret") != 0)
-				{printf("ggi") ;
+				{
 					regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0, 'n') ;				
 					insertVarReg(ins->x.str, regstr1, regs) ;
 				}
-				printf("ggg") ;
 				break ;
 			}
 		case OP_SET_BYTE: 
