@@ -5,7 +5,7 @@ global g
 global h
 global j
 
-fun f(a)
+fun f(a, b)
    x = 0
    ret
    

@@ -97,6 +97,7 @@ ListName
 typedef struct ListName_ ListName;
 struct ListName_ {
 char* name;
+int val ;
 ListName* nextName ;
 ListLife* first ;
 ListLife* last ;
