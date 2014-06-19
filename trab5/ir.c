@@ -84,7 +84,7 @@ Given a name, return a variable (plus its position in variable *pos).
 This function actually works for String lists as well,
 because they are structurally compatible.
 */
-static Variable* Variable_find(Variable* list, const char* name, int* pos) 
+static Variable* Variable_find(Variable* list, char* name, int* pos) 
 {
 	int i;
 	Variable* v;
@@ -282,7 +282,7 @@ void InsertInfoVar(Stack* stack, InfoStack* info)
 
 //------------------Insert Info Param -----------
 
-InfoStack* InsertInfoParam(Stack* stack, InfoStack* info)
+void InsertInfoParam(Stack* stack, InfoStack* info)
 {
 	InfoStack* stackAux = stack->stackParam ;
 
@@ -299,10 +299,6 @@ InfoStack* InsertInfoParam(Stack* stack, InfoStack* info)
 		stackAux->next = info ;
 	}
 	//return stack
-printf("stackAux: %d\n", stackAux) ;
-printf("infooooo: %d\n", info) ;
-printf("stack->stackParam: %d\n",stack->stackParam) ;
-printf("stack->stackParam->next: %d\n",stack->stackParam->next) ;
 }
 
 //------------------Info Stack --------------
@@ -407,9 +403,6 @@ bool notRepeated(char* name, LifeTable* lifeTab)
 
 void insertListLifeInstructions (LifeTable* lifeTab, InstrMod* mod)
 {
-				printf("mod->instr->x.str %s\n", mod->instr->x.str) ;
-				//printf("mod->instr->y.str %s\n", mod->instr->y.str) ;
-				//printf("mod->instr->z.str %s\n", mod->instr->z.str) ;
 	if(lifeTab->firstInstructions == NULL)
 	{
 		lifeTab->firstInstructions = mod ;
@@ -421,7 +414,6 @@ void insertListLifeInstructions (LifeTable* lifeTab, InstrMod* mod)
 		lifeTab->lastInstructions = mod;
 		prevLastInst->next = lifeTab->lastInstructions ;
 		lifeTab->lastInstructions->prev = prevLastInst ;
-		//printf("lifeTab->lastInstructions->prev->instr->x.str %s\n", lifeTab->lastInstructions->prev->instr->x.str) ;
 	}
 }
 
@@ -535,7 +527,6 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* sta
 		
 	if(notRepeated(name, lifeTab))
 	{
-		//printf("name: %s\n", name) ;
 		InsertListName (name, lifeTab) ;
 		InsertListName (name, allVars) ;
 		InsertRegsListName (name, regs) ;
@@ -552,8 +543,6 @@ void InsertLifeTable (Instr* code, LifeTable* lifeTab, RegList* regs, Stack* sta
 	
 
 	lifeTab->qtdLines = lifeTab->qtdLines + 1 ;
-	//printf("bloco basico: %d\n", code->bBlock->basicNum) ;
-	//printf("num linhas: %d\n", lifeTab->qtdLines) ;
 }
 
 //-------------------- valid variable -------
@@ -576,7 +565,6 @@ void CreateLifeTable (IR* ir)
 	LifeTable* lifeTab = NULL;
 	LifeTable* prevTable = lifeTab ;
 	RegList* regs = NULL ;
-	printf("lifeTab inicial %d\n", lifeTab) ;
 	LifeTable* aux ;
 	Variable* args ;
 	Stack* stack ;
@@ -592,9 +580,7 @@ void CreateLifeTable (IR* ir)
 		lifeTab->regs = regs ;
 		if(prevTable != NULL)
 			prevTable->next = lifeTab ;
-		printf("NEW BLOCK1 \n") ;
-		printf("lifeTab %d\n", lifeTab) ;
-		printf("lifeTab->next %d\n", lifeTab->next) ;
+
 		int bBlock = ins->bBlock->basicNum ;
 
 		stack = Stack_new() ;			// a cada nova funcao cria uma pilha
@@ -605,10 +591,6 @@ void CreateLifeTable (IR* ir)
 			info = InfoStack_new(args->name, i) ; 
 			InsertInfoParam(stack, info) ;
 			stack->qtdParam++ ;
-			printf("-----------%d\n", stack->stackParam) ;
-			printf("-------%d\n", lifeTab->stack->stackParam) ;
-			//printf("=======================%s\n", args->name);
-			//printf("=====%d\n", stack->qtdParam);
 			args = args->next;
 		}
 		
@@ -620,7 +602,6 @@ void CreateLifeTable (IR* ir)
 				if(bBlock == (ins->bBlock->basicNum))	//while por bloco básico
 				{
 					InsertLifeTable(ins, lifeTab, regs, stack) ;		// insere na tabela de registradores a nova variável
-					//printf("ins %d\n", ins) ;
 				}
 				else
 				{
@@ -631,7 +612,6 @@ void CreateLifeTable (IR* ir)
 					lifeTab->regs = regs ;
 					lifeTab->stack = stack ;
 					prevTable->next = lifeTab ;
-					printf("NEW BLOCK2 \n") ;
 					InsertLifeTable(ins, lifeTab, regs, stack) ;
 				}
 			}
@@ -646,21 +626,12 @@ void CreateLifeTable (IR* ir)
 			ins = ins->next ;
 		}
 
-		// printando mod------------------------
-		InstrMod* mod2 = lifeTab->lastInstructions ;
-		while(mod2)
-		{
-			printf("--mod2->instr->x.str %s\n", mod2->instr->x.str) ;
-			mod2 = mod2->prev ;
-		}
-		//-------------------------------------------
 		lastFn = lastFn->next;
 	}
 
 	aux = ir->functions->code->bBlock->life ;
 	while(aux)
-	{
-		//printf("TABELA!\n") ; 
+	{ 
 		aux = aux->next ;
 	}
 }
@@ -692,56 +663,21 @@ void FillLifeTableStatus (IR* ir)
 	int cont ;
 	int nextPosAlive = -1 ;
 	InstrMod* mod ;
-	char* name = " ";
 
 	while (lifeTab) 		// cria estruturas listLife
 	{
 		lstName = lifeTab->firstName ;
 		while(lstName)
 		{	
-			//printf("---LSTNAME->NAME: %s\n", lstName->name) ;
 			mod =  lifeTab->lastInstructions ;
 			lstLife = ListLife_new(lifeTab->qtdLines, 1, nextPosAlive) ;
-			//printf("---LSTLIFE1: %d\n", lstLife) ;
 			insertListLife (lstName, lstLife) ;  // na última linha está sempre vivo
-
-		// printando mod------------------------
-		/*while(mod)
-		{
-			printf("====mod//->instr->x.str %s\n", mod->instr->x.str) ;
-			mod = mod->prev ;
-		}
-		mod =  lifeTab->lastInstructions ;*/
-		//-------------------------------------------	
 	
 			for(cont=lifeTab->qtdLines-1;cont>=0;cont--)
-			{//printf("---0 \n") ;
-				//printf("--mod//->instr->x.str %s\n", mod->instr->x.str) ;
-
-
-				/*if((mod->instr->op == OP_IDX_SET) || (mod->instr->op == OP_IDX_SET_BYTE))
-				{
-					printf("entrou\n") ;
-					printf("mod->instr->x.str: %d\n", mod->instr->x.str) ;
-					printf("mod->instr->y.str: %d\n", mod->instr->y.str) ;
-					snprintf(name, 20, "%s[%s]", mod->instr->x.str, mod->instr->y.str);
-					printf("saiu\n") ;
-				}
-
-				// checa se vetor está do lado esquerdo da igualdade
-				if((mod->instr->x.str != NULL) && (mod->instr->y.str != NULL) && (name != ' ' ))
-				{
-					if(strcmp(name, lstName->name) == 0)
-					{
-						//printf("---1 \n") ;
-						lstLife = ListLife_new(cont, 1, nextPosAlive) ;
-						nextPosAlive = -1 ;
-					}
-				}*/
+			{
 				// checa se está do lado esquerdo da igualdade
 				if((mod->instr->x.str != NULL) && (strcmp(mod->instr->x.str, lstName->name) == 0))	
 				{
-					//printf("---1 \n") ;
 					if((mod->instr->op == OP_IDX_SET) || (mod->instr->op == OP_IDX_SET_BYTE))
 					{
 						lstLife = ListLife_new(cont, 0, nextPosAlive) ;
@@ -755,45 +691,37 @@ void FillLifeTableStatus (IR* ir)
 				// checa se está do lado direito da igualdade
 				else if ((mod->instr->y.str != NULL) && (strcmp(mod->instr->y.str, lstName->name) == 0) )
 				{
-					//printf("---2 \n") ;
 					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
 					nextPosAlive = cont ;		// nessa altura a variavel é usada
 				}
 				else if ((mod->instr->z.str != NULL) && (strcmp(mod->instr->z.str, lstName->name) == 0) )
 				{
-					//printf("---2 \n") ;
 					lstLife = ListLife_new(cont, 1, nextPosAlive) ;
 					nextPosAlive = cont ;		// nessa altura a variavel é usada					
 				}
 				else						// se nao aparece, esta morto
 				{
-					//printf("---3 \n") ;
 					lstLife = ListLife_new(cont, 0, nextPosAlive) ;
 				}
-				//printf("---LSTLIFE2: %d\n", lstLife) ;
 				insertListLife (lstName, lstLife) ;
 				mod = mod->prev ;
-				//printf("mod: %d\n", mod) ;
 			}
 			lstName = lstName->nextName ;
 		}
 		
 		lifeTab = lifeTab->next;
-		printf("---NEXT LIFE TAB: %d\n", lifeTab) ;
 	}
 }
 
 // ---------------- Make Spill --------------
 
-int makeSpill(LifeTable* lifeTab, char* name, char* byte, FILE* file)
+int makeSpill(LifeTable* lifeTab, char* name, char byte, FILE* file)
 {
 	Stack* stack = lifeTab->stack ;
 	InfoStack * info = stack->stackParam ;
 
-	//printf("stack: %d\n", stack) ;	
-	//printf("info: %d\n", info) ;
 	while(info)
-	{//printf("ooo\n") ;
+	{
 		if(strcmp(info->name, name)==0)
 		{
 			int pos ;
@@ -806,9 +734,8 @@ int makeSpill(LifeTable* lifeTab, char* name, char* byte, FILE* file)
 		}
 		info = info->next ;
 	}
-//printf("epaaaa\n") ;
+
 	info = stack->stackVar ;		// se a variavel nao eh parametro
-	//printf("info2: %d\n", info) ;
 	while(info)
 	{
 		if(strcmp(info->name, name)==0)
@@ -820,6 +747,7 @@ int makeSpill(LifeTable* lifeTab, char* name, char* byte, FILE* file)
 		}
 		info = info->next ;
 	}
+	return 0 ;
 }
 // ---------------- Future Life --------------
 
@@ -905,11 +833,10 @@ char* insertRegElseEax (Instr* ins, char* name, LifeTable* lifeTab, int blockLin
 			fprintf(file,"\tmovsbl %s, %%eax \n", name) ;
 		return "eax" ;
 	}
-	else				// faz spill
+	else				
 	{
-		var3->status = 1 ;		//VER!
+		var3->status = 1 ;		
 		regs->reg3 = name ;
-		//printf("SPILL\n") ;
 		makeSpill(lifeTab, regs->reg3, byte, file) ;
 		if(byte != 'b')
 			fprintf(file,"\tmovl %s, %%eax \n", name) ;
@@ -1367,9 +1294,8 @@ char* nameAux = malloc(20) ;
 	}
 	else				// faz spill
 	{
-		var1->status = 1 ;		//VER!
+		var1->status = 1 ;		
 		regs->reg1 = name ;
-		//printf("SPILL1\n") ;
 		makeSpill(lifeTab, regs->reg1, byte, file) ;
 		return "ebx" ;
 	}
@@ -1379,14 +1305,11 @@ char* nameAux = malloc(20) ;
 
 char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegList* regs, int varOrder, int ret, char byte, FILE* file)  //ret = 1 se eh retorno
 {
-//printf("entrou\n") ;
 	char* nameAux = malloc(20);
 	if( ret == 1)			// mexer apenas no reg3 -> eax
 	{
-		//printf("entrou\n") ;
 		if((regs->reg3 != NULL) && (strcmp(regs->reg3, name) == 0))
 		{
-			//printf("entrou1\n") ;
 			regs->reg3 = name ;
 			name = findReg(name, regs) ;
 			if(varOrder == 1)		// se for x, precisa alocar
@@ -1400,7 +1323,6 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		}
 		else if(regs->reg3 == NULL)
 		{
-			//printf("entrou2\n") ;
 			regs->reg3 = name ;
 			name = findReg(name, regs) ;
 			if(byte != 'b')
@@ -1417,7 +1339,6 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 	
 	else
 	{
-		//printf("entrou regs\n") ;
 		if((regs->reg1 != NULL) && (strcmp(regs->reg1, name) == 0))		// se estiver em algum registrador atualiza
 		{
 			regs->reg1 = name ;
@@ -1678,7 +1599,6 @@ char* insertReg (Instr* ins, char* name, LifeTable* lifeTab, int blockLine, RegL
 		}
 		else
 		{
-			//printf("FAZER!1\n") ;
 			return insertRegElse (ins, name, lifeTab, blockLine, regs, byte, file) ;
 				
 		}
@@ -1703,7 +1623,6 @@ void printOperation(int op, char* regstr1, char* regstr2, FILE* file)
 			fprintf(file,"\tcmpl ") ;
 			break ;	
 	}
-//printf("aqui\n") ;
 	if((strcmp(regstr1, "ebx") == 0) || (strcmp(regstr1, "ecx") == 0) || (strcmp(regstr1, "eax") == 0) ||
 		(strcmp(regstr1, "edx") == 0) || (strcmp(regstr1, "edi") == 0) || (strcmp(regstr1, "esi") == 0))
 	{	
@@ -1712,7 +1631,6 @@ void printOperation(int op, char* regstr1, char* regstr2, FILE* file)
 	else
 		fprintf(file,"%s, ", regstr1) ;
 
-//printf("aqui2\n") ;
 	if((strcmp(regstr2, "ebx") == 0) || (strcmp(regstr2, "ecx") == 0) || (strcmp(regstr2, "eax") == 0) ||
 		(strcmp(regstr2, "edx") == 0) || (strcmp(regstr2, "edi") == 0) || (strcmp(regstr2, "esi") == 0))
 	{	
@@ -1754,31 +1672,23 @@ char* searchInsert (Instr* ins, char* var, LifeTable* lifeTab, int blockLine, Re
 			return insertReg (ins, num, lifeTab, blockLine, regs, varOrder, ret, byte, file) ;
 		}
 	}
-	//printf("var: %s\n", var) ;
 	ListName* lstName = lifeTab->firstName ;
 	while(lstName)
 	{
-		//printf("OI\n") ;
-		//if(lstName != NULL)
-		 	//printf("---%s\n", lstName->name) ;
 		if((var != NULL) && (strcmp(lstName->name, var) == 0))		// so aloca se for uma variavel valida
 		{
 			return insertReg (ins, var, lifeTab, blockLine, regs, varOrder, ret, byte, file) ;
 		}
 		lstName = lstName->nextName ;	
-		//printf("%d\n", lstName) ;
 	}
 
+	return NULL ;
 }
 
 // ---------------- insert Var Regs --------------
 
 void insertVarReg(char* var, char* regstr, RegList* regs)
 {
-	//printf("oi2\n") ;
-	//printf("regstr: %s\n", regstr) ;
-	//printf("var: %s\n", var) ;
-	//printf("regs->reg1: %s\n", regs->reg1) ;
 	
 	if(strcmp(regstr, "ebx") == 0)
 	{	
@@ -1811,7 +1721,6 @@ void insertVarReg(char* var, char* regstr, RegList* regs)
 
 void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs, FILE* file)
 {
-	ListName* lstName = lifeTab->firstName ;
 	char* regstr1 = malloc(20);
 	char* regstr2 = malloc(20) ;
 	char* regstr3 = malloc(20) ;
@@ -1877,7 +1786,6 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs, FI
 		case OP_CALL: 
 			if(push == 0)
 			{
-				//printf("\tpushl %%eax\n") ;    ====> FAZER SPILL DO CONTEUDO DO EAX
 				fprintf(file,"\tpushl %%ecx\n") ;
 				fprintf(file,"\tpushl %%edx\n") ;				
 			}
@@ -1921,29 +1829,20 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs, FI
 			{ 
 				regstr1 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0, 'n', file) ;
 				fprintf(file,"\timul $4, %%%s\n", regstr1) ;
-			//fmt = "\t%s = %s[%s]\n";	
-			break;
+				break;
 			}
 		case OP_SET_IDX_BYTE: 
 			{
 				regstr1 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0, 'n', file) ;
 				regstr2 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0, 'n', file) ;
 				printOperation(OP_ADD, regstr2, regstr1, file) ;
-			//fmt = "\t%s = byte %s[%s]\n";	
-			break;
+				break;
 			}
 		case OP_IDX_SET: 
 			{
 				regstr1 = searchInsert (ins, ins->y.str, lifeTab, blockLine, regs, 2, 0, 'n', file) ;
 				fprintf(file,"\timul $4, %%%s\n", regstr1) ;
-				//regstr2 = searchInsert (ins, ins->x.str, lifeTab, blockLine, regs, 1, 0) ;
-				//printOperation(OP_ADD, regstr2, regstr1) ;
-				//regstr3 = searchInsert (ins, ins->z.str, lifeTab, blockLine, regs, 3, 0) ;
-				//printf("\tmovb %%%s, (%%%s)\n", regstr3, regstr1) ;
-				//snprintf(var, 20, "%s[%s]",ins->x.str, ins->y.str);
-				//insertVarReg(var, regstr1, regs) ;
-			//fmt = "\t%s[%s] = %s\n";	
-			break;
+				break;
 			}
 		case OP_IDX_SET_BYTE: 
 			{
@@ -1954,7 +1853,6 @@ void updateRegs(Instr* ins, LifeTable* lifeTab, int blockLine, RegList* regs, FI
 				fprintf(file,"\tmovb %%%s, (%%%s)\n", regstr3, regstr1) ;
 				snprintf(var, 20, "%s[%s]",ins->x.str, ins->y.str);
 				insertVarReg(var, regstr1, regs) ;
-			//fmt = "\t%s[%s] = byte %s\n";	
 			break;
 			}
 		case OP_NE: 
@@ -2506,10 +2404,10 @@ Output an instruction to the given file descriptor.
 */
 static void Instr_dump(Instr* ins, FILE* fd) 
 {
-	const char* x = ins->x.str;
-	const char* y = ins->y.str;
-	const char* z = ins->z.str;
-	const char* fmt;
+	char* x = ins->x.str;
+	char* y = ins->y.str;
+	char* z = ins->z.str;
+	char* fmt;
 
 	switch (ins->op) 
 	{
@@ -2701,25 +2599,16 @@ void printLifeTable(IR* ir)
 
 	while (lifeTab)
 	{
-		//printf("lifetab: %d\n", lifeTab) ;
-		//printf("lifeTab->firstName: %s\n", lifeTab->firstName->name) ;
 		lstName = lifeTab->firstName ;
 		while(lstName)
 		{	
-			//printf("entrou\n") ;
-			printf("lstName: %s\n", lstName->name) ;
 			printf("%s: \n", lstName->name) ; 
-			//printf("passou\n") ;
-			lstLife = lstName->first ;	
-			//printf("passou2\n") ;	
+			lstLife = lstName->first ;		
 			for(cont=0;cont<lifeTab->qtdLines+1;cont++)
 			{
-				//printf("lstLife %d\n", lstLife) ;
 				printf("=>vivo: %d ; next: %d \n", lstLife->alive, lstLife->nextPosAlive) ;
 				lstLife = lstLife->next ; 
-				//printf("passou3\n") ;
 			}
-			//printf("passou4\n") ;
 			lstName = lstName->nextName ;
 			printf("\n") ;
 		}
@@ -2755,7 +2644,7 @@ void IR_dump(IR* ir, FILE* fd)
 	CreateLifeTable (ir) ;
 	FillLifeTableStatus (ir) ;
 	//printLifeTable(ir) ;
-	FILE* file = fopen("saida.air", "wt") ;
+	FILE* file = fopen("saida.s", "wt") ;
 	if(file == NULL)
 	{
 		printf("erro na criacao do arquivo\n") ;

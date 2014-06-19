@@ -202,8 +202,8 @@ Strings are stored as a linked list.
 typedef struct String_ String;
 struct String_ {
 String* next;
-const char* name;
-const char* value;
+char* name;
+char* value;
 };
 
 /*
@@ -213,7 +213,7 @@ Variables are stored as a linked list.
 typedef struct Variable_ Variable;
 struct Variable_ {
 Variable* next;
-const char* name;
+char* name;
 };
 
 /*
@@ -226,7 +226,7 @@ Function* next;
 /*
 Name of the function.
 */
-const char* name;
+char* name;
 /*
 Number of input arguments of this function.
 The first `nArgs` entries in the `locals` list below are
